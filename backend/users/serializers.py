@@ -30,14 +30,14 @@ class ReducedProfileSerializer(serializers.ModelSerializer):
 
 
 class CollectiveSerializer(serializers.ModelSerializer):
-	members_count = serializers.SerializerMethodField()
+	members = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Collective
-		fields = ["id", "name", "picture", "description", "creation_date", "members_count"]
+		fields = ["id", "name", "picture", "description", "creation_date", "members"]
 
-	def get_members_count(self, obj):
-		return obj.members.count()
+	def get_members(self, obj):
+		return UserMembershipSerializer(Membership.objects.filter(collective=obj), many=True).data
 
 
 class MembershipSerializer(serializers.ModelSerializer):

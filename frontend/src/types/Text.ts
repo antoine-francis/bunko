@@ -2,6 +2,8 @@ import {BunkoComment} from "./Comment.ts";
 import {Author} from "./Author.ts";
 import {Genre} from "./Genre.ts";
 import {Series} from "./Series.ts";
+import {Like} from "./Like.ts";
+import {Bookmark} from "./Bookmark.ts";
 
 export interface BunkoText {
 	id?: number;
@@ -11,8 +13,8 @@ export interface BunkoText {
 	comments: BunkoComment[];
 	genres: Genre[];
 	isDraft: boolean;
-	bookmarkedBy: number;
-	likes: number;
+	bookmarkedBy: Bookmark[];
+	likes: Like[];
 	series: Series;
 	seriesEntry: number;
 }

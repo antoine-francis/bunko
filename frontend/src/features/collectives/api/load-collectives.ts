@@ -34,7 +34,6 @@ export const loadCollectiveDetails : (id : string) => Promise<Collective | undef
 					admins.push(flattenedMember);
 				}
 			}
-			console.log(data);
 
 			const collectiveDetails : Collective = Object.assign({}, {
 				id: data.id,
@@ -50,6 +49,6 @@ export const loadCollectiveDetails : (id : string) => Promise<Collective | undef
 			return collectiveDetails;
 		}
 	} catch (exception) {
-		console.log(exception);
+		console.error(exception);
 	}
 };

@@ -11,6 +11,10 @@ export const Dashboard = () => {
 	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
+		document.title = "Home - Bunko";
+	}, []);
+
+	useEffect(() => {
 		async function getTexts() {
 			setTexts(await loadTexts());
 			setLoaded(true);
@@ -21,7 +25,7 @@ export const Dashboard = () => {
 				console.error(e);
 			});
 		}
-	}, [texts]);
+	}, [texts, loaded]);
 
 return (
 	<div id="dashboard">

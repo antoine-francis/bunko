@@ -13,6 +13,12 @@ export const CollectiveDetails = () => {
 	const {id} = useParams();
 
 	useEffect(() => {
+		if (collective !== undefined) {
+			document.title = collective.name;
+		}
+	}, [collective]);
+
+	useEffect(() => {
 		async function getCollectiveDetails() {
 			if (id !== undefined) {
 				setCollective(await loadCollectiveDetails(id));
@@ -25,7 +31,7 @@ export const CollectiveDetails = () => {
 				console.error(e);
 			});
 		}
-	}, [collective]);
+	}, [collective, id, loaded]);
 
 	if (!loaded) {
 		return <Loading/>;

@@ -5,6 +5,7 @@ import {Link, useParams} from "react-router-dom";
 import {Loading} from "../../components/Loading.tsx";
 import {paths} from "../../config/paths.ts";
 import {TextDescription} from "../../types/Text.ts";
+import {NotFound} from "../../components/NotFound.tsx";
 
 export const Profile = () => {
 	const [profile, setProfile] = useState<UserProfile>();
@@ -12,12 +13,18 @@ export const Profile = () => {
 	const {username} = useParams();
 
 	useEffect(() => {
+		if (typeof username === "string") {
+			document.title = username;
+		}
+	}, [username]);
+
+	useEffect(() => {
 		async function getUserProfile() {
 			if (username !== null && username !== undefined) {
 				setProfile(await loadUserProfile(username));
 				isLoaded(true);
 			}
-		};
+		}
 
 		if (!loaded) {
 			getUserProfile().catch(e => {
@@ -28,7 +35,7 @@ export const Profile = () => {
 	return (
 		<div id="user-profile">
 			{!loaded && <Loading/>}
-			{profile === undefined ? <div className="user-not-found">User not found</div> :
+			{profile === undefined ? <NotFound/> :
 				<>
 					<div className="user-info">
 						<span className="full-name">{profile.firstName} {profile.lastName}</span>
@@ -57,6 +64,8 @@ export const Profile = () => {
 												</Link>
 											</div>
 										);
+									} else {
+										return null;
 									}
 								}
 							)}

@@ -10,8 +10,7 @@ export const loadTexts : () => Promise<BunkoText[]> = async () => {
 			credentials: 'same-origin',
 		});
 		if (response.ok) {
-			const data = await response.json();
-			return data;
+			return await response.json();
 		}
 	} catch (exception) {
 		console.log(exception);
@@ -27,8 +26,7 @@ export const loadSeries : (id : string) => Promise<Series> = async (id : string)
 			credentials: 'same-origin',
 		});
 		if (response.ok) {
-			const data = await response.json();
-			return data;
+			return await response.json();
 		}
 	} catch (exception) {
 		console.log(exception);

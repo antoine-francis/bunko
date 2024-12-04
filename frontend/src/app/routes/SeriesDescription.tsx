@@ -11,6 +11,12 @@ export const SeriesDescription = () => {
 	const [series, setSeries] = useState<Series>();
 	const [loaded, isLoaded] = useState(false);
 
+	useEffect(() => {
+		if (series !== undefined) {
+			document.title = series.title;
+		}
+	}, [series]);
+
 	useEffect(() =>{
 		const getSeries = async () => {
 			if (id !== undefined) {
@@ -24,7 +30,7 @@ export const SeriesDescription = () => {
 				console.error(e);
 			});
 		}
-	}, [series]);
+	}, [series, id, loaded]);
 
 	const getSeriesAuthorsNames = () : React.JSX.Element => {
 		const authorsList: string[] = [];

@@ -2,6 +2,7 @@ import {RouterProvider, createBrowserRouter, Outlet} from "react-router-dom";
 
 import { paths } from "../config/paths";
 import {MenuBar} from "../components/menubar/MenuBar.tsx";
+import React from "react";
 
 const AppLayout: React.FC = () => {
 	return (<>
@@ -100,31 +101,8 @@ const bunkoRouter = createBrowserRouter([
 			},
 		]
 	},
-	// {
-	// 	element: <Layout/>,
-	// 	errorElement: <ErrorPage />,
-	// 	children: [
-	// 		{
-	// 			path: paths.home.path,
-	// 			element: <Dashboard/>
-	// 			// lazy: async () => {
-	// 			// 	const { Dashboard } = await import('./routes/Dashboard');
-	// 			// 	return { Component: Dashboard };
-	// 			// },
-	// 		},
-	// 		{
-	// 			path: '/products',
-	// 			element: <ProductsList />
-	// 		},
-	// 		// {
-	// 		// 	path: '/products/:productId',
-	// 		// 	element: <SingleProductPage />
-	// 		// }
-	// 	]
-	// }
 ])
 
 export const BunkoRouter = () => {
-
 	return <RouterProvider router={bunkoRouter} />;
 };

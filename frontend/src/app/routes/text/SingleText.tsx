@@ -8,12 +8,19 @@ import {FormattedDate} from "react-intl";
 import React from "react";
 import {NotFound} from "../../../components/NotFound.tsx";
 import {paths} from "../../../config/paths.ts";
+import {Genre} from "../../../types/Genre.ts";
 
 export const SingleText = () => {
 	const [text, setText] = useState<BunkoText>();
 	const [loaded, setLoaded] = useState(false);
 	const [error, setError] = useState(false);
 	const {id} = useParams();
+
+	useEffect(() => {
+		if (text !== undefined) {
+			document.title = text.title;
+		}
+	}, [text]);
 
 	useEffect(() => {
 		async function getTextById(id: string) {
@@ -37,7 +44,7 @@ export const SingleText = () => {
 		return <Loading/>;
 	} else if (text === undefined) {
 		return <NotFound/>;
-	} else if (text !== undefined) {
+	} else {
 		return (
 			<div className="text-container">
 				<div className="text-title">{text.title}</div>
@@ -51,12 +58,12 @@ export const SingleText = () => {
 					</div>
 				</Link>)
 				}
-				<span className="genres">{text.genres.map(genre => {
-					return genre.tag;
+				<span className="genres">{text.genres.map((genre : Genre, index: number) => {
+					return `${genre.tag}${index < text.genres.length - 1 && ", "}`;
 				})}</span>
 				<div className="text-content">{text.content}</div>
-				<div className="likes">Liked by {text.likes}</div>
-				<div className="bookmark-count">Bookmarked by {text.bookmarkedBy}</div>
+				<div className="likes">Liked by {text.likes.length}</div>
+				<div className="bookmark-count">Bookmarked by {text.bookmarkedBy.length}</div>
 				<div className="comments-container">
 					{text.comments.map((comment : BunkoComment) => {
 						return (<React.Fragment key={comment.id}>
