@@ -1,0 +1,22 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "jsx": "react",
+    "types": ["react", "react-dom"],
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+

@@ -1,0 +1,42 @@
+{% extends "bunko/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>{{user.username}}</h1>
+<div class="content-section">
+	<div class="media">
+		<img class="rounded-circle account-img" src="{{user.profile.picture.url}}" alt="" />
+		<div class="media-body">
+			<p class="text-secondary">{{ user.email }}</p>
+			<p class=""text-secondary>{{ user.profile.bio }}</p>
+		</div>
+	</div>
+</div>
+<form action="" method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<fieldset class="form-group">
+		<legend class="border-bottom mb-4">Informations du profil</legend>
+		{{user_form|crispy}}
+		{{profile_form|crispy}}
+	</fieldset>
+	<div class="form-group">
+		<button class="btn btn-outline-info" type="submit">Sauvegarder</button>
+	</div>
+</form>
+{% if textes|length > 0 %}
+<small>{{textes|length}} texte{%if textes|length > 1%}s{% endif %}</small>
+{% for texte in textes %}
+<article class="media content-section">
+	<div class="media-body">
+		<div class="article-metadata">
+			<a class="mr-2" href="#">{{ texte.auteur }}</a>
+			<small class="text-muted"> - {{ texte.date_creation|date:"F d, Y" }}</small>
+		</div>
+		<h2><a class="article-title" href="#">{{ texte.titre }}</a></h2>
+		<p class="article-content">{{ texte.texte }}</p>
+	</div>
+</article>
+{% endfor %}
+{% else %}
+<small>L'auteur n'a pas publié de texte</small>
+{% endif %}
+{% endblock content %}

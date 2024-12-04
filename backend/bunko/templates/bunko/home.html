@@ -1,0 +1,38 @@
+{% extends 'bunko/base.html' %}
+{% block content %}
+<div class="row">
+	<div class="col-md-8">
+		{% for text in texts %}
+		<article class="media content-section">
+			<div class="media-body">
+				<img class="rounded-circle article-img" src="{{ text.author.profile.picture.url }}" alt="" />
+				<div class="article-metadata">
+					<a class="mr-2" href="{% url 'profile' text.author %}">{{ text.author }}</a>
+					<small class="text-muted"> - {{ text.creation_date|date:"F d, Y" }}</small>
+				</div>
+				<h2><a class="article-title" href="{% url 'texte-detail' text.id %}">{{ texte.title }}</a></h2>
+				<p class="article-content">{{ text.content|slice:"0:250" }}...</p>
+			</div>
+			<div id="reactions" class="text-muted">
+				<span id="likes">Aimé {{ text.like_count|length }} fois</span> |
+				<span id="suggestions">Suggéré par {{texte.recommend_count|length}} lecteurs et lectrices</span> |
+				<span id="nb-comments">{{text.comments|length}} commentaire{%if text.comments|length > 1%}s{% endif %}</span>
+			</div>
+		</article>
+		{% endfor %}
+	</div>
+<!--	<div class="col-md-4">-->
+<!--		<div class="content-section">-->
+<!--			<h3>Our Sidebar</h3>-->
+<!--			<p class='text-muted'>You can put any information here you'd like.-->
+<!--				<ul class="list-group">-->
+<!--					<li class="list-group-item list-group-item-light">Latest Posts</li>-->
+<!--					<li class="list-group-item list-group-item-light">Announcements</li>-->
+<!--					<li class="list-group-item list-group-item-light">Calendars</li>-->
+<!--					<li class="list-group-item list-group-item-light">etc</li>-->
+<!--				</ul>-->
+<!--			</p>-->
+<!--		</div>-->
+<!--	</div>-->
+</div>
+{% endblock content %}

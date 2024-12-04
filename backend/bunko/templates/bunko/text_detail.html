@@ -1,0 +1,29 @@
+{% extends 'bunko/base.html' %}
+{% block content %}
+<div class="row">
+	<div class="col-md-8">
+		<article class="media content-section">
+			<div class="media-body">
+				<div class="article-metadata">
+					<img class="rounded-circle article-img" src="{{ text.author.profile.picture.url }}" alt="" />
+					<a class="mr-2" href="#">{{ object.author }}</a>
+					<small class="text-muted"> - {{ object.creation_date|date:"F d, Y" }}</small>
+					{% if object.author == user %}
+					<span class="d-flex flex-row-reverse">
+						<a class="btn btn-sm btn-secondary" href="{% url 'texte-modifier% texte.id}">Modifier</a>
+						<a class="btn btn-sm btn-danger" href="{% url 'texte-supprimer% texte.id}">Supprimer</a>
+					</span>
+					{% endif %}
+				</div>
+				<h2 class="article-title">{{ object.title }}</h2>
+				<p class="article-content">{{ object.content }}</p>
+			</div>
+			<div id="reactions" class="text-muted">
+				<span id="bouton-aimer">Aimé {{ text.like_count|length }} fois</span> |
+				<span id="suggestions">Suggéré par {{text.recommend_count|length}} lecteurs et lectrices</span> |
+				<span id="nb-comments">{{text.comments|length}} commentaire{%if text.comments|length > 1%}s{% endif %}</span>
+			</div>
+		</article>
+	</div>
+</div>
+{% endblock content %}

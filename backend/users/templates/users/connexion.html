@@ -1,0 +1,23 @@
+{% extends "bunko/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="col-md-4 offset-md-2" id="register">
+	<div class="content-section">
+		<form method="POST">
+			{% csrf_token %}
+			<fieldset class="form-group">
+				<legend class="border-bottom mb4">Connexion</legend>
+				{{ form|crispy }}
+			</fieldset>
+			<div class="form-group">
+				<button class="btn btn-outline-info" type="submit">Se connecter</button>
+			</div>
+		</form>
+		<div class="border-top pt-3">
+			<small class="text-muted">
+				Première visite ? <a class="ml-2" href="{% url 'inscription' %}">S'inscrire</a>
+			</small>
+		</div>
+	</div>
+</div>
+{% endblock content %}

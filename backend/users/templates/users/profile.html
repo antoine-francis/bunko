@@ -1,0 +1,39 @@
+{% extends "bunko/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+	<div class="media">
+		<img class="rounded-circle account-img" src="{{utilisateurVisitay.profile.picture.url}}" alt="" />
+		<div class="media-body">
+			<span>{{utilisateurVisitay.first_name}} {{utilisateurVisitay.last_name}}</span>
+			<p class="text-secondary">@{{ utilisateurVisitay.username }}</p>
+			<p class="text-secondary">{{ utilisateurVisitay.profile.bio }}</p>
+			<p class="text-muted">Inscrit depuis le {{utilisateurVisitay.profile.date_abonnement|date:"F d Y"}}</p>
+			{% if utilisateurVisitay.username == user.username %}
+			<a href="{% url 'profile-edit' %}" class="btn btn-light">Modifier le profil</a>
+			{% endif%}
+		</div>
+	</div>
+</div>
+{% if textes|length > 0 %}
+<small>{{textes|length}} texte{%if textes|length > 1%}s{% endif %}</small>
+{% for texte in textes %}
+<article class="media content-section">
+	<div class="media-body">
+		<div class="article-metadata">
+			<small class="text-muted">{{ texte.date_creation|date:"F d, Y" }}</small>
+		</div>
+		<h2><a class="article-title" href="#">{{ texte.titre }}</a></h2>
+		<p class="article-content">{{ texte.texte }}</p>
+	</div>
+	<div id="reactions" class="text-muted">
+		<span id="likes">Aimé {{ texte.nb_likes|length }} fois</span> |
+		<span id="suggestions">Suggéré par {{texte.fois_suggeray|length}} lecteurs et lectrices</span> |
+		<span id="nb-comments">{{texte.comments|length}} commentaire{%if texte.comments|length > 1%}s{% endif %}</span>
+	</div>
+</article>
+{% endfor %}
+{% else %}
+<small>L'auteur n'a pas publié de texte</small>
+{% endif %}
+{% endblock content %}

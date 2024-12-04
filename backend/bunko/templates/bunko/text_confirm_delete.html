@@ -1,0 +1,20 @@
+{% extends "bunko/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="col-md-10 offset-md-1" id="nouveau_texte">
+	<div class="content-section">
+		<form method="POST">
+			{% csrf_token %}
+			<fieldset class="form-group">
+				<legend class="border-bottom mb4">Supprimer <i>{{texte.titre}}</i> ?</legend>
+				<h2 class="">Cette action ne peut pas être renversée.</h2>
+				{{ form|crispy }}
+			</fieldset>
+			<div class="form-group">
+				<button class="btn btn-outline-danger" type="submit">Supprimer</button>
+				<button class="btn btn-outline-secondary" type="reset">Annuler</button>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock content %}
