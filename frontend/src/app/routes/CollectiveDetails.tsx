@@ -1,40 +1,28 @@
-import {useEffect, useState} from "react";
 import {loadCollectiveDetails} from "../../features/collectives/api/load-collectives.ts";
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 import {Loading} from "../../components/Loading.tsx";
 import {EmptyList} from "../../components/users-list/EmptyList.tsx";
 import {FormattedDate} from "react-intl";
 import {paths} from "../../config/paths.ts";
 import {Collective} from "../../types/Collective.ts";
+import {useQuery} from "@tanstack/react-query";
+import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 
 export const CollectiveDetails = () => {
-	const [collective, setCollective] = useState<Collective>();
-	const [loaded, isLoaded] = useState(false);
+	const location = useLocation();
 	const {id} = useParams();
 
-	useEffect(() => {
-		if (collective !== undefined) {
-			document.title = collective.name;
-		}
-	}, [collective]);
+	const { data: collective, isLoading, error } = useQuery<Collective | undefined>({
+		queryKey: ["collective", id],
+		queryFn: () => loadCollectiveDetails(id!),
+		refetchOnWindowFocus: false,
+		retry: 0,
+	});
 
-	useEffect(() => {
-		async function getCollectiveDetails() {
-			if (id !== undefined) {
-				setCollective(await loadCollectiveDetails(id));
-				isLoaded(true);
-			}
-		}
-
-		if (!loaded) {
-			getCollectiveDetails().catch(e => {
-				console.error(e);
-			});
-		}
-	}, [collective, id, loaded]);
-
-	if (!loaded) {
+	if (isLoading) {
 		return <Loading/>;
+	} else if (error) {
+		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname} />;
 	} else if (collective === undefined || collective === null) {
 		return <EmptyList/>;
 	} else {

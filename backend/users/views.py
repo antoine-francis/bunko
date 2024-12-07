@@ -1,7 +1,9 @@
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
@@ -10,7 +12,37 @@ from django.contrib.auth.models import User
 
 from .models import Profile, Subscription, Collective
 from .serializers import ProfileSerializer, SubscriptionFollowersSerializer, SubscriptionFollowingSerializer, \
-	CollectiveDetailedSerializer
+	CollectiveDetailedSerializer, UserSerializer
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def bunko_login(request):
+	username = request.data.get('username')
+	password = request.data.get('password')
+
+	if not username or not password:
+		return Response({"detail": "Email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+	user = authenticate(request, username=username, password=password)
+
+	if user is not None:
+		login(request, user)  # This will log the user in by creating a session
+		return Response({"detail": "Login successful"}, status=status.HTTP_200_OK)
+
+	return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view()
+def get_user_data(request):
+	data = User.objects.filter(id=request.user.id).first()
+	if data:
+		serializer = UserSerializer(data, context={'request': request})
+		
+		# serializer = ProfileSettingsSerializer(data, context={'request': request})
+		return Response(serializer.data, status=status.HTTP_200_OK)
+	else:
+		return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 def inscription(request):
@@ -24,6 +56,7 @@ def inscription(request):
 	else:
 		formulaire = UserRegisterForm()
 	return render(request, 'users/inscription.html', {'formulaire': formulaire})
+
 
 def profile(request, username):
 	user = User.objects.filter(username=username).first()

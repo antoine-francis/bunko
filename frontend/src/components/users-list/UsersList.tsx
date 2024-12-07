@@ -1,47 +1,33 @@
 import {FormattedDate} from "react-intl";
 import {Subscription} from "../../types/UserProfile.ts";
-import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {Loading} from "../Loading.tsx";
 import {EmptyList} from "./EmptyList.tsx";
 import PropTypes from "prop-types";
-import {paths} from "../../config/paths.ts";
+import {ErrorHandler} from "../ErrorHandler.tsx";
+import {useQuery} from "@tanstack/react-query";
 
 interface UsersListProps {
-	loadUsers?: (username: string) => Promise<Subscription[] | undefined>
+	loadUsers: (username: string) => Promise<Subscription[] | undefined>
+	queryKey: string
 }
 
-export const UsersList = ({loadUsers} : UsersListProps) => {
-	const [users, setUsers] = useState<Subscription[]>([]);
-
-	const [loaded, isLoaded] = useState(false);
+export const UsersList = ({loadUsers, queryKey} : UsersListProps) => {
+	const location = useLocation();
 	const {username} = useParams();
-	const navigate = useNavigate();
 
-	useEffect(() => {
-		async function getUsers() {
-			if (username !== null && username !== undefined) {
-				if (loadUsers) {
-					try {
-						const users = await loadUsers(username);
-						users !== undefined && setUsers(users);
-					} catch (exception) {
-						console.error(exception);
-						navigate(paths.notFound.getHref());
-					}
-				}
-				isLoaded(true);
-			}
-		}
+	const {data: users, isLoading, error} = useQuery({
+		queryKey: [queryKey, username],
+		queryFn: () => loadUsers(username!),
+		refetchOnWindowFocus: false,
+		retry: 0,
+	})
 
-		if (!loaded) {
-			getUsers().catch(e => {
-				console.error(e);
-			});
-		}
-	}, [users, loadUsers, navigate, username, loaded]);
-	if (!loaded) {
+
+	if (isLoading) {
 		return <Loading/>;
+	} else if (error) {
+		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname}/>;
 	} else if (users === undefined || users.length === 0) {
 		return <EmptyList/>;
 	} else {

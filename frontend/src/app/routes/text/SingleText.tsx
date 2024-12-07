@@ -1,7 +1,7 @@
 import {BunkoText} from "../../../types/Text.ts";
-import {Link, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {loadText} from "../../../features/text/load-single-text.ts";
+import {Link, useLocation, useParams} from "react-router-dom";
+import {useEffect} from "react";
+import {loadText} from "../../../features/text/api/load-single-text.ts";
 import {BunkoComment} from "../../../types/Comment.ts";
 import {Loading} from "../../../components/Loading.tsx";
 import {FormattedDate} from "react-intl";
@@ -9,39 +9,30 @@ import React from "react";
 import {NotFound} from "../../../components/NotFound.tsx";
 import {paths} from "../../../config/paths.ts";
 import {Genre} from "../../../types/Genre.ts";
+import {useQuery} from "@tanstack/react-query";
+import {ErrorHandler} from "../../../components/ErrorHandler.tsx";
 
 export const SingleText = () => {
-	const [text, setText] = useState<BunkoText>();
-	const [loaded, setLoaded] = useState(false);
-	const [error, setError] = useState(false);
 	const {id} = useParams();
+	const location = useLocation();
+
+	const { data: text, isLoading, error } = useQuery<BunkoText | undefined>({
+		queryKey: ["text", id],
+		queryFn: () => loadText(id!),
+		refetchOnWindowFocus: false,
+		retry: 0,
+	});
 
 	useEffect(() => {
-		if (text !== undefined) {
+		if (text !== undefined && text !== null) {
 			document.title = text.title;
 		}
 	}, [text]);
 
-	useEffect(() => {
-		async function getTextById(id: string) {
-			setText(await loadText(id));
-			setLoaded(true);
-		}
-
-		if (id !== undefined && parseInt(id as string, 10)) {
-			getTextById(id).catch(e => {
-				console.error(e);
-			});
-		} else {
-			setError(true);
-		}
-
-	}, [id, loaded])
-
-	if (error) {
-		return <Link to={"/404"}/>;
-	} else if (!loaded) {
+	if (isLoading) {
 		return <Loading/>;
+	} else if (error) {
+		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname} />;
 	} else if (text === undefined) {
 		return <NotFound/>;
 	} else {

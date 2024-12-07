@@ -1,6 +1,7 @@
 import '../App.css'
 import {BunkoRouter} from "./BunkoRouter.tsx";
 import {IntlProvider} from "react-intl";
+import {UserProvider} from "../contexts/UserContext.tsx";
 
 function App() {
 
@@ -9,7 +10,9 @@ function App() {
 	return (
 		<>
 			<IntlProvider locale="en">
-				<BunkoRouter/>
+				<UserProvider>
+					<BunkoRouter/>
+				</UserProvider>
 			</IntlProvider>
 		</>
 	)

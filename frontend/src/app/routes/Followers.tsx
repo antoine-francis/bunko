@@ -12,5 +12,5 @@ export const Followers = () => {
 		}
 	}, [username]);
 
-	return <UsersList loadUsers={loadFollowers}/>
+	return <UsersList loadUsers={loadFollowers} queryKey="followers" />
 }

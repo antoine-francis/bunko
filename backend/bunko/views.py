@@ -1,11 +1,14 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework import status, permissions
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework import status
 
-from users.models import Profile, Subscription
+from users.models import Subscription
 from .models import Text, Series
 from .serializers import TextSerializer, CommentSerializer, SeriesSerializer
 
@@ -61,6 +64,7 @@ class TextDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 @api_view()
 def get_texts(request):
+	print(request.user.id)
 	if request.method == 'GET':
 		data = Text.objects.filter(
 			author_id__in=Subscription.objects.filter(follower=request.user.id).values('following')
@@ -75,6 +79,7 @@ def get_texts(request):
 
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view()
 def get_text_by_id(request, pk):
 	if request.method == 'GET':
@@ -85,6 +90,7 @@ def get_text_by_id(request, pk):
 
 		except Text.DoesNotExist:
 			return Response({"detail": f'No text with an id of {pk} was found.'}, status=status.HTTP_404_NOT_FOUND)
+
 
 @api_view()
 def get_texts_by_user(request, username):

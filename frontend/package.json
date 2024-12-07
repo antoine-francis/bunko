@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.62.2",
+    "@tanstack/react-query-devtools": "^5.62.2",
     "@types/react-helmet": "^6.1.11",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "eslint-plugin-react-hooks": "^5.0.0",

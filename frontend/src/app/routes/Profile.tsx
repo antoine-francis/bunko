@@ -1,41 +1,39 @@
-import {useEffect, useState} from "react";
-import {UserProfile} from "../../types/UserProfile.ts";
+import {useEffect} from "react";
 import {loadUserProfile} from "../../features/profile/api/load-user-profile.ts";
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 import {Loading} from "../../components/Loading.tsx";
 import {paths} from "../../config/paths.ts";
 import {TextDescription} from "../../types/Text.ts";
+import {useQuery} from "@tanstack/react-query";
+import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {NotFound} from "../../components/NotFound.tsx";
 
 export const Profile = () => {
-	const [profile, setProfile] = useState<UserProfile>();
-	const [loaded, isLoaded] = useState(false);
+	const location = useLocation();
 	const {username} = useParams();
 
 	useEffect(() => {
 		if (typeof username === "string") {
-			document.title = username;
+			document.title = `${username}'s profile`;
 		}
 	}, [username]);
 
-	useEffect(() => {
-		async function getUserProfile() {
-			if (username !== null && username !== undefined) {
-				setProfile(await loadUserProfile(username));
-				isLoaded(true);
-			}
-		}
+	const {data: profile, isLoading, error} = useQuery({
+		queryKey: ["profile", username],
+		queryFn: () => loadUserProfile(username!),
+		refetchOnWindowFocus: false,
+		retry: 0,
+	})
 
-		if (!loaded) {
-			getUserProfile().catch(e => {
-				console.error(e);
-			});
-		}
-	});
-	return (
-		<div id="user-profile">
-			{!loaded && <Loading/>}
-			{profile === undefined ? <NotFound/> :
+	if (isLoading) {
+		return <Loading />;
+	} else if (error) {
+		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname} />;
+	} else if (profile === undefined) {
+		return <NotFound/>;
+	} else {
+		return (
+			<div id="user-profile">
 				<>
 					<div className="user-info">
 						<span className="full-name">{profile.firstName} {profile.lastName}</span>
@@ -78,9 +76,9 @@ export const Profile = () => {
 									<div key={"text" + index}>
 										<div className="title">{text.title}</div>
 										{text.series !== null &&
-                                            <div className="series">
-                                                <Link to={{pathname: `${paths.series.getHref()}${text.series.id}`}}>
-                                                    <span className="series-title">{text.series.title} - part {text.seriesEntry}</span>
+											<div className="series">
+												<Link to={{pathname: `${paths.series.getHref()}${text.series.id}`}}>
+													<span className="series-title">{text.series.title} - part {text.seriesEntry}</span>
 												</Link>
 											</div>
 										}
@@ -89,7 +87,8 @@ export const Profile = () => {
 							})
 						}
 					</div>
-				</>}
-		</div>
-	);
+				</>
+			</div>
+		);
+	}
 }

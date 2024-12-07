@@ -1,2 +1,6 @@
 frontend/node_modules/
 .DS_Store
+backend/users/__pycache__/
+backend/bunko/__pycache__/
+
+**/*.pyc

@@ -1,36 +1,28 @@
 import {TextsList} from "../../components/texts-list/TextsList.tsx";
 import {loadSeries} from "../../features/dashboard/api/load-texts.ts";
-import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import React, {useEffect} from "react";
+import {useLocation, useParams} from "react-router-dom";
 import {Loading} from "../../components/Loading.tsx";
 import {NotFound} from "../../components/NotFound.tsx";
-import type {Series} from "../../types/Series";
+import {ErrorHandler} from "../../components/ErrorHandler.tsx";
+import {useQuery} from "@tanstack/react-query";
 
 export const SeriesDescription = () => {
 	const {id} = useParams();
-	const [series, setSeries] = useState<Series>();
-	const [loaded, isLoaded] = useState(false);
+	const location = useLocation();
+
+const {data: series, isLoading, error} = useQuery({
+	queryKey: ["seriesId", id],
+	queryFn: () => loadSeries(id!),
+	refetchOnWindowFocus: false,
+	retry: 0
+})
 
 	useEffect(() => {
 		if (series !== undefined) {
 			document.title = series.title;
 		}
 	}, [series]);
-
-	useEffect(() =>{
-		const getSeries = async () => {
-			if (id !== undefined) {
-				setSeries(await loadSeries(id));
-				isLoaded(true);
-			}
-		}
-
-		if (!loaded) {
-			getSeries().catch(e => {
-				console.error(e);
-			});
-		}
-	}, [series, id, loaded]);
 
 	const getSeriesAuthorsNames = () : React.JSX.Element => {
 		const authorsList: string[] = [];
@@ -49,8 +41,10 @@ export const SeriesDescription = () => {
 		</>)
 	}
 
-	if (!loaded) {
+	if (isLoading) {
 		return <Loading />;
+	} else if (error) {
+		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname} />;
 	} else if (series === undefined) {
 		return <NotFound />;
 	} else {
