@@ -1,18 +1,17 @@
 import '../App.css'
 import {BunkoRouter} from "./BunkoRouter.tsx";
 import {IntlProvider} from "react-intl";
-import {UserProvider} from "../contexts/UserContext.tsx";
+import {Provider} from "react-redux";
+import {store} from "../store.ts";
 
 function App() {
-
-
 
 	return (
 		<>
 			<IntlProvider locale="en">
-				<UserProvider>
+				<Provider store={store}>
 					<BunkoRouter/>
-				</UserProvider>
+				</Provider>
 			</IntlProvider>
 		</>
 	)

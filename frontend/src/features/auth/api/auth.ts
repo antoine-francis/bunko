@@ -1,0 +1,45 @@
+import {getCookie} from "../../../utils/get-cookie.ts";
+import {UserBadge} from "../../../types/UserProfile.ts";
+
+export const attemptLogin = async (username: string, password : string) => {
+	const response = await fetch('http://localhost:8000/auth/login', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			"X-CSRFToken": getCookie('csrftoken'),
+		},
+		body: JSON.stringify({username, password}),
+		credentials: 'include',
+	});
+
+	if (!response.ok) {
+		// Special case of providing as little info as possible
+		throw new Error("Bad credentials");
+	}
+	return await response.json();
+}
+
+export const attemptLogout = async () => {
+	const response = await fetch('http://localhost:8000/auth/logout', {
+		method: 'DELETE',
+		credentials: 'include',
+		headers: {
+			"X-CSRFToken": getCookie('csrftoken'),
+			'Content-Type': 'application/json',
+		},
+	});
+	return response.json();
+}
+
+export const checkSession = async (): Promise<UserBadge | undefined> => {
+	const response = await fetch('http://localhost:8000/user_data', {
+		credentials: "include",
+	});
+	if (!response.ok) {
+		if (response.status === 404) {
+			return undefined;
+		}
+		throw new Error('Failed to fetch user data');
+	}
+	return response.json();
+};

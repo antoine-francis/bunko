@@ -32,3 +32,9 @@ export interface Membership extends UserBadge {
 	joinDate: Date;
 	collective?: Collective
 }
+
+// Redux types
+export interface UserState {
+	user: UserBadge | undefined,
+	loaded: boolean;
+}

@@ -1,33 +1,36 @@
 import React, {ChangeEvent, useState} from 'react';
 import {useMutation} from "@tanstack/react-query";
-import {attemptLogin} from "../../features/auth/auth.ts";
+import {attemptLogin} from "../../features/auth/api/auth.ts";
 import {FormattedMessage} from "react-intl";
-import {useUser} from "../../contexts/UserContext.tsx";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {paths} from "../../config/paths.ts";
 
 export const Login = () => {
 	const [username, setUsername] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
-
-	const user = useUser();
-	console.log(user);
+	const navigate = useNavigate();
 
 	const {mutate, isError, isPending} = useMutation({
 		mutationFn: () => attemptLogin(username, password),
+		onSuccess: () => {
+			navigate(paths.home.getHref());
+		}
 	})
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		mutate();
 	};
+
 	return (
 		<>
 			<div className="login-form">
 				<h2>Login</h2>
-				{isError && <p style={{ color: 'red' }}><FormattedMessage id="auth.badCredentials"
-																		  defaultMessage="Invalid Credentials"
-																		  description="Invalid credentials"/></p>}
+				{isError && <p style={{ color: 'red' }}>
+					<FormattedMessage id="auth.badCredentials"
+									  defaultMessage="Invalid Credentials"
+									  description="Invalid credentials"/>
+				</p>}
 				<form onSubmit={handleSubmit}>
 					<div>
 						<label>Username:</label>

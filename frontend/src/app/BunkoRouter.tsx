@@ -3,25 +3,27 @@ import {RouterProvider, createBrowserRouter, Outlet} from "react-router-dom";
 import { paths } from "../config/paths";
 import {MenuBar} from "../components/menubar/MenuBar.tsx";
 import React from "react";
+import {ProtectedRoute} from "../components/ProtectedRoute.tsx";
 
 const AppLayout: React.FC = () => {
 	return (<>
-		<MenuBar />
-		<Outlet />
+		<ProtectedRoute>
+			<MenuBar />
+			<Outlet />
+		</ProtectedRoute>
 	</>);
 }
+//
+// const AuthLayout: React.FC = () => {
+// 	return (<>
+// 		<Outlet />
+// 	</>);
+// }
 
 const bunkoRouter = createBrowserRouter([
 	{
-		element: <AppLayout/>,
+		element: <Outlet/>,
 		children: [
-			{
-				path: paths.home.path,
-				lazy: async () => {
-					const { Dashboard } = await import('./routes/Dashboard');
-					return { Component: Dashboard };
-				},
-			},
 			{
 				path: paths.auth.login.path,
 				lazy: async () => {
@@ -34,6 +36,18 @@ const bunkoRouter = createBrowserRouter([
 				lazy: async () => {
 					const { Register } = await import('./routes/Register');
 					return { Component: Register };
+				},
+			},
+		]
+	},
+	{
+		element: <AppLayout/>,
+		children: [
+			{
+				path: paths.home.path,
+				lazy: async () => {
+					const { Dashboard } = await import('./routes/Dashboard');
+					return { Component: Dashboard };
 				},
 			},
 			{

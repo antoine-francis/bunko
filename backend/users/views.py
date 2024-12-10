@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from rest_framework import status
@@ -20,25 +20,38 @@ from .serializers import ProfileSerializer, SubscriptionFollowersSerializer, Sub
 def bunko_login(request):
 	username = request.data.get('username')
 	password = request.data.get('password')
-
+	print(f"User {username} is logging in")
 	if not username or not password:
+		print(f"Empty fields provided")
 		return Response({"detail": "Email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
 	user = authenticate(request, username=username, password=password)
+	print(user)
 
 	if user is not None:
 		login(request, user)  # This will log the user in by creating a session
-		return Response({"detail": "Login successful"}, status=status.HTTP_200_OK)
+		print(f"User {username} is logged in")
+		return Response(data=UserSerializer(user, context={'request': request}).data, status=status.HTTP_200_OK)
 
+	print(f"Invalid credentials")
 	return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view()
+@api_view(['DELETE'])
+def bunko_logout(request):
+	print(f"User {request.user.id} is logging out")
+	logout(request)
+	print(f"User {request.user.id} is logged out")
+	return Response({"detail": "User is logged out"}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def get_user_data(request):
 	data = User.objects.filter(id=request.user.id).first()
+	print(data)
 	if data:
 		serializer = UserSerializer(data, context={'request': request})
-		
+		# TODO : Use the profile model instead and add settings/preferences to it
 		# serializer = ProfileSettingsSerializer(data, context={'request': request})
 		return Response(serializer.data, status=status.HTTP_200_OK)
 	else:
@@ -58,38 +71,7 @@ def inscription(request):
 	return render(request, 'users/inscription.html', {'formulaire': formulaire})
 
 
-def profile(request, username):
-	user = User.objects.filter(username=username).first()
-	print("username is : " + user.username)
-	context = {
-		'textes': user.text_set.all(),
-		'utilisateurVisitay': user
-	}
-	return render(request, 'users/profile.html', context)
-
-@login_required
-def profile_edit(request):
-	user = request.user
-	if request.method == 'POST':
-		user_form = UserUpdateForm(request.POST, instance=user)
-		profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=user.profile)
-
-		if user_form.is_valid() and profile_form.is_valid():
-			user_form.save()
-			profile_form.save()
-			messages.success(request, f'Vos informations ont été mises à jour.')
-			return redirect('profile', username=user.username)
-	else:
-		user_form = UserUpdateForm(instance=user)
-		profile_form = ProfileUpdateForm(instance=user.profile)
-	context = {
-		'textes': user.text_set.all().order_by('-date_creation'),
-		'user_form': user_form,
-		'profile_form': profile_form
-	}
-	return render(request, 'users/profile-edit.html', context)
-
-@api_view()
+@api_view(['GET'])
 def get_profile(request, username):
 	if request.method == 'GET':
 		data = Profile.objects.get(user__username=username)
@@ -97,7 +79,7 @@ def get_profile(request, username):
 		return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET'])
 def get_followers(request, username):
 	if request.method == 'GET':
 		try:
@@ -113,7 +95,7 @@ def get_followers(request, username):
 		return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET'])
 def get_following(request, username):
 	if request.method == 'GET':
 		try:
@@ -129,7 +111,7 @@ def get_following(request, username):
 		return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET'])
 def get_collective(request, pk):
 	if request.method == 'GET':
 		try:
