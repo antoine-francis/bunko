@@ -55,6 +55,7 @@ class Text(models.Model):
 	likes = models.ManyToManyField(User, related_name="likes", through='Like')
 	version = models.IntegerField(default=1)
 	creation_date = models.DateTimeField(default=timezone.now)
+	publication_date = models.DateTimeField(blank=True, null=True)
 	modification_date = models.DateTimeField(auto_now=True)
 	genres = models.ManyToManyField(Genre, related_name="genres")
 

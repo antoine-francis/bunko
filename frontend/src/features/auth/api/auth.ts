@@ -7,8 +7,8 @@ export const attemptLogin = async (username: string, password : string) => {
 		headers: {
 			'Content-Type': 'application/json',
 			"X-CSRFToken": getCookie('csrftoken'),
+			"Authorization": "Basic " + btoa(username + ":" + password)
 		},
-		body: JSON.stringify({username, password}),
 		credentials: 'include',
 	});
 
@@ -43,3 +43,27 @@ export const checkSession = async (): Promise<UserBadge | undefined> => {
 	}
 	return response.json();
 };
+
+export const attemptSignup = async (
+	username: string,
+	email : string,
+	firstName : string,
+	lastName : string,
+	password : string) => {
+	const response = await fetch('http://localhost:8000/auth/signup', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			"X-CSRFToken": getCookie('csrftoken'),
+			"Authorization": "Basic " + btoa(username + ":" + email + ":" + firstName + ":" + lastName + ":" + password)
+		},
+		credentials: 'include',
+	});
+
+	if (!response.ok) {
+		console.log(response);
+		// Special case of providing as little info as possible
+		throw new Error(response.status.toString());
+	}
+	return await response.json();
+}

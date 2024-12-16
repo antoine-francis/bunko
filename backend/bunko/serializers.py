@@ -43,7 +43,7 @@ class MinimalTextSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Text
-		fields = ['title', 'author', 'series', 'series_entry']
+		fields = ['title', 'author', 'series', 'series_entry', 'is_draft', 'creation_date', 'modification_date', 'publication_date']
 
 	def get_author(self, obj):
 		return AuthorSerializer(obj.author).data
@@ -95,7 +95,7 @@ class TextSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Text
 		fields = ['title', 'content', 'author', 'is_draft', 'comments', 'likes', 'bookmarked_by', 'favorited_by',
-				  'series', 'series_entry', 'genres', 'id']
+				  'series', 'series_entry', 'genres', 'id', 'creation_date', 'modification_date', 'publication_date']
 
 	def get_likes(self, obj):
 		return LikeSerializer(Like.objects.filter(text=obj), many=True).data

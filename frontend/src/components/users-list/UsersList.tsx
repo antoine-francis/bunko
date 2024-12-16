@@ -1,49 +1,53 @@
 import {FormattedDate} from "react-intl";
 import {Subscription} from "../../types/UserProfile.ts";
-import {useLocation, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {Loading} from "../Loading.tsx";
 import {EmptyList} from "./EmptyList.tsx";
-import PropTypes from "prop-types";
 import {ErrorHandler} from "../ErrorHandler.tsx";
-import {useQuery} from "@tanstack/react-query";
+import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {paths} from "../../config/paths.ts";
+import {fetchProfile} from "../../slices/ProfilesSlice.ts";
 
 interface UsersListProps {
-	loadUsers: (username: string) => Promise<Subscription[] | undefined>
-	queryKey: string
+	subscriptionsKey: string
 }
 
-export const UsersList = ({loadUsers, queryKey} : UsersListProps) => {
-	const location = useLocation();
+export const UsersList = ({subscriptionsKey} : UsersListProps) => {
 	const {username} = useParams();
+	const navigate = useNavigate();
+	const location = useLocation();
+	const dispatch = useBunkoDispatch();
+	const profile = useBunkoSelector(state => username ? state.userProfiles[username] : undefined);
 
-	const {data: users, isLoading, error} = useQuery({
-		queryKey: [queryKey, username],
-		queryFn: () => loadUsers(username!),
-		refetchOnWindowFocus: false,
-		retry: 0,
-	})
+	if (username === undefined) {
+		navigate(paths.notFound.getHref());
+	} else {
+		if (!profile) {
+			dispatch(fetchProfile(username));
+		}
+		document.title = `${username}'s ${subscriptionsKey}`;
+	}
 
+	const subscriptions : Subscription[] = profile ? ((profile as any)[subscriptionsKey]) : undefined;
 
-	if (isLoading) {
+	if (profile === undefined) {
+		navigate(paths.notFound.getHref());
+	} else if (profile.loading) {
 		return <Loading/>;
-	} else if (error) {
-		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname}/>;
-	} else if (users === undefined || users.length === 0) {
+	} else if (profile.error) {
+		return <ErrorHandler statusCode={profile.error} redirectTo={location.pathname}/>;
+	} else if (subscriptions === undefined || (subscriptions).length === 0) {
 		return <EmptyList/>;
 	} else {
 		return (
 			<div id="followers-containers">
-				{users.map((u: Subscription, i: number) => {
+				{subscriptions.map((sub: Subscription, i: number) => {
 					return (<div key={"user-" + i} className="follower-card">
-						<span className="name">{u.username}</span>
-						<span className="follow-date"><FormattedDate value={u.followDate}/></span>
+						<Link to={paths.profile.getHref() + sub.user.username}><span className="name">{sub.user.username}</span></Link>
+						<span className="follow-date"><FormattedDate value={sub.followDate}/></span>
 					</div>)
 				})}
 			</div>
 		);
 	}
-}
-
-UsersList.propTypes = {
-	loadUsers : PropTypes.func.isRequired
 }

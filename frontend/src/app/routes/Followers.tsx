@@ -1,4 +1,3 @@
-import {loadFollowers} from "../../features/followers/api/load-followers.ts";
 import {UsersList} from "../../components/users-list/UsersList.tsx";
 import {useParams} from "react-router-dom";
 import {useEffect} from "react";
@@ -12,5 +11,5 @@ export const Followers = () => {
 		}
 	}, [username]);
 
-	return <UsersList loadUsers={loadFollowers} queryKey="followers" />
+	return <UsersList subscriptionsKey={"followers"} />
 }

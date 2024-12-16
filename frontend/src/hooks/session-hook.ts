@@ -1,32 +1,21 @@
 import {useBunkoDispatch, useBunkoSelector} from "./redux-hooks.ts";
 import {UserBadge} from "../types/UserProfile.ts";
-import {checkSession} from "../features/auth/api/auth.ts";
-import {setUser, loadUser} from "../slices/UserSlice.ts";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
+import {fetchUser} from "../slices/UserSlice.ts";
 
 export const useSession = (): UserBadge | undefined => {
-	const [user, setUserState] = useState<UserBadge | undefined>(undefined);
-	const { user: reduxUser } = useBunkoSelector((state) => state.currentUser);
+	const { user, loading} = useBunkoSelector((state) => state.currentUser);
 	const dispatch = useBunkoDispatch();
 
 	useEffect(() => {
-		dispatch(loadUser());
-		if (reduxUser) {
-			setUserState(reduxUser);
-		} else {
-			const fetchSession = async () => {
-				const session = await checkSession();
-				if (session) {
-					setUserState(session);
-					dispatch(setUser(session));
-				} else {
-					setUserState(undefined);
-				}
-			};
-
-			fetchSession().then(() => {});
+		if (!user && loading) {
+			dispatch(fetchUser());
 		}
-	}, [reduxUser, dispatch]);
+		if (!user && !loading) {
+			// If no session is found in the store
+			return undefined;
+		}
+	}, [user, loading, dispatch]);
 
 	return user;
 };

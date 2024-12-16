@@ -62,10 +62,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 		fields = ['user', 'picture', 'bio', 'signup_date', 'followers', 'following', 'bookmarks', 'favorites', 'collectives', 'texts']
 
 	def get_followers(self, obj):
-		return Subscription.objects.filter(following=obj.user).count()
+		return SubscriptionFollowersSerializer(Subscription.objects.filter(following=obj.user), many=True).data
 
 	def get_following(self, obj):
-		return Subscription.objects.filter(follower=obj.user).count()
+		return SubscriptionFollowingSerializer(Subscription.objects.filter(follower=obj.user), many=True).data
 
 	def get_bookmarks(self, obj):
 		return BookmarkSerializer(Bookmark.objects.filter(user=obj.user), many=True).data
@@ -74,7 +74,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 		return MembershipSerializer(Membership.objects.filter(user=obj.user), many=True).data
 
 	def get_texts(self, obj):
-		return MinimalTextSerializer(Text.objects.filter(author=obj.user), many=True).data
+		request = self.context['request']
+		if request.user == obj.user:
+			return MinimalTextSerializer(Text.objects.filter(author=obj.user), many=True).data
+		else:
+			return MinimalTextSerializer(Text.objects.filter(author=obj.user, is_draft=False), many=True).data
 
 	def get_favorites(self, obj):
 		return MinimalTextSerializer(Favorite.objects.filter(user=obj.user), many=True).data

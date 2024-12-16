@@ -13,12 +13,6 @@ const AppLayout: React.FC = () => {
 		</ProtectedRoute>
 	</>);
 }
-//
-// const AuthLayout: React.FC = () => {
-// 	return (<>
-// 		<Outlet />
-// 	</>);
-// }
 
 const bunkoRouter = createBrowserRouter([
 	{

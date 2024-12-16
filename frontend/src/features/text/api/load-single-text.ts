@@ -7,6 +7,7 @@ export const loadText : (id : string) => Promise<BunkoText | undefined> = async 
 	if (response.ok) {
 		const data = await response.json();
 		const text : BunkoText = Object.assign({}, {
+			id: data.id,
 			author: data.author,
 			content: data.content,
 			creationDate: data.creationDate,

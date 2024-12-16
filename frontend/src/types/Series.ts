@@ -7,4 +7,10 @@ export interface Series {
 	author: Author;
 	picture: string;
 	entries?: BunkoText[];
+	error?: string;
+	loading?: boolean;
+}
+
+export interface SeriesState {
+	[key: string]: Series;
 }

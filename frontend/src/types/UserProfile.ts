@@ -2,6 +2,7 @@ import {Bookmark} from "./Bookmark.ts";
 import {Collective} from "./Collective.ts";
 import {TextDescription} from "./Text.ts";
 import {Favorite} from "./Favorite.ts";
+import {HttpStatus} from "../constants/Http.ts";
 
 export interface UserBadge {
 	username: string;
@@ -10,19 +11,21 @@ export interface UserBadge {
 	picture: string;
 }
 
-export interface UserProfile extends UserBadge{
+export interface UserProfile extends UserBadge {
 	bio: string;
 	signupDate: Date;
-	followers: number;
-	following: number;
+	followers: Subscription[];
+	following: Subscription[];
 	bookmarks: Bookmark[];
 	favorites: Favorite[];
 	collectives: Membership[];
 	texts: TextDescription[];
-
+	loading?: boolean;
+	error?: HttpStatus;
 }
 
-export interface Subscription extends UserBadge {
+export interface Subscription {
+	user: UserBadge;
 	followDate: Date;
 }
 
@@ -30,11 +33,31 @@ export interface Membership extends UserBadge {
 	isStarredMember: boolean;
 	isAdmin: boolean;
 	joinDate: Date;
-	collective?: Collective
+	collective?: Collective;
 }
 
 // Redux types
 export interface UserState {
-	user: UserBadge | undefined,
-	loaded: boolean;
+	user: UserBadge | undefined;
+	loading: boolean;
+	error: HttpStatus | string | undefined;
+}
+
+export interface ProfilesState {
+	[key:string]: UserProfile;
+}
+
+// User auth objects
+
+export interface SignupForm {
+	email: string;
+	username: string;
+	password: string;
+	firstName: string;
+	lastName: string;
+}
+
+export interface UserPwdPair {
+	username : string,
+	password : string
 }

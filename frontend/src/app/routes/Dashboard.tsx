@@ -1,32 +1,29 @@
 import {BunkoText} from "../../types/Text.ts";
 import {useEffect} from "react";
 
-import {loadTexts} from "../../features/dashboard/api/load-texts.ts";
 import {paths} from "../../config/paths.ts";
 import {Link, useLocation} from "react-router-dom";
 import {Loading} from "../../components/Loading.tsx";
-import {useQuery} from "@tanstack/react-query";
 import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {EmptyList} from "../../components/users-list/EmptyList.tsx";
+import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {fetchTexts} from "../../slices/TextListSlice.ts";
 
 export const Dashboard = () => {
 	const location = useLocation();
+	const dispatch = useBunkoDispatch();
+	const {texts, error, loaded} = useBunkoSelector(state => state.dashboard)
 
 	useEffect(() => {
 		document.title = "Home - Bunko";
-	}, []);
+		// Dashboard content should always be refreshed on reload
+		dispatch(fetchTexts());
+	}, [dispatch]);
 
-	const { data: texts, isLoading, error } = useQuery<BunkoText[] | undefined>({
-		queryKey: ["dashboardTexts"],
-		queryFn: () => loadTexts(),
-		refetchOnWindowFocus: false,
-		retry: 0,
-	});
-
-	if (isLoading) {
+	if (!loaded) {
 		return <Loading />;
 	} else if (error) {
-		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname} />;
+		return <ErrorHandler statusCode={error} redirectTo={location.pathname} />;
 	} else if (texts === undefined || !texts.length) {
 		return <EmptyList/>;
 	} else {

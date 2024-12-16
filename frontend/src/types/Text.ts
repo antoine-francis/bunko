@@ -4,9 +4,10 @@ import {Genre} from "./Genre.ts";
 import {Series} from "./Series.ts";
 import {Like} from "./Like.ts";
 import {Bookmark} from "./Bookmark.ts";
+import {HttpStatus} from "../constants/Http.ts";
 
 export interface BunkoText {
-	id?: number;
+	id: number;
 	title: string;
 	content: string;
 	author: Author;
@@ -17,6 +18,11 @@ export interface BunkoText {
 	likes: Like[];
 	series: Series;
 	seriesEntry: number;
+	creationDate: Date;
+	modificationDate: Date;
+	publicationDate: Date;
+	loading?: boolean;
+	error?: HttpStatus | undefined;
 }
 
 export interface TextDescription {
@@ -24,4 +30,18 @@ export interface TextDescription {
 	author: Author;
 	series: Series;
 	seriesEntry: number;
+	isDraft: boolean;
+	creationDate: Date;
+	modificationDate: Date;
+	publicationDate: Date;
+}
+
+export interface TextListState {
+	texts: BunkoText[];
+	error?: HttpStatus;
+	loaded: boolean;
+}
+
+export interface TextState {
+	[key: string]: BunkoText;
 }

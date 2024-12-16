@@ -1,30 +1,39 @@
-import {loadCollectiveDetails} from "../../features/collectives/api/load-collectives.ts";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {Loading} from "../../components/Loading.tsx";
-import {EmptyList} from "../../components/users-list/EmptyList.tsx";
 import {FormattedDate} from "react-intl";
 import {paths} from "../../config/paths.ts";
-import {Collective} from "../../types/Collective.ts";
-import {useQuery} from "@tanstack/react-query";
 import {ErrorHandler} from "../../components/ErrorHandler.tsx";
+import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {useEffect} from "react";
+import {fetchCollective} from "../../slices/CollectivesSlice.ts";
 
 export const CollectiveDetails = () => {
-	const location = useLocation();
 	const {id} = useParams();
+	const location = useLocation();
+	const navigate = useNavigate();
+	const dispatch = useBunkoDispatch();
+	const collective = useBunkoSelector(state => id ? state.collectives[id] : undefined);
 
-	const { data: collective, isLoading, error } = useQuery<Collective | undefined>({
-		queryKey: ["collective", id],
-		queryFn: () => loadCollectiveDetails(id!),
-		refetchOnWindowFocus: false,
-		retry: 0,
-	});
+	useEffect(() => {
+		if (collective !== undefined) {
+			document.title = collective.name;
+		}
+	}, [collective]);
 
-	if (isLoading) {
+	if (id === undefined) {
+		navigate(paths.notFound.getHref());
+	} else {
+		if (!collective) {
+			dispatch(fetchCollective(id));
+		}
+	}
+
+	if (!collective) {
+		return null;
+	} else if (collective.loading) {
 		return <Loading/>;
-	} else if (error) {
-		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname} />;
-	} else if (collective === undefined || collective === null) {
-		return <EmptyList/>;
+	} else if (collective.error) {
+		return <ErrorHandler statusCode={collective.error} redirectTo={location.pathname} />;
 	} else {
 		return (
 			<div id="collective-container">

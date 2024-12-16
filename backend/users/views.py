@@ -1,3 +1,5 @@
+import base64
+
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -6,8 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-from django.contrib.auth.decorators import login_required
+from .forms import UserRegisterForm
 from django.contrib.auth.models import User
 
 from .models import Profile, Subscription, Collective
@@ -18,15 +19,15 @@ from .serializers import ProfileSerializer, SubscriptionFollowersSerializer, Sub
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def bunko_login(request):
-	username = request.data.get('username')
-	password = request.data.get('password')
-	print(f"User {username} is logging in")
+	auth_header = request.headers.get('Authorization')[6:]
+	auth_header_bytes = base64.b64decode(auth_header)
+	auth_data = auth_header_bytes.decode("utf-8")
+	username, password = auth_data.split(":", 1)
 	if not username or not password:
 		print(f"Empty fields provided")
 		return Response({"detail": "Email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
 	user = authenticate(request, username=username, password=password)
-	print(user)
 
 	if user is not None:
 		login(request, user)  # This will log the user in by creating a session
@@ -58,23 +59,28 @@ def get_user_data(request):
 		return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-def inscription(request):
-	if request.method == 'POST':
-		formulaire = UserRegisterForm(request.POST)
-		if formulaire.is_valid():
-			formulaire.save()
-			username = formulaire.cleaned_data.get('username')
-			messages.success(request, f'Votre compte a été créé. Vous pouvez maintenant vous connecter!')
-			return redirect('connexion')
-	else:
-		formulaire = UserRegisterForm()
-	return render(request, 'users/inscription.html', {'formulaire': formulaire})
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def bunko_signup(request):
+	auth_header = request.headers.get('Authorization')[6:]
+	auth_header_bytes = base64.b64decode(auth_header)
+	auth_data = auth_header_bytes.decode("utf-8")
+	username, email, first_name, last_name, password = auth_data.split(":", 4)
+	if User.objects.filter(username=username).exists():
+		return Response({"error": "User already exists with username: " + username}, status=status.HTTP_409_CONFLICT)
+	if User.objects.filter(email=email).exists():
+		return Response({"error": "User already exists with email: " + email}, status=status.HTTP_409_CONFLICT)
+	User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
+	return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def get_profile(request, username):
 	if request.method == 'GET':
-		data = Profile.objects.get(user__username=username)
+		try:
+			data = Profile.objects.get(user__username=username)
+		except Profile.DoesNotExist:
+			return Response({"error": "User not found with username: " + username}, status=status.HTTP_404_NOT_FOUND)
 		serializer = ProfileSerializer(data, context={'request': request})
 		return Response(serializer.data)
 

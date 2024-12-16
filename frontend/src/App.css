@@ -1,8 +1,64 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+}
+
+.menu-bar {
+  display: flex;
+}
+
+.menu-bar > .home {
+  flex: 1 1 auto;
+}
+
+.menu-bar div {
+  padding: 16px;
+}
+
+#dashboard, #user-profile, #collective-container, #series-info {
+  padding: 16px;
+}
+
+#loading {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: calc(100vh - 64px);
+  justify-content: center;
+}
+
+.login-form {
+  margin: 0 auto;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: calc(100vh - 64px);
+  flex-wrap: wrap;
+  width: 90%;
+}
+
+.login-title {
+  margin: 0 auto;
+  width: 90%;
+}
+
+.login-form form {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.login-form input {
+
+}
+
+#dashboard .text-preview {
+  padding-bottom: 12px;
+}
+
+#dashboard p {
+  margin: 0;
 }
 
 .logo {

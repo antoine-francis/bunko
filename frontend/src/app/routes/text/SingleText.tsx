@@ -1,7 +1,5 @@
-import {BunkoText} from "../../../types/Text.ts";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect} from "react";
-import {loadText} from "../../../features/text/api/load-single-text.ts";
 import {BunkoComment} from "../../../types/Comment.ts";
 import {Loading} from "../../../components/Loading.tsx";
 import {FormattedDate} from "react-intl";
@@ -9,32 +7,38 @@ import React from "react";
 import {NotFound} from "../../../components/NotFound.tsx";
 import {paths} from "../../../config/paths.ts";
 import {Genre} from "../../../types/Genre.ts";
-import {useQuery} from "@tanstack/react-query";
 import {ErrorHandler} from "../../../components/ErrorHandler.tsx";
+import {useBunkoDispatch, useBunkoSelector} from "../../../hooks/redux-hooks.ts";
+import {fetchText} from "../../../slices/TextSlice.ts";
 
 export const SingleText = () => {
 	const {id} = useParams();
 	const location = useLocation();
-
-	const { data: text, isLoading, error } = useQuery<BunkoText | undefined>({
-		queryKey: ["text", id],
-		queryFn: () => loadText(id!),
-		refetchOnWindowFocus: false,
-		retry: 0,
-	});
+	const navigate = useNavigate();
+	const dispatch = useBunkoDispatch();
+	const text = useBunkoSelector(state => id ? state.texts[id] : undefined);
 
 	useEffect(() => {
-		if (text !== undefined && text !== null) {
+		if (text !== undefined) {
 			document.title = text.title;
 		}
 	}, [text]);
 
-	if (isLoading) {
-		return <Loading/>;
-	} else if (error) {
-		return <ErrorHandler statusCode={error.message} redirectTo={location.pathname} />;
-	} else if (text === undefined) {
+	if (id === undefined) {
+		navigate(paths.notFound.getHref());
+	} else {
+		if (!text) {
+			dispatch(fetchText(id));
+		}
+	}
+
+	if (text === undefined) {
 		return <NotFound/>;
+	}
+	if (text.loading) {
+		return <Loading/>;
+	} else if (text.error) {
+		return <ErrorHandler statusCode={text.error} redirectTo={location.pathname} />;
 	} else {
 		return (
 			<div className="text-container">

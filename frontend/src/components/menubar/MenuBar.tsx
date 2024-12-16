@@ -4,11 +4,10 @@ import {useBunkoSelector} from "../../hooks/redux-hooks.ts";
 
 export const MenuBar = () => {
 	const {user} = useBunkoSelector((state) => state.currentUser);
-
 	if (user) {
 		return (
 			<div className="menu-bar">
-				<div className="Home">
+				<div className="home">
 					<Link to={paths.home.getHref()}>Bunko</Link>
 				</div>
 				<div className="profile-button">

@@ -1,6 +1,7 @@
 import {UserProfile} from "../../../types/UserProfile.ts";
 
 export const loadUserProfile : (username : string) => Promise<UserProfile | undefined> = async (username: string) => {
+
 	const response = await fetch("http://localhost:8000/profile/" + username, {
 		credentials: 'include',
 	});
