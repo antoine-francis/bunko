@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 	'bunko.apps.BunkoConfig',
 	'users.apps.UsersConfig',
-	'crispy_forms',
+	'nanoid_field',
 	'rest_framework',
 	'corsheaders',
 	'crispy_bootstrap4',

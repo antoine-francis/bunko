@@ -1,6 +1,7 @@
 import base64
 
 from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from rest_framework import status
@@ -49,7 +50,6 @@ def bunko_logout(request):
 @api_view(['GET'])
 def get_user_data(request):
 	data = User.objects.filter(id=request.user.id).first()
-	print(data)
 	if data:
 		serializer = UserSerializer(data, context={'request': request})
 		# TODO : Use the profile model instead and add settings/preferences to it
@@ -115,6 +115,35 @@ def get_following(request, username):
 
 		serializer = SubscriptionFollowingSerializer(data, many=True)
 		return Response(serializer.data)
+
+
+@api_view(['POST'])
+def subscribe(request, username):
+	try:
+		user = User.objects.filter(username=username).first()
+		subscription = Subscription.objects.filter(follower=request.user, following=user)
+		if subscription:
+			return Response({"error": "A subscription with those users already exists"}, status=status.HTTP_417_EXPECTATION_FAILED)
+		else:
+			new_subscription = Subscription.objects.create(follower=request.user, following=user)
+			return Response(status=status.HTTP_200_OK, data=SubscriptionFollowersSerializer(new_subscription).data)
+	except IntegrityError:
+		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@api_view(['POST'])
+def unsubscribe(request, username):
+	try:
+		user = User.objects.filter(username=username).first()
+		subscription = Subscription.objects.get(follower=request.user, following=user)
+		if not subscription:
+			return Response({"error": "User " + request.user + "doesn't follow " + user}, status=status.HTTP_404_NOT_FOUND)
+		else:
+			subscription.delete()
+			print(request.user.username)
+			return Response(status=status.HTTP_200_OK, data=request.user.username)
+	except IntegrityError:
+		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
 
 
 @api_view(['GET'])

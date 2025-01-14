@@ -5,8 +5,8 @@ export interface Series {
 	id: number;
 	title: string;
 	author: Author;
-	picture: string;
-	entries?: BunkoText[];
+	picture?: string;
+	entries: BunkoText[];
 	error?: string;
 	loading?: boolean;
 }

@@ -1,0 +1,46 @@
+import {TextsList} from "../../components/texts-list/TextsList.tsx";
+import {useEffect} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {Loading} from "../../components/Loading.tsx";
+import {ErrorHandler} from "../../components/ErrorHandler.tsx";
+import {useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {paths} from "../../config/paths.ts";
+import {UserProfile} from "../../types/UserProfile.ts";
+import {TextDescription} from "../../types/Text.ts";
+import {Bookmark} from "../../types/Bookmark.ts";
+
+export const UserBookmarks = () => {
+	const {username} = useParams();
+	const location = useLocation();
+	const navigate = useNavigate();
+	const profile : UserProfile | undefined = useBunkoSelector(state => username ? state.userProfiles[username] : undefined);
+
+	useEffect(() => {
+		if (profile !== undefined) {
+			document.title = `${profile.username}'s bookmarks`;
+		}
+		if (username === undefined) {
+			navigate(paths.notFound.getHref());
+		}
+	}, [profile]);
+
+	if (!profile) {
+		return null;
+	} else if (profile.loading) {
+		return <Loading />;
+	} else if (profile.error) {
+		return <ErrorHandler statusCode={profile.error} redirectTo={location.pathname} />;
+	} else {
+		const bookmarksTextDesc : TextDescription[] = profile.bookmarks.map((bookmark : Bookmark) => {
+			return bookmark.text;
+		})
+		return (
+			<>
+				<div id="series-info">
+					<TextsList texts={bookmarksTextDesc}/>
+				</div>
+			</>
+		);
+	}
+
+}

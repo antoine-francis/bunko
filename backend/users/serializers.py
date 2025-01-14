@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from bunko.models import Bookmark, Text, Favorite
-from bunko.serializers import BookmarkSerializer, MinimalTextSerializer
+from bunko.models import Bookmark, Text, Favorite, Series
+from bunko.serializers import BookmarkSerializer, MinimalTextSerializer, SeriesReadSerializer
 from users.models import Profile, Subscription, Membership, Collective
 
 
@@ -52,6 +52,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 	followers = serializers.SerializerMethodField()
 	following = serializers.SerializerMethodField()
 	bookmarks = serializers.SerializerMethodField()
+	series = serializers.SerializerMethodField()
 	user = UserSerializer()
 	collectives = serializers.SerializerMethodField()
 	texts = serializers.SerializerMethodField()
@@ -59,7 +60,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Profile
-		fields = ['user', 'picture', 'bio', 'signup_date', 'followers', 'following', 'bookmarks', 'favorites', 'collectives', 'texts']
+		fields = ['user', 'picture', 'bio', 'signup_date', 'followers', 'following', 'bookmarks', 'series', 'favorites', 'collectives', 'texts']
 
 	def get_followers(self, obj):
 		return SubscriptionFollowersSerializer(Subscription.objects.filter(following=obj.user), many=True).data
@@ -68,7 +69,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 		return SubscriptionFollowingSerializer(Subscription.objects.filter(follower=obj.user), many=True).data
 
 	def get_bookmarks(self, obj):
-		return BookmarkSerializer(Bookmark.objects.filter(user=obj.user), many=True).data
+		return BookmarkSerializer(Bookmark.objects.filter(user=obj.user, text__is_draft=False), many=True).data
+
+	def get_series(self, obj):
+		return SeriesReadSerializer(Series.objects.filter(text__author=obj.user), many=True).data
 
 	def get_collectives(self, obj):
 		return MembershipSerializer(Membership.objects.filter(user=obj.user), many=True).data

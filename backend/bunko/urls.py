@@ -1,21 +1,29 @@
 from django.urls import path
-from .views import (TextListView, TextDetailView, TextCreateView, TextUpdateView, TextDeleteView,
-					comment, get_texts, get_texts_by_user, get_series, get_series_by_user, get_text_by_id)
+from .views import (comment, get_texts, get_texts_by_user, get_series, get_series_by_user, like_text,
+					unlike_text, unbookmark_text, bookmark_text, create_text, text, get_texts_by_tag)
 
 urlpatterns = [
-	path('', TextListView.as_view(), name="bunko-home"),
-	# views django (désuettes)
-	path('texte/<int:pk>/', TextDetailView.as_view(), name="texte-detail"),
-	path('texte/nouveau/', TextCreateView.as_view(), name="texte-creer"),
-	path('texte/modifier/<int:pk>/', TextUpdateView.as_view(), name="texte-modifier"),
-	path('texte/supprimer/<int:pk>/', TextDeleteView.as_view(), name="texte-supprimer"),
 	# api views
+
+	# text list
 	path('texts', get_texts),
-	path('text/<int:pk>', get_text_by_id),
 	path('texts/<username>', get_texts_by_user),
+	path('tag/<tag>', get_texts_by_tag),
+
+	# single text
+	path('new_text', create_text),
+	path('text/<text_hash>', text),
+
+	# text action
+	path('like/<int:pk>', like_text),
+	path('unlike/<int:pk>', unlike_text),
+	path('bookmark/<int:pk>', bookmark_text),
+	path('unbookmark/<int:pk>', unbookmark_text),
+
+	# series
 	path('series/<username>', get_series_by_user),
 	path('series_id/<int:pk>', get_series),
 
-	# Commentaires
+	# comments
 	path('comment/', comment, name="comment"),
 ]

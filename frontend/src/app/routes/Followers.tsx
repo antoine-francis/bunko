@@ -11,5 +11,5 @@ export const Followers = () => {
 		}
 	}, [username]);
 
-	return <UsersList subscriptionsKey={"followers"} />
+	return <UsersList subscriptionsKey="followers" />;
 }

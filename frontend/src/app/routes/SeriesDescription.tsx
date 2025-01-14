@@ -6,6 +6,8 @@ import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {paths} from "../../config/paths.ts";
 import {fetchSeries} from "../../slices/SeriesSlice.ts";
+import {BunkoText, TextDescription} from "../../types/Text.ts";
+import {convertTextToDesc} from "../../features/text/text-functions.ts";
 
 export const SeriesDescription = () => {
 	const {id} = useParams();
@@ -18,15 +20,14 @@ export const SeriesDescription = () => {
 		if (series !== undefined) {
 			document.title = series.title;
 		}
-	}, [series]);
-
-	if (id === undefined) {
-		navigate(paths.notFound.getHref());
-	} else {
-		if (!series) {
-			dispatch(fetchSeries(id));
+		if (id === undefined) {
+			navigate(paths.notFound.getHref());
+		} else {
+			if (!series) {
+				dispatch(fetchSeries(id));
+			}
 		}
-	}
+	}, [series, dispatch, id, navigate]);
 
 	const getSeriesAuthorsNames = () : React.JSX.Element => {
 		const authorsList: string[] = [];
@@ -52,12 +53,15 @@ export const SeriesDescription = () => {
 	} else if (series.error) {
 		return <ErrorHandler statusCode={series.error} redirectTo={location.pathname} />;
 	} else {
+		const seriesTextDesc : TextDescription[] = series.entries.map((text : BunkoText) => {
+			return convertTextToDesc(text);
+		})
 		return (
 			<>
 				<div id="series-info">
 					<div className="series-title">{series.title}</div>
 					<div className="author">{getSeriesAuthorsNames()}</div>
-					<TextsList texts={series.entries}/>
+					<TextsList texts={seriesTextDesc}/>
 				</div>
 			</>
 		);

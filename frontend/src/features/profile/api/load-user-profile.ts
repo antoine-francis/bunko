@@ -1,8 +1,9 @@
 import {UserProfile} from "../../../types/UserProfile.ts";
+import {URL} from "../../../constants/Url.ts";
 
 export const loadUserProfile : (username : string) => Promise<UserProfile | undefined> = async (username: string) => {
 
-	const response = await fetch("http://localhost:8000/profile/" + username, {
+	const response = await fetch(URL.SERVER + URL.PROFILE + username, {
 		credentials: 'include',
 	});
 
@@ -15,6 +16,7 @@ export const loadUserProfile : (username : string) => Promise<UserProfile | unde
 			followers: data.followers === undefined ? 0 : data.followers,
 			following: data.following === undefined ? 0 : data.following,
 			bookmarks: data.bookmarks === undefined ? 0 : data.bookmarks,
+			series: data.series === undefined ? 0 : data.series,
 			favorites: data.favorites,
 			collectives: data.collectives,
 			texts: data.texts,

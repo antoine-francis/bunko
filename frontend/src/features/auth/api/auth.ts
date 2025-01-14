@@ -5,8 +5,8 @@ export const attemptLogin = async (username: string, password : string) => {
 	const response = await fetch('http://localhost:8000/auth/login', {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json',
-			"X-CSRFToken": getCookie('csrftoken'),
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken"),
 			"Authorization": "Basic " + btoa(username + ":" + password)
 		},
 		credentials: 'include',
@@ -24,8 +24,8 @@ export const attemptLogout = async () => {
 		method: 'DELETE',
 		credentials: 'include',
 		headers: {
-			"X-CSRFToken": getCookie('csrftoken'),
-			'Content-Type': 'application/json',
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken"),
 		},
 	});
 	return response.json();
@@ -53,15 +53,14 @@ export const attemptSignup = async (
 	const response = await fetch('http://localhost:8000/auth/signup', {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json',
-			"X-CSRFToken": getCookie('csrftoken'),
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken"),
 			"Authorization": "Basic " + btoa(username + ":" + email + ":" + firstName + ":" + lastName + ":" + password)
 		},
 		credentials: 'include',
 	});
 
 	if (!response.ok) {
-		console.log(response);
 		// Special case of providing as little info as possible
 		throw new Error(response.status.toString());
 	}

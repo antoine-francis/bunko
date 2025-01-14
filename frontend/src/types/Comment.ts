@@ -6,5 +6,12 @@ export interface BunkoComment {
 	creationDate: Date;
 	modificationDate?: Date;
 	author: Author;
-	parentComment?: number;
+	replies?: BunkoComment[];
+	text: string; // text hash
+}
+
+export interface CommentPost {
+	content: string;
+	textId: number;
+	parent: number | undefined;
 }

@@ -66,6 +66,20 @@ const bunkoRouter = createBrowserRouter([
 				},
 			},
 			{
+				path: paths.newText.path,
+				lazy: async () => {
+					const { TextEditor } = await import('./routes/text/TextEditor.tsx');
+					return { Component: TextEditor };
+				},
+			},
+			{
+				path: paths.editText.path,
+				lazy: async () => {
+					const { TextEditor } = await import('./routes/text/TextEditor.tsx');
+					return { Component: TextEditor };
+				},
+			},
+			{
 				path: paths.followers.path,
 				lazy: async () => {
 					const { Followers } = await import('./routes/Followers');
@@ -80,10 +94,24 @@ const bunkoRouter = createBrowserRouter([
 				},
 			},
 			{
+				path: paths.bookmarks.path,
+				lazy: async () => {
+					const { UserBookmarks } = await import('./routes/UserBookmarks.tsx');
+					return { Component: UserBookmarks };
+				},
+			},
+			{
 				path: paths.series.path,
 				lazy: async () => {
 					const { SeriesDescription } = await import('./routes/SeriesDescription.tsx');
 					return { Component: SeriesDescription };
+				},
+			},
+			{
+				path: paths.tag.path,
+				lazy: async () => {
+					const { Tag } = await import('./routes/Tag.tsx');
+					return { Component: Tag };
 				},
 			},
 			{

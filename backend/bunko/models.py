@@ -1,10 +1,9 @@
-from datetime import datetime
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from nanoid_field import NanoidField
 
 
 class Like(models.Model):
@@ -38,7 +37,7 @@ class Genre(models.Model):
 class Series(models.Model):
 	title = models.CharField(max_length=255)
 	synopsis = models.CharField(max_length=255, blank=True, null=True)
-	picture = models.ImageField(default='default-bunko.jpg',upload_to='series_cover')
+	picture = models.ImageField(default='default-bunko.jpg',upload_to='series_cover', blank=True, null=True)
 
 	def __str__(self):
 		return f'title: {self.title}'
@@ -58,6 +57,7 @@ class Text(models.Model):
 	publication_date = models.DateTimeField(blank=True, null=True)
 	modification_date = models.DateTimeField(auto_now=True)
 	genres = models.ManyToManyField(Genre, related_name="genres")
+	hash = NanoidField(max_length=21, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
 
 	def __str__(self):
 		return (f'title: {self.title}, author: {self.author}, creation: {self.creation_date},'
@@ -76,8 +76,7 @@ class Comment(models.Model):
 	modification_date = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		d = datetime.now
-		return f'{self.author.username} - {self.text.id} - {self.content[:10]}'
+		return f'{self.author.username} - {self.text.id} - {self.content[:10]}... - {self.creation_date}'
 
 
 class Bookmark(models.Model):

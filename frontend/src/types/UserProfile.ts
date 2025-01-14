@@ -3,6 +3,7 @@ import {Collective} from "./Collective.ts";
 import {TextDescription} from "./Text.ts";
 import {Favorite} from "./Favorite.ts";
 import {HttpStatus} from "../constants/Http.ts";
+import {Series} from "./Series.ts";
 
 export interface UserBadge {
 	username: string;
@@ -17,6 +18,7 @@ export interface UserProfile extends UserBadge {
 	followers: Subscription[];
 	following: Subscription[];
 	bookmarks: Bookmark[];
+	series: Series[];
 	favorites: Favorite[];
 	collectives: Membership[];
 	texts: TextDescription[];

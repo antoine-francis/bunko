@@ -1,16 +1,16 @@
-from django.contrib.auth.decorators import login_required
+from datetime import datetime
+
+from django.db import IntegrityError
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework import status
 
 from users.models import Subscription
-from .models import Text, Series
-from .serializers import TextSerializer, CommentSerializer, SeriesSerializer
+from .models import Text, Series, Like, Bookmark
+from .serializers import TextSerializer, CommentSerializer, SeriesReadSerializer, LikeSerializer, \
+	UserBookmarkSerializer, \
+	NewCommentSerializer, NewTextSerializer, TextEditSerializer, MinimalTextSerializer
 
 
 def home(request):
@@ -20,54 +20,12 @@ def home(request):
 	return render(request, 'bunko/home.html', context)
 
 
-class TextListView(ListView):
-	model = Text
-	template_name = 'bunko/home.html'
-	context_object_name = 'texts'
-	ordering = ['-creation_date']
-
-
-class TextDetailView(DetailView):
-	model = Text
-
-
-class TextCreateView(LoginRequiredMixin, CreateView):
-	model = Text
-	fields = ['title', 'content']
-
-	def form_valid(self, form):
-		form.instance.author = self.request.user
-		return super().form_valid(form)
-
-
-class TextUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-	model = Text
-	fields = ['title', 'content']
-
-	def form_valid(self, form):
-		form.instance.author = self.request.user
-		return super().form_valid(form)
-
-	def test_func(self):
-		text = self.get_object()
-		return self.request.user == text.author
-
-
-class TextDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-	model = Text
-	success_url = '/'
-
-	def test_func(self):
-		text = self.get_object()
-		return self.request.user == text.author
-
-
 @api_view()
 def get_texts(request):
-	print(request.user.id)
 	if request.method == 'GET':
 		data = Text.objects.filter(
-			author_id__in=Subscription.objects.filter(follower=request.user.id).values('following')
+			author_id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
+			is_draft=False
 		)
 		serializer = TextSerializer(data, context={'request': request}, many=True)
 		return Response(serializer.data)
@@ -80,16 +38,79 @@ def get_texts(request):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view()
-def get_text_by_id(request, pk):
+@api_view(['GET', 'PUT', 'DELETE'])
+def text(request, text_hash):
 	if request.method == 'GET':
 		try:
-			data = Text.objects.get(id=pk)
+			data = Text.objects.get(hash=text_hash)
 			serializer = TextSerializer(data)
 			return Response(serializer.data, status=status.HTTP_200_OK)
 
 		except Text.DoesNotExist:
-			return Response({"detail": f'No text with an id of {pk} was found.'}, status=status.HTTP_404_NOT_FOUND)
+			return Response({"detail": f'No text with an id of {text_hash} was found.'}, status=status.HTTP_404_NOT_FOUND)
+	elif request.method == 'PUT':
+		try:
+			data = request.data
+			author_data = data.get('author')
+			if request.user.username != author_data.get('username'):
+				return Response({"error": f'User {request.user.username} is not allowed to modify text {data.id}'},
+								status=status.HTTP_403_FORBIDDEN)
+			series = data.get('series')
+			print(series)
+			serializer = TextEditSerializer(data=data, context={'request': request}, partial=True)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(data=data, status=status.HTTP_200_OK)
+			print(serializer.errors)
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		except IntegrityError as e:
+			print(e)
+			return Response({"error": f'Something went wrong while saving text for user {request.user.id}.'},
+							status=status.HTTP_417_EXPECTATION_FAILED)
+	elif request.method == 'DELETE':
+		try:
+			data = request.data
+			author_data = data.get('author')
+			if request.user.username != author_data.get('username'):
+				return Response({"error": f'User {request.user.username} is not allowed to modify text {data.id}'},
+								status=status.HTTP_403_FORBIDDEN)
+			text_hash = data.get('hash')
+			Text.objects.get(hash=text_hash).delete()
+			return Response(status=status.HTTP_200_OK)
+		except IntegrityError:
+			return Response(
+				{"error": f'Something went wrong while deleting text {text_hash} for user {request.user.id}.'},
+				status=status.HTTP_417_EXPECTATION_FAILED)
+#
+# @api_view(['DELETE'])
+# def delete_text(request):
+
+
+
+@api_view(['POST'])
+def create_text(request):
+	try:
+		data = request.data
+		new_text = {
+			'author': request.user.id,
+			'content': data.get('content'),
+			'title': data.get('title'),
+			'genres': data.get('genres', []),
+			'is_draft': data.get('is_draft'),
+			'series': data.get('series'),
+			'series_entry': data.get('series_entry'),
+			'synopsis': data.get('synopsis')
+		}
+		serializer = NewTextSerializer(data=new_text, context={'request': request})
+		if serializer.is_valid():
+			saved_text = serializer.save()
+			text_data = TextSerializer(saved_text).data
+			return Response(data=text_data, status=status.HTTP_200_OK)
+		print(serializer.errors)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	except IntegrityError:
+		return Response({"error": f'Something went wrong while saving text for user {request.user.id}.'},
+						status=status.HTTP_417_EXPECTATION_FAILED)
 
 
 @api_view()
@@ -107,18 +128,33 @@ def get_texts_by_user(request, username):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+def get_texts_by_tag(request, tag):
+	if request.method == 'GET':
+		data = Text.objects.filter(genres__tag=tag)
+		print(data)
+		serializer = MinimalTextSerializer(data, context={'request': request}, many=True)
+		return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
 # Comments
 
-@api_view()
+@api_view(['POST'])
 def comment(request):
 	if request.method == 'POST':
 		data = request.data
-		data['author'] = request.user.id
-		serializer = CommentSerializer(data=data, context={'request': request})
+		new_comment = {
+			'author': request.user.id,
+			'content': data.get('content'),
+			'text': data.get('text_id'),
+			'parent': data.get('parent', None)
+		}
+		serializer = NewCommentSerializer(data=new_comment, context={'request': request})
 		if serializer.is_valid():
-			serializer.save()
-			return Response(status=status.HTTP_201_CREATED)
-
+			saved_comment = serializer.save()
+			data = CommentSerializer(saved_comment).data
+			return Response(data=data, status=status.HTTP_200_OK)
+		print(serializer.errors)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -139,17 +175,76 @@ def delete_comment(request):
 def get_series_by_user(request, username):
 	if request.method == 'GET':
 		data = Series.objects.filter(text__author__username=username)
-		print(data)
-		serializer = SeriesSerializer(data, context={'request': request}, many=True)
+		serializer = SeriesReadSerializer(data, context={'request': request}, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view()
 def get_series(request, pk):
 	if request.method == 'GET':
 		try:
 			data = Series.objects.get(id=pk)
-			serializer = SeriesSerializer(data)
+			serializer = SeriesReadSerializer(data)
 			return Response(serializer.data, status=status.HTTP_200_OK)
 
 		except Series.DoesNotExist:
 			return Response({"detail": f'No series with an id of {pk} was found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def like_text(request, pk):
+	try:
+		text = Text.objects.filter(id=pk).first()
+		like = Like.objects.filter(user=request.user, text=text)
+		if like:
+			return Response({"error": "This text has already been liked"}, status=status.HTTP_417_EXPECTATION_FAILED)
+		else:
+			new_like = Like.objects.create(user=request.user, text=text)
+			return Response(status=status.HTTP_200_OK, data=LikeSerializer(new_like).data)
+	except IntegrityError:
+		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@api_view(['POST'])
+def unlike_text(request, pk):
+	try:
+		text = Text.objects.filter(id=pk).first()
+		like = Like.objects.get(user=request.user, text=text)
+		if not like:
+			return Response({"error": "No like from user " + request.user.id + "for text " + text.id},
+							status=status.HTTP_404_NOT_FOUND)
+		else:
+			like.delete()
+			return Response(status=status.HTTP_200_OK, data=request.user.username)
+	except IntegrityError:
+		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@api_view(['POST'])
+def bookmark_text(request, pk):
+	try:
+		text = Text.objects.filter(id=pk).first()
+		bookmark = Bookmark.objects.filter(user=request.user, text=text)
+		if bookmark:
+			return Response({"error": "This text has already been bookmarked"},
+							status=status.HTTP_417_EXPECTATION_FAILED)
+		else:
+			new_bookmark = Bookmark.objects.create(user=request.user, text=text)
+			return Response(status=status.HTTP_200_OK, data=UserBookmarkSerializer(new_bookmark).data)
+	except IntegrityError:
+		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+
+
+@api_view(['POST'])
+def unbookmark_text(request, pk):
+	try:
+		text = Text.objects.filter(id=pk).first()
+		bookmark = Bookmark.objects.get(user=request.user, text=text)
+		if not bookmark:
+			return Response({"error": "No bookmark from user " + request.user.id + "for text " + text.id},
+							status=status.HTTP_404_NOT_FOUND)
+		else:
+			bookmark.delete()
+			return Response(status=status.HTTP_200_OK, data=request.user.username)
+	except IntegrityError:
+		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)

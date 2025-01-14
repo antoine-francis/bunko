@@ -10,6 +10,9 @@ export const MenuBar = () => {
 				<div className="home">
 					<Link to={paths.home.getHref()}>Bunko</Link>
 				</div>
+				<div className="create-text">
+					<Link to={{pathname: paths.newText.getHref()}}>+</Link>
+				</div>
 				<div className="profile-button">
 					<Link to={{pathname: paths.profile.getHref() + user.username}}>{user.username}</Link>
 				</div>

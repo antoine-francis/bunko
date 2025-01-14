@@ -7,6 +7,7 @@ import {ErrorHandler} from "../ErrorHandler.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {paths} from "../../config/paths.ts";
 import {fetchProfile} from "../../slices/ProfilesSlice.ts";
+import {URL} from "../../constants/Url.ts";
 
 interface UsersListProps {
 	subscriptionsKey: string
@@ -40,10 +41,16 @@ export const UsersList = ({subscriptionsKey} : UsersListProps) => {
 		return <EmptyList/>;
 	} else {
 		return (
-			<div id="followers-containers">
+			<div id="followers-container">
 				{subscriptions.map((sub: Subscription, i: number) => {
 					return (<div key={"user-" + i} className="follower-card">
-						<Link to={paths.profile.getHref() + sub.user.username}><span className="name">{sub.user.username}</span></Link>
+						<Link className="name-pic" to={paths.profile.getHref() + sub.user.username}>
+							<img className="badge-picture" src={URL.SERVER + sub.user.picture} alt=""/>
+							<div className="name">
+								<div className="username">{sub.user.username}</div>
+								<div className="fullname">{`${sub.user.firstName} ${sub.user.lastName}`}</div>
+							</div>
+						</Link>
 						<span className="follow-date"><FormattedDate value={sub.followDate}/></span>
 					</div>)
 				})}

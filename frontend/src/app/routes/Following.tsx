@@ -9,7 +9,7 @@ export const Following = () => {
 		if (username !== undefined){
 			document.title = `Followed by ${username}`;
 		}
-	}, [username])
+	}, [username]);
 
-	return <UsersList subscriptionsKey="following"/>
+	return <UsersList subscriptionsKey="following"/>;
 }

@@ -26,6 +26,16 @@ export const paths = {
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/user/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
+	newText: {
+		path: '/new/',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/new/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
+	editText: {
+		path: '/edit/:hash',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/edit/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
 	followers: {
 		path: '/followers/:username',
 		getHref: (redirectTo?: string | null | undefined) =>
@@ -36,15 +46,25 @@ export const paths = {
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/following/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
-	singleText: {
-		path: '/text/:id',
+	bookmarks: {
+		path: '/bookmarks/:username',
 		getHref: (redirectTo?: string | null | undefined) =>
-			`/text/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+			`/bookmarks/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
+	singleText: {
+		path: '/read/:hash',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/read/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
 	series: {
 		path: '/series/:id',
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/series/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
+	tag: {
+		path: '/tag/:tag',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/tag/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
 	collective: {
 		path: '/collective/:id',
