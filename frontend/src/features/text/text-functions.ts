@@ -9,6 +9,7 @@ export const convertTextToDesc = (text : BunkoText) : TextDescription => {
 		author: text.author,
 		series: text.series,
 		seriesEntry: text.seriesEntry,
+		genres: text.genres,
 		isDraft: text.isDraft,
 		creationDate: text.creationDate,
 		modificationDate: text.modificationDate,

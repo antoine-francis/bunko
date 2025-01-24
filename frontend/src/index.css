@@ -19,7 +19,7 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: #dddde5;
+  color: #c29b00;
 }
 
 body {
@@ -35,8 +35,7 @@ h1 {
 }
 
 button {
-  /*border-radius: 8px;*/
-  border: 1px solid #c0c2c6;
+  border: 2px solid #c0c2c6;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
@@ -46,7 +45,8 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #c29b00;
+  color: #c29b00;
 }
 button:focus,
 button:focus-visible {

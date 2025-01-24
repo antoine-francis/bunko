@@ -5,6 +5,7 @@ export const URL = {
 	TEXT: "/text/",
 	TEXTS: "/texts",
 	TAG: "/tag/",
+	TAGS: "/tags",
 	PROFILE: "/profile/",
 	SERIES: "/series_id/",
 	COLLECTIVE: "/collective/",

@@ -7,10 +7,10 @@ import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {defineMessages, FormattedDate, useIntl} from "react-intl";
 import {useIsFollowedByUser, useIsOwner} from "../../hooks/users-relationships-hooks.ts";
 import {UserBadge, UserProfile} from "../../types/UserProfile.ts";
-import {ReactNode, useCallback, useEffect} from "react";
+import {useCallback, useEffect} from "react";
 import {TextDescription} from "../../types/Text.ts";
 import {BunkoDispatch} from "../../store.ts";
-import {toRoman} from "../../utils/roman-numerals.ts";
+import {TextsList} from "../../components/texts-list/TextsList.tsx";
 
 const messages = defineMessages({
 	textPlural: {
@@ -99,61 +99,37 @@ export const Profile = () => {
 	}, [profile, dispatch, isFollowedByUser]);
 
 	const getSortedTexts = useCallback(() => {
-		const published : ReactNode[] = [];
-		const drafts : ReactNode[] = [];
+		// const published : ReactNode[] = [];
+		// const drafts : ReactNode[] = [];
+		const published : TextDescription[] = []
+		const drafts : TextDescription[] = []
 		if (profile !== undefined) {
 			for (let i : number = 0; i < profile.texts.length; i++) {
 				const text : TextDescription = profile.texts[i];
-				const textElement = (
-					<>
-						<Link to={paths.singleText.getHref()+text.hash}>
-							<div className="preview-container"><p className="content-preview">{text.content?.substring(0, 900)}</p></div>
-							<div className="title">{text.title}</div>
-							<div className="publ-date"><FormattedDate value={text.modificationDate ? text.modificationDate : text.creationDate}/></div>
-						</Link>
-					{text.series && text.seriesEntry &&
-					<div className="series">
-						<Link to={{pathname: `${paths.series.getHref()}${text.series.id}`}}>
-							<div className="series-title">{text.series.title} - {toRoman(text.seriesEntry)}</div>
-							<div></div>
-						</Link>
-					</div>
-					}
-				</>);
 				if (text.isDraft && isOwner) {
-					drafts.push(
-						<div className="text-item" key={"draft" + i}>
-							{textElement}
-						</div>
-					);
+					drafts.push(text);
 				} else {
-					published.push(
-						<div className="text-item" key={"text" + i}>
-							{textElement}
-						</div>
-					);
+					published.push(text);
 				}
 			}
 			return (
 				<>
 					<div id="texts">
-
-						<span className="text-count">{published.length > 1 ? formatMessage(messages.textPlural, {nb: published.length}) :
-							formatMessage(messages.textSing, {nb: published.length})}</span>
-						<div className="texts-container">
-							{published}
-						</div>
-
-					</div>
-					{isOwner && (
-						<div id="drafts">
+						{isOwner && (
+							<div id="drafts">
 							<span className="drafts-count">{drafts.length > 1 ? formatMessage(messages.draftPlural, {nb: drafts.length}) :
 								formatMessage(messages.draftSing, {nb: drafts.length})}</span>
-							<div className="texts-container">
-								{drafts}
+								<div className="text-list-container">
+									<TextsList texts={drafts} showDescription={false}/>
+								</div>
 							</div>
+						)}
+						<span className="text-count">{published.length > 1 ? formatMessage(messages.textPlural, {nb: published.length}) :
+							formatMessage(messages.textSing, {nb: published.length})}</span>
+						<div className="text-list-container">
+							<TextsList texts={published} />
 						</div>
-					)}
+					</div>
 				</>
 			)
 		}

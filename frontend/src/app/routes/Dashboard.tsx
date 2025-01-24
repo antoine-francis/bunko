@@ -11,12 +11,13 @@ import {fetchTexts} from "../../slices/TextListSlice.ts";
 import {defineMessages, FormattedDate, useIntl} from "react-intl";
 import TimeAgo from "timeago-react";
 import Markdown from "marked-react";
+import {TagList} from "../../components/texts-list/TagList.tsx";
 
 const messages = defineMessages({
 	author: {
 		id: "by.author",
 		description: "author display on single text view",
-		defaultMessage: "{0} {1}",
+		defaultMessage: "{0}",
 	}
 });
 
@@ -56,8 +57,8 @@ export const Dashboard = () => {
 						<div className="author-date">
 							<Link to={{pathname: `${paths.profile.getHref()}${text.author.username}`}}>
 							<span className="author">{formatMessage(messages.author, {
-								0: text.author.firstName,
-								1: text.author.lastName
+								0: text.author.firstName !== "" ? `${text.author.firstName} ${text.author.lastName}` :
+								text.author.username
 							})}</span>
 							</Link>
 							<span className="publish-date">{date}</span>
@@ -66,15 +67,8 @@ export const Dashboard = () => {
 
 						<Link to={{pathname: `${paths.singleText.getHref()}${text.hash}`}}>
 							<p className="synopsis">{text.synopsis ? text.synopsis : <Markdown>{text.content.substring(0, 255)}</Markdown>}</p>
-							{/*<p>{text.content}</p>*/}
 						</Link>
-						<div className="genres">
-							{text.genres.map((genre) => {
-								return (
-									<span className="genre-tag">#{genre.tag}</span>
-								)
-							})}
-						</div>
+						<TagList genres={text.genres} />
 					</div>)
 				})}
 			</div>

@@ -24,7 +24,7 @@ const seriesSlice = createSlice({
 				(state[id] as LoadingState) = {loading: true, error: undefined};
 			})
 			.addCase(fetchSeries.fulfilled, (state, action : PayloadAction<Series | undefined>) => {
-				if (action.payload !== undefined) {
+				if (action.payload !== undefined && action.payload.id) {
 					state[action.payload.id] = {...action.payload, loading: false, error: undefined};
 				}
 			})

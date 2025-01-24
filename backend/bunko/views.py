@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from django.db import IntegrityError
@@ -7,11 +8,12 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 
 from users.models import Subscription
-from .models import Text, Series, Like, Bookmark
-from .serializers import TextSerializer, CommentSerializer, SeriesReadSerializer, LikeSerializer, \
+from .models import Text, Series, Like, Bookmark, Genre
+from .serializers import TextSerializer, CommentSerializer, SeriesSerializer, LikeSerializer, \
 	UserBookmarkSerializer, \
-	NewCommentSerializer, NewTextSerializer, TextEditSerializer, MinimalTextSerializer
+	NewCommentSerializer, NewTextSerializer, TextEditSerializer, TextDescriptionSerializer, TextsByTagSerializer
 
+logger = logging.getLogger(__name__)
 
 def home(request):
 	context = {
@@ -40,50 +42,77 @@ def get_texts(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def text(request, text_hash):
+	logger.info(f"START GET text() for user {request.user.id}")
 	if request.method == 'GET':
 		try:
 			data = Text.objects.get(hash=text_hash)
 			serializer = TextSerializer(data)
-			return Response(serializer.data, status=status.HTTP_200_OK)
-
+			response = Response(serializer.data, status=status.HTTP_200_OK)
 		except Text.DoesNotExist:
-			return Response({"detail": f'No text with an id of {text_hash} was found.'}, status=status.HTTP_404_NOT_FOUND)
+			response = Response({"detail": f'No text with an id of {text_hash} was found.'}, status=status.HTTP_404_NOT_FOUND)
+		logger.info(f"END GET text() for user {request.user.id}")
+		return response
 	elif request.method == 'PUT':
+		logger.info(f"START PUT text() for user {request.user.id}")
 		try:
 			data = request.data
 			author_data = data.get('author')
 			if request.user.username != author_data.get('username'):
-				return Response({"error": f'User {request.user.username} is not allowed to modify text {data.id}'},
-								status=status.HTTP_403_FORBIDDEN)
-			series = data.get('series')
-			print(series)
-			serializer = TextEditSerializer(data=data, context={'request': request}, partial=True)
-			if serializer.is_valid():
-				serializer.save()
-				return Response(data=data, status=status.HTTP_200_OK)
-			print(serializer.errors)
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+				message = f'User {request.user.username} is not allowed to modify text {data.id}'
+				response = Response({"error": message}, status=status.HTTP_403_FORBIDDEN)
+			else:
+				if data.get('series'):
+					series = data.get('series')
+					series_id = series.get('id')
+					series_title = series.get('title')
+					series_synopsis = series.get('synopsis')
+					if series_id == 0:
+						logger.info(f"Creating new series '{series_title}' for user {request.user.id}")
+						new_series = Series.objects.create(title=series_title, synopsis=series_synopsis)
+						data['series'] = new_series.id
+					else:
+						logger.info(f"Assigning '{data.get('title')}' to series '{series_title}' for user {request.user.id}")
+						data['series'] = series_id
+						Series.objects.filter(pk=series_id).update(synopsis=series_synopsis)
+				else:
+					data['series'] = None
+					data['series_entry'] = None
+				serializer = TextEditSerializer(data=data, context={'request': request}, partial=True)
+				if serializer.is_valid():
+					updated_text = serializer.save()
+					text_data = TextSerializer(updated_text).data
+					response = Response(data=text_data, status=status.HTTP_200_OK)
+				else:
+					logger.error("error in PUT text() for user " + request.user.username + " : " + str(serializer.errors))
+					response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		except IntegrityError as e:
-			print(e)
-			return Response({"error": f'Something went wrong while saving text for user {request.user.id}.'},
+			message = "error in PUT text() for user " + request.user.id + " : " + str(e)
+			logger.error(message)
+			response = Response({"error": f'Something went wrong : {message}'},
 							status=status.HTTP_417_EXPECTATION_FAILED)
+		logger.info(f"END PUT text() for user {request.user.id}")
+		return response
 	elif request.method == 'DELETE':
+		logger.info(f"START DELETE text() for user {request.user.id}")
 		try:
 			data = request.data
 			author_data = data.get('author')
 			if request.user.username != author_data.get('username'):
-				return Response({"error": f'User {request.user.username} is not allowed to modify text {data.id}'},
+				message = f'User {request.user.id} is not allowed to modify text {data.id}'
+				response = Response({"error": message},
 								status=status.HTTP_403_FORBIDDEN)
-			text_hash = data.get('hash')
-			Text.objects.get(hash=text_hash).delete()
-			return Response(status=status.HTTP_200_OK)
+			else:
+				text_hash = data.get('hash')
+				Text.objects.get(hash=text_hash).delete()
+				return Response(status=status.HTTP_200_OK)
 		except IntegrityError:
-			return Response(
-				{"error": f'Something went wrong while deleting text {text_hash} for user {request.user.id}.'},
+			message = f"error in DELETE text() for user {request.user.id} : Something went wrong while deleting text {text_hash}"
+			logger.error(message)
+			response = Response(
+				{"error": message},
 				status=status.HTTP_417_EXPECTATION_FAILED)
-#
-# @api_view(['DELETE'])
-# def delete_text(request):
+		logger.info(f"END DELETE text() for user {request.user.id}")
+		return response
 
 
 
@@ -107,6 +136,7 @@ def create_text(request):
 			text_data = TextSerializer(saved_text).data
 			return Response(data=text_data, status=status.HTTP_200_OK)
 		print(serializer.errors)
+		logger.error(str())
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	except IntegrityError:
 		return Response({"error": f'Something went wrong while saving text for user {request.user.id}.'},
@@ -133,7 +163,17 @@ def get_texts_by_tag(request, tag):
 	if request.method == 'GET':
 		data = Text.objects.filter(genres__tag=tag)
 		print(data)
-		serializer = MinimalTextSerializer(data, context={'request': request}, many=True)
+		serializer = TextDescriptionSerializer(data, context={'request': request}, many=True)
+		return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_tags(request):
+	if request.method == 'GET':
+		data = Genre.objects.all()
+		# data = Genre.objects.filter(text__is_draft=False)
+		print(data)
+		serializer = TextsByTagSerializer(data, context={'request': request}, many=True)
 		return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -175,7 +215,7 @@ def delete_comment(request):
 def get_series_by_user(request, username):
 	if request.method == 'GET':
 		data = Series.objects.filter(text__author__username=username)
-		serializer = SeriesReadSerializer(data, context={'request': request}, many=True)
+		serializer = SeriesSerializer(data, context={'request': request}, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -183,8 +223,8 @@ def get_series_by_user(request, username):
 def get_series(request, pk):
 	if request.method == 'GET':
 		try:
-			data = Series.objects.get(id=pk)
-			serializer = SeriesReadSerializer(data)
+			data = Series.objects.get(id=pk, text__is_draft=False)
+			serializer = SeriesSerializer(data)
 			return Response(serializer.data, status=status.HTTP_200_OK)
 
 		except Series.DoesNotExist:

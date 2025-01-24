@@ -7,6 +7,7 @@ import textEditorReducer from "./slices/TextEditorSlice.ts";
 import profilesReducer from "./slices/ProfilesSlice.ts";
 import seriesReducer from "./slices/SeriesSlice.ts";
 import tagsReducer from "./slices/TagSlice.ts";
+import browseTagsReducer from "./slices/BrowseTagsSlice.ts";
 import collectivesReducer from "./slices/CollectivesSlice.ts"
 import modalReducer from "./slices/ModalSlice.ts"
 
@@ -18,6 +19,7 @@ export const store = configureStore({
 		series: seriesReducer,
 		collectives: collectivesReducer,
 		tags: tagsReducer,
+		browseTags: browseTagsReducer,
 		texts: textReducer,
 		textEditor: textEditorReducer,
 		modal: modalReducer,

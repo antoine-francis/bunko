@@ -33,12 +33,20 @@ export interface TextDescription {
 	author: Author;
 	series?: Series;
 	seriesEntry?: number;
+	synopsis?: string;
+	genres: Genre[];
 	isDraft: boolean;
 	creationDate: Date;
 	modificationDate: Date;
 	publicationDate: Date;
 	id: number;
 	content?: string;
+}
+
+export interface MinimalTextDesc {
+	hash: string;
+	title: string;
+	author: Author;
 }
 
 export interface TextListState {

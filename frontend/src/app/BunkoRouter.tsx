@@ -115,6 +115,13 @@ const bunkoRouter = createBrowserRouter([
 				},
 			},
 			{
+				path: paths.tags.path,
+				lazy: async () => {
+					const { BrowseTags } = await import('./routes/BrowseTags.tsx');
+					return { Component: BrowseTags };
+				},
+			},
+			{
 				path: paths.collective.path,
 				lazy: async () => {
 					const { CollectiveDetails } = await import('./routes/CollectiveDetails.tsx');

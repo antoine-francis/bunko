@@ -66,6 +66,11 @@ export const paths = {
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/tag/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
+	tags: {
+		path: '/tags',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/tags${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
 	collective: {
 		path: '/collective/:id',
 		getHref: (redirectTo?: string | null | undefined) =>

@@ -53,7 +53,12 @@ const messages = defineMessages({
 		id: "text.readOnly",
 		description: "Banner text",
 		defaultMessage: "This draft is in read-only mode",
-	}
+	},
+	untitledText: {
+		id: "title.untitledText",
+		description: "untitled text title",
+		defaultMessage: "(Untitled)",
+	},
 })
 
 
@@ -82,9 +87,9 @@ export const SingleText = () => {
 
 	useEffect(() => {
 		if (text !== undefined) {
-			document.title = text.title;
+			document.title = text.title ? text.title : formatMessage(messages.untitledText);
 		}
-	}, [text]);
+	}, [formatMessage, text]);
 
 	const handleLike = useCallback(() => {
 		if (text !== undefined) {
@@ -170,15 +175,15 @@ export const SingleText = () => {
 	} else {
 		return (
 			<div id="text-container">
-				<div className="text-title">{text.title}</div>
+				<div className="text-title">{text.title ? text.title : formatMessage(messages.untitledText)}</div>
 				<Link to={`${paths.profile.getHref()}${text.author.username}`}>
 					<div className="text-author">{formatMessage(messages.author, {
 						0: text.author.firstName || text.author.lastName ? `${text.author.firstName} ${text.author.lastName}` : text.author.username})}</div>
 				</Link>
-				{text.series !== undefined && text.seriesEntry &&
+				{text.series &&
 					(<Link to={{pathname: `${paths.series.getHref()}${text.series.id}`}}>
 						<div className="text-series-info">
-							<span className="series-name">{text.series.title} - {toRoman(text.seriesEntry)}</span>
+							<span className="series-name">{text.series.title} {text.seriesEntry && toRoman(text.seriesEntry)}</span>
 						</div>
 					</Link>)
 				}
@@ -193,23 +198,25 @@ export const SingleText = () => {
 								<LikeButton onClick={handleLike} liked={isLiked} text={text}/>
 								<BookmarkButton onClick={handleBookmark} bookmarked={isBookmarked} text={text}/>
 							</div>
-							{isOwner && <>
-								<div className="options" onClick={toggleDropdown}>···</div>
-								<div id="dropdown-menu">
-									<ul>
-										<li onClick={handleEditText}>
-											<FormattedMessage id="text.editText"
-															  description="dropdown button"
-															  defaultMessage="Edit text"/>
-										</li>
-										<li className="destructive-action" onClick={showDeletePrompt}><FormattedMessage
-											id="text.deleteText"
-											description="dropdown button"
-											defaultMessage="Delete text"/>
-										</li>
-									</ul>
-								</div>
-							</>}
+							{isOwner ? <>
+									<div className="options" onClick={toggleDropdown}>···</div>
+									<div id="dropdown-menu">
+										<ul>
+											<li onClick={handleEditText}>
+												<FormattedMessage id="text.editText"
+																  description="dropdown button"
+																  defaultMessage="Edit text"/>
+											</li>
+											<li className="destructive-action" onClick={showDeletePrompt}><FormattedMessage
+												id="text.deleteText"
+												description="dropdown button"
+												defaultMessage="Delete text"/>
+											</li>
+										</ul>
+									</div>
+								</> :
+								<div className="options" onClick={toggleDropdown}>↩</div>
+							}
 						</div>
 						<CommentSection textId={text.id} comments={text.comments}/>
 					</>

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from bunko.models import Bookmark, Text, Favorite, Series
-from bunko.serializers import BookmarkSerializer, MinimalTextSerializer, SeriesReadSerializer
+from bunko.serializers import BookmarkSerializer, TextDescriptionSerializer, SeriesSerializer
 from users.models import Profile, Subscription, Membership, Collective
 
 
@@ -72,7 +72,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 		return BookmarkSerializer(Bookmark.objects.filter(user=obj.user, text__is_draft=False), many=True).data
 
 	def get_series(self, obj):
-		return SeriesReadSerializer(Series.objects.filter(text__author=obj.user), many=True).data
+		return SeriesSerializer(Series.objects.filter(text__author=obj.user).distinct(), many=True).data
 
 	def get_collectives(self, obj):
 		return MembershipSerializer(Membership.objects.filter(user=obj.user), many=True).data
@@ -80,12 +80,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 	def get_texts(self, obj):
 		request = self.context['request']
 		if request.user == obj.user:
-			return MinimalTextSerializer(Text.objects.filter(author=obj.user), many=True).data
+			return TextDescriptionSerializer(Text.objects.filter(author=obj.user), many=True).data
 		else:
-			return MinimalTextSerializer(Text.objects.filter(author=obj.user, is_draft=False), many=True).data
+			return TextDescriptionSerializer(Text.objects.filter(author=obj.user, is_draft=False), many=True).data
 
 	def get_favorites(self, obj):
-		return MinimalTextSerializer(Favorite.objects.filter(user=obj.user), many=True).data
+		return TextDescriptionSerializer(Favorite.objects.filter(user=obj.user), many=True).data
 
 
 class UserMembershipSerializer(serializers.ModelSerializer):

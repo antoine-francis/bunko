@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (comment, get_texts, get_texts_by_user, get_series, get_series_by_user, like_text,
-					unlike_text, unbookmark_text, bookmark_text, create_text, text, get_texts_by_tag)
+					unlike_text, unbookmark_text, bookmark_text, create_text, text, get_texts_by_tag, get_tags)
 
 urlpatterns = [
 	# api views
@@ -9,6 +9,7 @@ urlpatterns = [
 	path('texts', get_texts),
 	path('texts/<username>', get_texts_by_user),
 	path('tag/<tag>', get_texts_by_tag),
+	path('tags', get_tags),
 
 	# single text
 	path('new_text', create_text),

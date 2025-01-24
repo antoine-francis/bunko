@@ -37,14 +37,13 @@ class Genre(models.Model):
 class Series(models.Model):
 	title = models.CharField(max_length=255)
 	synopsis = models.CharField(max_length=255, blank=True, null=True)
-	picture = models.ImageField(default='default-bunko.jpg',upload_to='series_cover', blank=True, null=True)
 
 	def __str__(self):
 		return f'title: {self.title}'
 
 
 class Text(models.Model):
-	title = models.CharField(max_length=255)
+	title = models.CharField(max_length=255, blank=True, null=True)
 	content = models.TextField()
 	synopsis = models.CharField(max_length=255, blank=True, null=True)
 	is_draft = models.BooleanField(default=True)

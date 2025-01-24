@@ -52,16 +52,17 @@ export const SeriesDescription = () => {
 		return <Loading />;
 	} else if (series.error) {
 		return <ErrorHandler statusCode={series.error} redirectTo={location.pathname} />;
-	} else {
+	} else if (series.entries !== undefined) {
 		const seriesTextDesc : TextDescription[] = series.entries.map((text : BunkoText) => {
 			return convertTextToDesc(text);
 		})
 		return (
 			<>
-				<div id="series-info">
+				<div id="series-info-container">
 					<div className="series-title">{series.title}</div>
 					<div className="author">{getSeriesAuthorsNames()}</div>
-					<TextsList texts={seriesTextDesc}/>
+					<div className="synopsis">{series.synopsis}</div>
+					<TextsList texts={seriesTextDesc} showSeries={false}/>
 				</div>
 			</>
 		);

@@ -36,7 +36,7 @@ export const UserBookmarks = () => {
 		})
 		return (
 			<>
-				<div id="series-info">
+				<div id="bookmarks-container">
 					<TextsList texts={bookmarksTextDesc}/>
 				</div>
 			</>

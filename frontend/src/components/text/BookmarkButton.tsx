@@ -8,7 +8,7 @@ interface BookmarkButtonProps {
 
 export function BookmarkButton({ onClick, bookmarked, text } : BookmarkButtonProps) {
 	return (
-		<span className="bookmarks reactions">
+		<span className="bookmark reactions">
 			<span className="bookmark-btn btn" onClick={onClick}>
 				{bookmarked ? "★ " : "☆ "}
 			</span>

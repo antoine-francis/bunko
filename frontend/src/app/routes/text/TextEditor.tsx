@@ -14,7 +14,7 @@ import {ModalDialog} from "../../../components/layout/ModalDialog.tsx";
 import {C} from "../../../constants/Constants.ts";
 import {Navigate, useNavigate, useParams} from "react-router-dom";
 import {paths} from "../../../config/paths.ts";
-import {EditorContent} from "../../../types/Text.ts";
+import {BunkoText, EditorContent} from "../../../types/Text.ts";
 import {Genre} from "../../../types/Genre.ts";
 import {fetchText, updateText} from "../../../slices/TextSlice.ts";
 import {Series} from "../../../types/Series.ts";
@@ -42,6 +42,11 @@ const messages = defineMessages({
 		id: "title.seriesTitlePlaceholder",
 		description: "placeholder for text editor",
 		defaultMessage: "Series title...",
+	},
+	seriesSynopsisPlaceholder: {
+		id: "text.seriesSynopsisPlaceholder",
+		description: "placeholder for text editor",
+		defaultMessage: "Add a synopsis to your series...",
 	},
 	addTags: {
 		id: "text.genreTags",
@@ -78,11 +83,6 @@ const messages = defineMessages({
 		description: "Button text",
 		defaultMessage: "Cancel changes",
 	},
-	untitledText: {
-		id: "title.untitledText",
-		description: "untitled text title",
-		defaultMessage: "(Untitled)",
-	},
 	partOfSeries: {
 		id: "text.partOfSeries",
 		description: "Label for extra fields",
@@ -115,6 +115,7 @@ export const TextEditor = () => {
 	const [newSeriesTitle, setNewSeriesTitle] = useState<string>("");
 	const [content, setContent] = useState<string>(text ? text.content : "");
 	const [synopsis, setSynopsis] = useState<string>(text && text.synopsis ? text.synopsis : "");
+	const [seriesSynopsis, setSeriesSynopsis] = useState<string>(text && text.series && text.series.synopsis ? text.series.synopsis : "");
 	const [title, setTitle] = useState<string>(text ? text.title : "");
 	const [tags, setTags] = useState<string>(text && !text.loading ? text.genres.map(genre => {
 		return genre.tag
@@ -139,6 +140,7 @@ export const TextEditor = () => {
 				if (text.series) {
 					setPartOfSeries(true);
 					setSelectedSeries(text.series.id);
+					text.series.synopsis && setSeriesSynopsis(text.series.synopsis);
 				}
 			}
 		} else {
@@ -173,6 +175,37 @@ export const TextEditor = () => {
 		dispatch(confirmLostChanges());
 	}, [dispatch]);
 
+	const getSeriesInfo = useCallback(() => {
+		let series : Series | undefined = undefined;
+		if (partOfSeries) {
+			console.log("test2");
+			if (selectedSeries && selectedSeries > 0 && currentUserProfile) {
+				console.log("test3");
+				console.log(seriesSynopsis);
+				const tempSeries = currentUserProfile.series.find((series: Series) => {
+					return series.id === selectedSeries;
+				});
+				if (tempSeries !== undefined) {
+					series = {
+						title: tempSeries.title,
+						id: tempSeries.id,
+						synopsis: seriesSynopsis
+					};
+				}
+			} else if (selectedSeries !== undefined && selectedSeries === 0) {
+				console.log("test1");
+				series = {
+					title: newSeriesTitle,
+					id: 0,
+					synopsis: seriesSynopsis
+				}
+			}
+			return series;
+		} else {
+			return undefined;
+		}
+	}, [currentUserProfile, newSeriesTitle, partOfSeries, selectedSeries, seriesSynopsis]);
+
 	const save = useCallback((isDraft: boolean) => {
 		const genres = [];
 		if (tags !== "") {
@@ -182,19 +215,15 @@ export const TextEditor = () => {
 			}
 		}
 		if (text) {
-			const updatedText = Object.assign({}, text, {
+			const series = getSeriesInfo();
+			console.log(series);
+			const updatedText : BunkoText = Object.assign({}, text, {
 				content,
-				title: title !== "" ? title : formatMessage(messages.untitledText),
+				title,
 				genres,
 				isDraft,
 				synopsis,
-				series: partOfSeries && selectedSeries && currentUserProfile ? currentUserProfile.series.find((s: Series) => {
-					return s.id === selectedSeries;
-				}) : undefined,
-				// If the series exists,
-				seriesEntry: selectedSeries && text.series ?
-					text.series.entries.length + 1 :
-					partOfSeries ? 0 : undefined
+				series
 			});
 			dispatch(updateText(updatedText));
 			navigate(paths.singleText.getHref() + text.hash);
@@ -202,24 +231,33 @@ export const TextEditor = () => {
 		} else {
 			const newText : EditorContent = {
 				content,
-				title: title !== "" ? title : formatMessage(messages.untitledText),
+				title,
 				genres,
 				isDraft,
 				synopsis,
 			}
 			dispatch(createText(newText));
 		}
-	}, [dispatch, synopsis, currentUserProfile, tags, title, content, navigate, text, formatMessage, partOfSeries, selectedSeries]);
+	}, [dispatch, synopsis, tags, title, content, navigate, text, getSeriesInfo]);
 
 	const publishText = useCallback(() => {
 		dispatch(confirmPublication());
 	}, [dispatch]);
 
-	const handleSeriesSelectChange = useCallback((e : React.ChangeEvent<HTMLSelectElement>) => {
-		const selectedId = parseInt(e.target.value);
+	const handleSeriesSelectChange = useCallback((e : ChangeEvent<HTMLSelectElement>) => {
+		let selectedId = undefined;
+		if (e.target.value !== "") {
+			selectedId = parseInt(e.target.value);
+		}
 		setNewSeriesInput(selectedId === 0);
 		setSelectedSeries(selectedId);
-	}, [])
+		const selectedSeries = currentUserProfile ? currentUserProfile.series.find((series: Series) => {
+			return series.id === selectedId;
+		}) : undefined;
+		if (selectedSeries !== undefined) {
+			setSeriesSynopsis(synopsis)
+		}
+	}, [synopsis, currentUserProfile]);
 
 	const confirmAction = useCallback(() => {
 		switch (alertType) {
@@ -255,16 +293,18 @@ export const TextEditor = () => {
 					onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
 					className="text-editor seamless-input"
 					placeholder={formatMessage(messages.textPlaceholder)}/>
-				<div id="extra-fields-popup" style={!extraFieldsToggled ? {display: "none"} : {display: "block"}}>
+				{/*<div id="extra-fields-popup" style={!extraFieldsToggled ? {display: "none"} : {display: "block"}}>*/}
+				<div id="extra-fields-popup"
+					 style={!extraFieldsToggled ? {height: 0} : {height: "300px", display: "block"}}>
 				<textarea
 					value={synopsis}
 					rows={3}
 					maxLength={255}
-					onChange={(e : ChangeEvent<HTMLTextAreaElement>) => setSynopsis(e.target.value)}
+					onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setSynopsis(e.target.value)}
 					id="synopsis-input"
 					className="seamless-input"
 					placeholder={formatMessage(messages.synopsisPlaceholder)}/>
-					<div className="series-info-container">
+					<div className="series-select-container">
 						<label className="extra-fields-checkbox" htmlFor="series-checkbox">
 							<input
 								type="checkbox"
@@ -276,46 +316,54 @@ export const TextEditor = () => {
 							/>
 							Part of Series
 						</label>
-						{partOfSeries && <select value={selectedSeries} onChange={handleSeriesSelectChange}>
-							<option value={undefined}>---</option>
-							{currentUserProfile && currentUserProfile.series && currentUserProfile.series.map((series: Series) => {
-								return (
-									<option key={series.id} value={series.id}
-												onSelect={() => setNewSeriesInput(false)}>
+						{partOfSeries && (
+							<select value={selectedSeries} onChange={handleSeriesSelectChange}>
+								<option key="no-selection" value="">---</option>
+								{currentUserProfile && currentUserProfile.series && currentUserProfile.series.map((series: Series) => (
+									<option key={series.id} value={series.id}>
 										{series.title}
-									</option>);
-							})}
-							<option value="0" id="new-series-opt"
-									onSelect={() => setNewSeriesInput(true)}>
-								{formatMessage(messages.createNewSeries)}
-							</option>
-						</select>}
+									</option>
+								))}
+								<option value="0" id="new-series-opt">
+									{formatMessage(messages.createNewSeries)}
+								</option>
+							</select>
+						)}
 						{newSeriesInput && <input type="text" id="new-series-input"
 												  value={newSeriesTitle}
 												  className="seamless-input"
 												  placeholder={formatMessage(messages.seriesTitlePlaceholder)}
 												  onChange={(e: ChangeEvent<HTMLInputElement>) => setNewSeriesTitle(e.target.value)}/>}
 					</div>
+					<textarea
+						value={seriesSynopsis}
+						rows={3}
+						maxLength={255}
+						onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setSeriesSynopsis(e.target.value)}
+						id="series-synopsis-input"
+						className="seamless-input"
+						placeholder={formatMessage(messages.seriesSynopsisPlaceholder)}/>
 				</div>
 				<footer id="editor-footer" className="action-buttons text-editor-buttons">
-					<button id="cancel-changes" onClick={cancelChanges}>{formatMessage(messages.cancelChanges)}</button>
+					<button id="cancel-changes"
+							onClick={cancelChanges}>{formatMessage(messages.cancelChanges)}</button>
 					<button id="" onClick={toggleExtraFields}>{extraFieldsToggled ? "▼" : "▲"}</button>
 					<button id="save-draft" onClick={saveDraft}>{text && text.isDraft ?
-						formatMessage(messages.saveDraft) :
-						formatMessage(messages.saveAsDraft)}
-					</button>
-					<button id="publish" onClick={publishText}>{!text ?
-						formatMessage(messages.publish) :
-						text && text.isDraft ?
-							formatMessage(messages.saveAndPublish) :
-							formatMessage(messages.publishChanges)
-					}
-					</button>
-				</footer>
-				<ModalDialog isOpen={showAlert}
-							 type={alertType}
-							 confirmFunction={confirmAction}/>
-			</div>
-		)
-	}
-}
+							formatMessage(messages.saveDraft) :
+							formatMessage(messages.saveAsDraft)}
+						</button>
+						<button id="publish" onClick={publishText}>{!text ?
+							formatMessage(messages.publish) :
+							text && text.isDraft ?
+								formatMessage(messages.saveAndPublish) :
+								formatMessage(messages.publishChanges)
+						}
+						</button>
+					</footer>
+					<ModalDialog isOpen={showAlert}
+								 type={alertType}
+								 confirmFunction={confirmAction}/>
+				</div>
+				)
+				}
+				}

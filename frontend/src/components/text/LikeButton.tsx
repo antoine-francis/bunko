@@ -8,7 +8,7 @@ interface LikeButtonProps {
 
 export function LikeButton({onClick, liked, text} : LikeButtonProps) {
 	return (
-		<span className="likes reactions">
+		<span className="like reactions">
 			<span className="like-btn btn" onClick={onClick}>
 				{liked ? "♥ " : "♡ "}
 			</span>

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -59,6 +60,17 @@ class GenreTagSerializer(serializers.ModelSerializer):
 		fields = ['tag']
 
 
+class TextsByTagSerializer(serializers.ModelSerializer):
+	texts = serializers.SerializerMethodField()
+	class Meta:
+		model = Genre
+		fields = '__all__'
+		# fields = ['tag']
+
+	def get_texts(self, obj):
+		return MinimalTextSerializer(Text.objects.filter(genres=obj.id, is_draft=False), many=True).data
+
+
 class SeriesNameSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Series
@@ -66,39 +78,53 @@ class SeriesNameSerializer(serializers.ModelSerializer):
 
 
 class MinimalTextSerializer(serializers.ModelSerializer):
-	author = serializers.SerializerMethodField()
-	series = SeriesNameSerializer()
+	author = AuthorSerializer()
 
 	class Meta:
 		model = Text
-		fields = ['title', 'author', 'series', 'series_entry', 'is_draft', 'creation_date', 'modification_date',
+		fields = ['author', 'title', 'hash']
+
+class TextDescriptionSerializer(serializers.ModelSerializer):
+	author = serializers.SerializerMethodField()
+	series = SeriesNameSerializer()
+	genres = GenreTagSerializer(many=True, allow_null=True)
+
+	class Meta:
+		model = Text
+		fields = ['title', 'author', 'series', 'series_entry', 'genres', 'synopsis', 'is_draft', 'creation_date', 'modification_date',
 				  'publication_date', 'content', 'hash']
 
 	def get_author(self, obj):
 		return AuthorSerializer(obj.author).data
 
 
-class SeriesReadSerializer(serializers.ModelSerializer):
+class SeriesTitleSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Series
+		fields = ['title', 'synopsis']
+
+
+class SeriesSerializer(serializers.ModelSerializer):
 	entries = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Series
-		fields = ['title', 'picture', 'entries', 'id']
+		fields = ['title', 'synopsis', 'entries', 'id']
 
 	def get_entries(self, obj):
-		return MinimalTextSerializer(Text.objects.filter(series=obj), many=True).data
+		return TextDescriptionSerializer(Text.objects.filter(series=obj), many=True).data
 
 
 class SeriesCreateSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Series
-		fields = ['title']
+		fields = ['title', 'id', 'entries']
 
 
 
 class BookmarkSerializer(serializers.ModelSerializer):
-	text = MinimalTextSerializer()
+	text = TextDescriptionSerializer()
 
 	class Meta:
 		model = Bookmark
@@ -144,7 +170,9 @@ class NewTextSerializer(serializers.ModelSerializer):
 
 class TextEditSerializer(serializers.ModelSerializer):
 	author = AuthorSerializer(read_only=True)
-	series = SeriesReadSerializer()
+	series = serializers.PrimaryKeyRelatedField(queryset=Series.objects.all(), allow_null=True)
+	# series = serializers.SerializerMethodField()
+	# series = SeriesSerializer(allow_null=True, read_only=True)
 	genres = GenreTagSerializer(many=True, allow_null=True)
 
 	class Meta:
@@ -166,6 +194,7 @@ class TextEditSerializer(serializers.ModelSerializer):
 			genre, created = Genre.objects.get_or_create(tag=genre_tag)
 			genres.append(genre)
 		text.genres.add(*genres)
+
 		text.save()
 		return text
 
@@ -175,7 +204,7 @@ class TextSerializer(serializers.ModelSerializer):
 	likes = serializers.SerializerMethodField()
 	genres = GenreTagSerializer(many=True)
 	author = AuthorSerializer()
-	series = SeriesReadSerializer(allow_null=True)
+	series = SeriesSerializer(allow_null=True)
 	bookmarked_by = serializers.SerializerMethodField()
 	favorited_by = serializers.SerializerMethodField()
 

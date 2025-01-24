@@ -1,12 +1,19 @@
-import {BunkoText} from "./Text.ts";
+import {BunkoText, MinimalTextDesc} from "./Text.ts";
 import {HttpStatus} from "../constants/Http.ts";
 
 export interface Genre {
 	tag: string;
+	texts?: MinimalTextDesc[]
 }
 
 export interface TagListState {
 	[key: string]: TagLoadingState;
+}
+
+export interface BrowseTagsState {
+	tags: Genre[];
+	loading: boolean;
+	error: HttpStatus | undefined;
 }
 
 export interface TagLoadingState {
