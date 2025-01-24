@@ -72,6 +72,12 @@
     font-variant: small-caps;
 }
 
+.series a:hover {
+    text-decoration: underline;
+    font-size: 12px;
+    font-variant: small-caps;
+}
+
 #extra-fields-popup {
     display: none;
     background-color: #3f3d3d;

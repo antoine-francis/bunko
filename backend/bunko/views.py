@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from django.db import IntegrityError
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -25,19 +25,15 @@ def home(request):
 @api_view()
 def get_texts(request):
 	if request.method == 'GET':
+		logger.info(f"START GET get_texts() for user {request.user.id}")
 		data = Text.objects.filter(
 			author_id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
 			is_draft=False
 		)
 		serializer = TextSerializer(data, context={'request': request}, many=True)
-		return Response(serializer.data)
-	elif request.method == 'POST':
-		serializer = TextSerializer(data=request.data, context={'request': request})
-		if serializer.is_valid():
-			serializer.save()
-			return Response(status=status.HTTP_201_CREATED)
-
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		response = Response(serializer.data)
+		logger.info(f"END GET get_texts() for user {request.user.id}")
+		return response
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -104,7 +100,7 @@ def text(request, text_hash):
 			else:
 				text_hash = data.get('hash')
 				Text.objects.get(hash=text_hash).delete()
-				return Response(status=status.HTTP_200_OK)
+				response = Response(status=status.HTTP_200_OK)
 		except IntegrityError:
 			message = f"error in DELETE text() for user {request.user.id} : Something went wrong while deleting text {text_hash}"
 			logger.error(message)
@@ -118,6 +114,7 @@ def text(request, text_hash):
 
 @api_view(['POST'])
 def create_text(request):
+	logger.info(f"START POST create_text() for user {request.user.id}")
 	try:
 		data = request.data
 		new_text = {
@@ -134,46 +131,38 @@ def create_text(request):
 		if serializer.is_valid():
 			saved_text = serializer.save()
 			text_data = TextSerializer(saved_text).data
-			return Response(data=text_data, status=status.HTTP_200_OK)
-		print(serializer.errors)
-		logger.error(str())
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			response = Response(data=text_data, status=status.HTTP_200_OK)
+		else:
+			logger.error(serializer.errors)
+			response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	except IntegrityError:
-		return Response({"error": f'Something went wrong while saving text for user {request.user.id}.'},
+		response = Response({"error": f'Something went wrong while saving text for user {request.user.id}.'},
 						status=status.HTTP_417_EXPECTATION_FAILED)
-
-
-@api_view()
-def get_texts_by_user(request, username):
-	if request.method == 'GET':
-		data = Text.objects.filter(author__username=username)
-		serializer = TextSerializer(data, context={'request': request}, many=True)
-		return Response(serializer.data)
-	elif request.method == 'POST':
-		serializer = TextSerializer(data=request.data, context={'request': request})
-		if serializer.is_valid():
-			serializer.save()
-			return Response(status=status.HTTP_201_CREATED)
-
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	logger.info(f"END POST create_text() for user {request.user.id}")
+	return response
 
 
 @api_view(['GET'])
 def get_texts_by_tag(request, tag):
 	if request.method == 'GET':
+		logger.info(f"START GET get_texts_by_tag() for user {request.user.id}")
 		data = Text.objects.filter(genres__tag=tag)
-		print(data)
 		serializer = TextDescriptionSerializer(data, context={'request': request}, many=True)
-		return Response(data=serializer.data, status=status.HTTP_200_OK)
+		if serializer.is_valid():
+			response = Response(data=serializer.data, status=status.HTTP_200_OK)
+		else:
+			response = Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		logger.info(f"END GET get_texts_by_tag() for user {request.user.id}")
+		return response
 
 
 @api_view(['GET'])
 def get_tags(request):
 	if request.method == 'GET':
-		data = Genre.objects.all()
-		# data = Genre.objects.filter(text__is_draft=False)
-		print(data)
+		logger.info(f"START GET get_tags() for user {request.user.id}")
+		data = Genre.objects.filter(text_genres__isnull=False, text_genres__is_draft=False).distinct()
 		serializer = TextsByTagSerializer(data, context={'request': request}, many=True)
+		logger.info(f"END GET get_tags() for user {request.user.id}")
 		return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -182,6 +171,7 @@ def get_tags(request):
 @api_view(['POST'])
 def comment(request):
 	if request.method == 'POST':
+		logger.info(f"START POST comment() for user {request.user.id}")
 		data = request.data
 		new_comment = {
 			'author': request.user.id,
@@ -193,98 +183,123 @@ def comment(request):
 		if serializer.is_valid():
 			saved_comment = serializer.save()
 			data = CommentSerializer(saved_comment).data
-			return Response(data=data, status=status.HTTP_200_OK)
-		print(serializer.errors)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			response = Response(data=data, status=status.HTTP_200_OK)
+		else:
+			logger.error(serializer.errors)
+			response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		logger.info(f"END POST comment() for user {request.user.id}")
+		return response;
 
 
-@api_view()
+@api_view(['DELETE'])
 def delete_comment(request):
 	if request.method == 'DELETE':
+		logger.info(f"START DELETE comment() for user {request.user.id}")
 		data = request.data
 		data['author'] = request.user.id
 		serializer = CommentSerializer(data=data, context={'request': request})
 		if serializer.is_valid():
 			serializer.save()
-			return Response(status=status.HTTP_201_CREATED)
+			response = Response(status=status.HTTP_201_CREATED)
+		else:
+			response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		logger.info(f"END DELETE comment() for user {request.user.id}")
+		return response
 
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view()
+@api_view(['GET'])
 def get_series_by_user(request, username):
 	if request.method == 'GET':
+		logger.info(f"START GET get_series_by_user() for user {request.user.id}")
 		data = Series.objects.filter(text__author__username=username)
 		serializer = SeriesSerializer(data, context={'request': request}, many=True)
+		logger.info(f"END GET get_series_by_user() for user {request.user.id}")
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view()
 def get_series(request, pk):
 	if request.method == 'GET':
+		logger.info(f"START GET get_series() for user {request.user.id}")
 		try:
-			data = Series.objects.get(id=pk, text__is_draft=False)
+			data = get_object_or_404(Series, id=pk)
+			if not data.text.filter(author=request.user).exists():
+				data = data.text.filter(is_draft=False)
 			serializer = SeriesSerializer(data)
-			return Response(serializer.data, status=status.HTTP_200_OK)
+			response = Response(serializer.data, status=status.HTTP_200_OK)
 
 		except Series.DoesNotExist:
-			return Response({"detail": f'No series with an id of {pk} was found.'}, status=status.HTTP_404_NOT_FOUND)
+			response = Response({"detail": f'No series with an id of {pk} was found.'}, status=status.HTTP_404_NOT_FOUND)
+		logger.info(f"END GET get_series() for user {request.user.id}")
+		return response
 
 
 @api_view(['POST'])
 def like_text(request, pk):
+	logger.info(f"START POST like_text() for user {request.user.id}")
 	try:
-		text = Text.objects.filter(id=pk).first()
-		like = Like.objects.filter(user=request.user, text=text)
+		liked_text = Text.objects.filter(id=pk).first()
+		like = Like.objects.filter(user=request.user, text=liked_text)
 		if like:
-			return Response({"error": "This text has already been liked"}, status=status.HTTP_417_EXPECTATION_FAILED)
+			response = Response({"error": "This text has already been liked"}, status=status.HTTP_417_EXPECTATION_FAILED)
 		else:
-			new_like = Like.objects.create(user=request.user, text=text)
-			return Response(status=status.HTTP_200_OK, data=LikeSerializer(new_like).data)
+			new_like = Like.objects.create(user=request.user, text=liked_text)
+			response = Response(status=status.HTTP_200_OK, data=LikeSerializer(new_like).data)
 	except IntegrityError:
-		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+	logger.info(f"END POST like_text() for user {request.user.id}")
+	return response
 
 
 @api_view(['POST'])
 def unlike_text(request, pk):
+	logger.info(f"START POST unlike_text() for user {request.user.id}")
 	try:
-		text = Text.objects.filter(id=pk).first()
-		like = Like.objects.get(user=request.user, text=text)
+		unliked_text = Text.objects.filter(id=pk).first()
+		like = Like.objects.get(user=request.user, text=unliked_text)
 		if not like:
-			return Response({"error": "No like from user " + request.user.id + "for text " + text.id},
+			response = Response({"error": "No like from user " + request.user.id + "for text " + text.id},
 							status=status.HTTP_404_NOT_FOUND)
 		else:
 			like.delete()
-			return Response(status=status.HTTP_200_OK, data=request.user.username)
+			response = Response(status=status.HTTP_200_OK, data=request.user.username)
 	except IntegrityError:
-		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+	logger.info(f"END POST unlike_text() for user {request.user.id}")
+	return response
 
 
 @api_view(['POST'])
 def bookmark_text(request, pk):
+	logger.info(f"START POST bookmark_text() for user {request.user.id}")
 	try:
 		text = Text.objects.filter(id=pk).first()
 		bookmark = Bookmark.objects.filter(user=request.user, text=text)
 		if bookmark:
-			return Response({"error": "This text has already been bookmarked"},
+			response = Response({"error": "This text has already been bookmarked"},
 							status=status.HTTP_417_EXPECTATION_FAILED)
 		else:
 			new_bookmark = Bookmark.objects.create(user=request.user, text=text)
-			return Response(status=status.HTTP_200_OK, data=UserBookmarkSerializer(new_bookmark).data)
+			response = Response(status=status.HTTP_200_OK, data=UserBookmarkSerializer(new_bookmark).data)
 	except IntegrityError:
-		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+	logger.info(f"END POST bookmark_text() for user {request.user.id}")
+	return response
 
 
 @api_view(['POST'])
 def unbookmark_text(request, pk):
+	logger.info(f"START POST unbookmark_text() for user {request.user.id}")
 	try:
-		text = Text.objects.filter(id=pk).first()
-		bookmark = Bookmark.objects.get(user=request.user, text=text)
+		bookmarked_text = Text.objects.filter(id=pk).first()
+		bookmark = Bookmark.objects.get(user=request.user, text=bookmarked_text)
 		if not bookmark:
-			return Response({"error": "No bookmark from user " + request.user.id + "for text " + text.id},
+			response = Response({"error": "No bookmark from user " + request.user.id + "for text " + bookmarked_text.id},
 							status=status.HTTP_404_NOT_FOUND)
 		else:
 			bookmark.delete()
-			return Response(status=status.HTTP_200_OK, data=request.user.username)
+			response = Response(status=status.HTTP_200_OK, data=request.user.username)
 	except IntegrityError:
-		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+	logger.info(f"END POST unbookmark_text() for user {request.user.id}")
+	return response

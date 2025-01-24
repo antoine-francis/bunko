@@ -47,7 +47,7 @@ class Text(models.Model):
 	content = models.TextField()
 	synopsis = models.CharField(max_length=255, blank=True, null=True)
 	is_draft = models.BooleanField(default=True)
-	series = models.ForeignKey(Series, blank=True, null=True, on_delete=models.SET_NULL)
+	series = models.ForeignKey(Series, blank=True, null=True, on_delete=models.SET_NULL, related_name='text')
 	series_entry = models.IntegerField(blank=True, null=True)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	likes = models.ManyToManyField(User, related_name="likes", through='Like')
@@ -55,7 +55,7 @@ class Text(models.Model):
 	creation_date = models.DateTimeField(default=timezone.now)
 	publication_date = models.DateTimeField(blank=True, null=True)
 	modification_date = models.DateTimeField(auto_now=True)
-	genres = models.ManyToManyField(Genre, related_name="genres")
+	genres = models.ManyToManyField(Genre, related_name="text_genres")
 	hash = NanoidField(max_length=21, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
 
 	def __str__(self):

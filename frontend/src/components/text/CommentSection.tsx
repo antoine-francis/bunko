@@ -61,7 +61,7 @@ export function CommentSection({comments, textId} : CommentSectionProps ) {
 					</React.Fragment>
 				);
 			})}
-			<form onSubmit={handleSubmit}>
+			<form id="new-comment" onSubmit={handleSubmit}>
 				<div>
 					<textarea
 						value={newComment}

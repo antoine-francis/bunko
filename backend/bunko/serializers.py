@@ -68,7 +68,7 @@ class TextsByTagSerializer(serializers.ModelSerializer):
 		# fields = ['tag']
 
 	def get_texts(self, obj):
-		return MinimalTextSerializer(Text.objects.filter(genres=obj.id, is_draft=False), many=True).data
+		return MinimalTextSerializer(Text.objects.filter(genres=obj.id), many=True).data
 
 
 class SeriesNameSerializer(serializers.ModelSerializer):
