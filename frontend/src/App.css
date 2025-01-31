@@ -3,9 +3,145 @@
   width: 100%;
 }
 
+#main-container {
+  display: flex;
+  flex-wrap: nowrap;
+  min-height: calc(100% - 57px);
+}
+
 .menu-bar {
   display: flex;
   border-bottom: 1px solid #c0c2c6;
+  background-color: #242424;
+}
+
+.search-bar-container {
+  margin: auto 12px auto auto;
+  padding: 3px;
+  width: 50%;
+}
+
+#search-bar {
+  width: 100%;
+}
+
+#clear-input {
+  position: relative;
+  width: 22px;
+  padding: 0;
+  float: right;
+  top: -22px;
+  height: 0;
+  box-sizing: border-box;
+  left: 8px;
+  cursor: pointer;
+}
+
+#clear-input:hover {
+  color: #c29b00;
+}
+
+#clear-input svg {
+  width: 80%;
+}
+
+.search-results {
+  width: 100%;
+  background-color: #242424;
+  padding: 0px 2px !important;
+  position: relative;
+  border: 1px solid #c29b00;
+  border-top: none;
+}
+
+.list-results {
+  position:absolute;
+  width: 100%;
+  padding: 8px 0 !important;
+  border: 2px solid #c29b00;
+  border-top: none;
+  margin: 0 auto;
+  box-sizing: content-box;
+  left: -1px;
+  background-color: #474747;
+  z-index: 10000;
+  max-height: 300px;
+}
+
+.list-results ul {
+  list-style: none;
+  padding: 0;
+}
+
+.result {
+  padding: 16px;
+  cursor: pointer;
+}
+
+.result:hover {
+  background-color: #353535;
+}
+
+#search-bar:focus {
+  box-sizing: content-box;
+  outline: none;
+  border: 2px solid #c29b00;
+}
+
+#vertical-bar-toggle {
+  font-weight: 800;
+  cursor: pointer;
+  width: 24px;
+  text-align: center;
+}
+
+#vertical-bar-toggle:hover {
+  background-color: #474747;
+  color: #c29b00;
+}
+
+.menu-bar-btn {
+  font-weight: 800;
+  margin-left: auto;
+  cursor: pointer;
+  min-width: 24px;
+  text-align: center;
+}
+
+.menu-bar-btn:hover {
+  background-color: #474747;
+  color: #c29b00;
+}
+
+#vertical-options-bar {
+  width: 250px;
+  flex: 1 0 auto;
+  background-color: #353535;
+}
+
+#vertical-options-bar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#vertical-options-bar ul li {
+  padding: 24px;
+  display: flex;
+}
+
+#vertical-options-bar ul li img {
+  height: 32px;
+  border-radius: 50%;
+}
+
+#vertical-options-bar ul li a {
+  align-self: center;
+  padding-left: 32px;
+}
+
+#vertical-options-bar ul li:hover {
+  background-color: #474747;
 }
 
 .yellow {
@@ -15,10 +151,6 @@
 .menu-bar > .home {
   flex: 1 1 auto;
 }
-
-/*.menu-bar > .home > a {*/
-/*  color: #c29b00;*/
-/*}*/
 
 .menu-bar div {
   padding: 16px;
@@ -32,6 +164,7 @@ h2 {
   padding: 16px;
   width: 80%;
   margin: 0 auto;
+  flex: 1 1 auto;
 }
 
 .text-list {
@@ -44,7 +177,9 @@ h2 {
   padding: 16px;
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
+  justify-content: space-around;
 }
 
 .tag-name {
@@ -58,13 +193,24 @@ h2 {
   height: calc(100vh - 75px);
 }
 
-#loading {
+#loading-container, #error-page {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: calc(100vh - 64px);
   justify-content: center;
+  flex: 1 1 auto;
+  padding: 16px;
+  width: 80%;
+}
+
+.loading, .no-result {
+  text-align: center;
+}
+
+.text-count {
+  padding: 16px;
 }
 
 .login-form, .signup-form {
@@ -175,6 +321,8 @@ form div input:focus {
 
 .btn {
   cursor: pointer;
+  max-height: 24px;
+  padding-right: 4px;
 }
 
 .replies {
@@ -257,6 +405,9 @@ textarea:focus {
 .reactions {
   margin-right: 12px;
   font-size: 20px;
+  flex-wrap: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .like, .bookmark {
@@ -286,14 +437,12 @@ textarea:focus {
 
 .options {
   font-weight: 800;
-  text-align: right;
+  text-align: center;
   margin-left: auto;
   cursor: pointer;
-  transform: rotate(180deg);
   padding: 8px 0;
   border-radius: 5px;
   width: 40px;
-  text-align: center;
 }
 
 .author {
@@ -331,7 +480,7 @@ textarea:focus {
 }
 
 .genre-tag {
-  color: #888888;
+  color: #888888 !important;
   font-size: 13px;
   padding-right: 3px;
   font-weight: 400;
@@ -340,6 +489,7 @@ textarea:focus {
 .genre-tag:hover {
   text-decoration: underline;
   cursor: pointer;
+  color: #b4b4b4 !important;
 }
 
 .seamless-input {
@@ -349,6 +499,8 @@ textarea:focus {
   margin: 0 auto;
   display: flex;
   font-family: monospace;
+  outline: none;
+  box-sizing: content-box;
 }
 
 #new-series-input {
@@ -379,6 +531,7 @@ textarea:focus {
 
 .seamless-input:focus-visible {
   outline: none;
+  border: none;
 }
 
 .text-title-editor:focus-visible {
@@ -406,7 +559,10 @@ textarea:focus {
 .text-editor-buttons {
   display: flex;
   width: 90%;
-  margin: 10px auto 5px;
+  margin: 8px auto 5px;
+  position: absolute;
+  bottom: 5px;
+  padding: 0 5%;
 }
 
 .action-buttons button:not(:first-child) {

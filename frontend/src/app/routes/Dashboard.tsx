@@ -3,7 +3,6 @@ import {useCallback, useEffect} from "react";
 
 import {paths} from "../../config/paths.ts";
 import {Link, useLocation} from "react-router-dom";
-import {Loading} from "../../components/Loading.tsx";
 import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {EmptyList} from "../../components/users-list/EmptyList.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
@@ -12,6 +11,7 @@ import {defineMessages, FormattedDate, useIntl} from "react-intl";
 import TimeAgo from "timeago-react";
 import Markdown from "marked-react";
 import {TagList} from "../../components/texts-list/TagList.tsx";
+import {LoadingContainer} from "../../components/LoadingContainer.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -38,7 +38,7 @@ export const Dashboard = () => {
 	}, [])
 
 	if (!loaded) {
-		return <Loading />;
+		return <LoadingContainer />;
 	} else if (error) {
 		return <ErrorHandler statusCode={error} redirectTo={location.pathname} />;
 	} else if (texts === undefined || !texts.length) {

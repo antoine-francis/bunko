@@ -1,8 +1,8 @@
-import {Loading} from "../../components/Loading.tsx";
 import {useEffect} from "react";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {logout} from "../../slices/UserSlice.ts";
 import Login from "./Login.tsx";
+import {LoadingContainer} from "../../components/LoadingContainer.tsx";
 
 export const Logout = () => {
 	const dispatch = useBunkoDispatch();
@@ -12,5 +12,5 @@ export const Logout = () => {
 		dispatch(logout());
 	});
 
-	return loading ? <Loading /> : <Login/>;
+	return loading ? <LoadingContainer /> : <Login/>;
 };

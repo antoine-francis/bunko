@@ -40,7 +40,7 @@ export function CommentSection({comments, textId} : CommentSectionProps ) {
 		e.preventDefault();
 		dispatch(comment({content: newComment, textId: textId, parent: undefined}))
 		setNewComment("");
-	}, [newComment])
+	}, [newComment, dispatch, textId]);
 
 	return (
 		<div className="comments-container">

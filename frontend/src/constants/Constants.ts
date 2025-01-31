@@ -3,4 +3,9 @@ export const C = {
 	CONFIRM_DELETE: "CONFIRM_DELETE",
 	DELETE_TEXT: "DELETE_TEXT",
 	PUBLISH_TEXT: "PUBLISH_TEXT",
+
+	// Search parameters
+	TAGS: "TAGS",
+	USERS: "USERS",
+	TITLES: "TITLES",
 }

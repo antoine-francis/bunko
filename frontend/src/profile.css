@@ -53,8 +53,9 @@
 }
 
 .text-item {
-    margin: 16px;
+    margin: 16px auto 16px 16px;
     display: flex;
+    min-width: 200px;
 }
 
 .text-item .synopsis {

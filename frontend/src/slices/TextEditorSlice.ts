@@ -4,8 +4,8 @@ import {createNewText} from "../features/text/api/single-text.ts";
 
 export const createText = createAsyncThunk<BunkoText, EditorContent>(
 	'textEditor_createText',
-	async ({content, synopsis, isDraft, title, genres} : EditorContent) => {
-		return await createNewText({content, synopsis, isDraft, title, genres});
+	async ({content, synopsis, isDraft, title, genres, series} : EditorContent) => {
+		return await createNewText({content, synopsis, isDraft, title, genres, series});
 	}
 )
 
@@ -27,8 +27,8 @@ const textEditorSlice = createSlice({
 		finishLoading: (state) => {
 			state.loading = false;
 		},
-		resetEditor: (state) => {
-			state.newHash = undefined;
+		resetEditor: () => {
+			return initialState;
 		},
 	},
 	extraReducers: builder => {
@@ -47,6 +47,13 @@ const textEditorSlice = createSlice({
 				state.newHash = undefined;
 				state.error = (action as any).error.message;
 			})
+			// .addMatcher(
+			// 	isAnyOf(
+			// 		createText.fulfilled
+			// 	), () => {
+			// 		return initialState;
+			// 	}
+			// )
 	},
 });
 

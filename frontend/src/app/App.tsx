@@ -10,9 +10,9 @@ function App() {
 	return (
 		<>
 			<IntlProvider locale="en">
-				<Provider store={store}>
-					<BunkoRouter/>
-				</Provider>
+					<Provider store={store}>
+						<BunkoRouter/>
+					</Provider>
 			</IntlProvider>
 		</>
 	)

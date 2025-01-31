@@ -93,9 +93,6 @@ export const Register = () => {
 				<div className="signup-form">
 					{error && <p style={{color: 'red'}}>
 						{error}
-						{/*<FormattedMessage id="auth.invalidFields"*/}
-						{/*				  defaultMessage="Invalid fields"*/}
-						{/*				  description="alert for invalid fields"/>*/}
 					</p>}
 					<form onSubmit={handleSubmit}>
 						<div id="name">

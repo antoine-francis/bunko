@@ -2,13 +2,13 @@ import {useEffect} from "react";
 
 import {paths} from "../../config/paths.ts";
 import {Link, useLocation} from "react-router-dom";
-import {Loading} from "../../components/Loading.tsx";
 import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {EmptyList} from "../../components/users-list/EmptyList.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
 import {fetchTags} from "../../slices/BrowseTagsSlice.ts";
 import {Genre} from "../../types/Genre.ts";
+import {LoadingContainer} from "../../components/LoadingContainer.tsx";
 
 const messages = defineMessages({
 	browseTags: {
@@ -30,7 +30,7 @@ export const BrowseTags = () => {
 	}, [dispatch]);
 
 	if (loading) {
-		return <Loading />;
+		return <LoadingContainer />;
 	} else if (error) {
 		return <ErrorHandler statusCode={error} redirectTo={location.pathname} />;
 	} else if (tags === undefined || !tags.length) {
@@ -40,12 +40,11 @@ export const BrowseTags = () => {
 			<div id="browse-by-tags-container">
 				<h2>{formatMessage(messages.browseTags)}</h2>
 				{tags.map((genre: Genre, index: number) => {
-					return (<div key={`${genre}-${index}`}>
-						<Link to={{pathname: `${paths.tag.getHref()}${genre.tag}`}}>
-							<p className="genre-tag">#{genre.tag} ({genre.texts !== undefined && genre.texts.length})</p>
+					return (
+						<Link className="genre-tag" key={`${genre}-${index}`} to={{pathname: `${paths.tag.getHref()}${genre.tag}`}}>
+							#{genre.tag} ({genre.texts !== undefined && genre.texts.length})
 						</Link>
-					</div>)
-				})}
+					)})}
 			</div>
 		);
 	}

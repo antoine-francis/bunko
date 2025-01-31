@@ -20,7 +20,7 @@ import {fetchText, updateText} from "../../../slices/TextSlice.ts";
 import {Series} from "../../../types/Series.ts";
 import {UserBadge, UserProfile} from "../../../types/UserProfile.ts";
 import {fetchProfile} from "../../../slices/ProfilesSlice.ts";
-import {Loading} from "../../../components/Loading.tsx";
+import {LoadingContainer} from "../../../components/LoadingContainer.tsx";
 
 const messages = defineMessages({
 	textPlaceholder: {
@@ -97,7 +97,7 @@ const messages = defineMessages({
 
 export const TextEditor = () => {
 	const {hash} = useParams();
-	const {newHash, loading} = useBunkoSelector(state => state.textEditor);
+	const {newHash, loading, saved} = useBunkoSelector(state => state.textEditor);
 	const {showAlert, alertType} = useBunkoSelector(state => state.modal);
 	const text = useBunkoSelector(state => hash ? state.texts[hash] : undefined);
 	const {formatMessage} = useIntl();
@@ -117,7 +117,7 @@ export const TextEditor = () => {
 	const [synopsis, setSynopsis] = useState<string>(text && text.synopsis ? text.synopsis : "");
 	const [seriesSynopsis, setSeriesSynopsis] = useState<string>(text && text.series && text.series.synopsis ? text.series.synopsis : "");
 	const [title, setTitle] = useState<string>(text ? text.title : "");
-	const [tags, setTags] = useState<string>(text && !text.loading ? text.genres.map(genre => {
+	const [tags, setTags] = useState<string>(text && !text.loading && text.genres !== undefined? text.genres.map(genre => {
 		return genre.tag
 	}).join(", ") : "");
 
@@ -148,11 +148,17 @@ export const TextEditor = () => {
 			setContent("");
 			setTitle("");
 			setTags("")
+			setSelectedSeries(undefined);
+			setSeriesSynopsis("");
 		}
-
 		// If there is a newHash it means the text was created and we redirect to the reading page
-		newHash && navigate(paths.singleText.getHref() + newHash);
-	}, [text, dispatch, hash, loading, newHash, navigate, currentUser, currentUserProfile]);
+		if (newHash && saved) {
+			// Copying the newHash to make sure it is not lost before the redirection
+			const newHashCopy = `${newHash}`
+			dispatch(resetEditor());
+			navigate(paths.singleText.getHref() + newHashCopy);
+		}
+	}, [text, dispatch, hash, loading, saved, newHash, navigate, currentUser, currentUserProfile]);
 
 	const toggleExtraFields = useCallback(() => {
 		setExtraFieldsToggled(!extraFieldsToggled);
@@ -178,10 +184,7 @@ export const TextEditor = () => {
 	const getSeriesInfo = useCallback(() => {
 		let series : Series | undefined = undefined;
 		if (partOfSeries) {
-			console.log("test2");
 			if (selectedSeries && selectedSeries > 0 && currentUserProfile) {
-				console.log("test3");
-				console.log(seriesSynopsis);
 				const tempSeries = currentUserProfile.series.find((series: Series) => {
 					return series.id === selectedSeries;
 				});
@@ -193,7 +196,6 @@ export const TextEditor = () => {
 					};
 				}
 			} else if (selectedSeries !== undefined && selectedSeries === 0) {
-				console.log("test1");
 				series = {
 					title: newSeriesTitle,
 					id: 0,
@@ -215,8 +217,8 @@ export const TextEditor = () => {
 			}
 		}
 		if (text) {
+			// update existing text
 			const series = getSeriesInfo();
-			console.log(series);
 			const updatedText : BunkoText = Object.assign({}, text, {
 				content,
 				title,
@@ -229,12 +231,14 @@ export const TextEditor = () => {
 			navigate(paths.singleText.getHref() + text.hash);
 			dispatch(resetEditor())
 		} else {
+			const series = getSeriesInfo();
 			const newText : EditorContent = {
 				content,
 				title,
 				genres,
 				isDraft,
 				synopsis,
+				series
 			}
 			dispatch(createText(newText));
 		}
@@ -254,10 +258,12 @@ export const TextEditor = () => {
 		const selectedSeries = currentUserProfile ? currentUserProfile.series.find((series: Series) => {
 			return series.id === selectedId;
 		}) : undefined;
-		if (selectedSeries !== undefined) {
-			setSeriesSynopsis(synopsis)
+		if (selectedSeries !== undefined && selectedSeries.synopsis) {
+			setSeriesSynopsis(selectedSeries.synopsis)
+		} else {
+			setSeriesSynopsis("");
 		}
-	}, [synopsis, currentUserProfile]);
+	}, [currentUserProfile]);
 
 	const confirmAction = useCallback(() => {
 		switch (alertType) {
@@ -272,7 +278,7 @@ export const TextEditor = () => {
 	}, [save, text, navigate, dispatch, alertType]);
 
 	if (hash && text && (text.loading || loading || !currentUserProfile)) {
-		return <Loading />;
+		return <LoadingContainer />;
 	} else if (hash && text && !text.loading && currentUserProfile && text.author.username !== currentUserProfile.username) {
 		return (<Navigate to={paths.singleText.getHref() + text.hash} />)
 	} else {
@@ -293,7 +299,6 @@ export const TextEditor = () => {
 					onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
 					className="text-editor seamless-input"
 					placeholder={formatMessage(messages.textPlaceholder)}/>
-				{/*<div id="extra-fields-popup" style={!extraFieldsToggled ? {display: "none"} : {display: "block"}}>*/}
 				<div id="extra-fields-popup"
 					 style={!extraFieldsToggled ? {height: 0} : {height: "300px", display: "block"}}>
 				<textarea
@@ -310,7 +315,7 @@ export const TextEditor = () => {
 								type="checkbox"
 								id="series-checkbox"
 								checked={partOfSeries}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								onChange={(e: ChangeEvent<HTMLInputElement>) => {
 									setPartOfSeries(e.target.checked);
 								}}
 							/>
@@ -335,14 +340,14 @@ export const TextEditor = () => {
 												  placeholder={formatMessage(messages.seriesTitlePlaceholder)}
 												  onChange={(e: ChangeEvent<HTMLInputElement>) => setNewSeriesTitle(e.target.value)}/>}
 					</div>
-					<textarea
+					{partOfSeries && selectedSeries !== undefined && <textarea
 						value={seriesSynopsis}
 						rows={3}
 						maxLength={255}
 						onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setSeriesSynopsis(e.target.value)}
 						id="series-synopsis-input"
 						className="seamless-input"
-						placeholder={formatMessage(messages.seriesSynopsisPlaceholder)}/>
+						placeholder={formatMessage(messages.seriesSynopsisPlaceholder)}/>}
 				</div>
 				<footer id="editor-footer" className="action-buttons text-editor-buttons">
 					<button id="cancel-changes"

@@ -1,6 +1,6 @@
 export const Error = () => {
 	return (
-		<div>
+		<div id="error-page">
 			Error
 		</div>
 	)

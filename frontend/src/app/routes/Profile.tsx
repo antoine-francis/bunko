@@ -1,5 +1,4 @@
 import {Link, NavigateFunction, useNavigate, useParams} from "react-router-dom";
-import {Loading} from "../../components/Loading.tsx";
 import {paths} from "../../config/paths.ts";
 import {fetchProfile, subscribe, unsubscribe} from "../../slices/ProfilesSlice.ts";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
@@ -11,6 +10,7 @@ import {useCallback, useEffect} from "react";
 import {TextDescription} from "../../types/Text.ts";
 import {BunkoDispatch} from "../../store.ts";
 import {TextsList} from "../../components/texts-list/TextsList.tsx";
+import {LoadingContainer} from "../../components/LoadingContainer.tsx";
 
 const messages = defineMessages({
 	textPlural: {
@@ -117,7 +117,7 @@ export const Profile = () => {
 					<div id="texts">
 						{isOwner && (
 							<div id="drafts">
-							<span className="drafts-count">{drafts.length > 1 ? formatMessage(messages.draftPlural, {nb: drafts.length}) :
+							<span className="text-count">{drafts.length > 1 ? formatMessage(messages.draftPlural, {nb: drafts.length}) :
 								formatMessage(messages.draftSing, {nb: drafts.length})}</span>
 								<div className="text-list-container">
 									<TextsList texts={drafts} showDescription={false}/>
@@ -139,7 +139,7 @@ export const Profile = () => {
 		return null;
 	} else {
 		if (profile.loading !== undefined && profile.loading) {
-			return <Loading/>;
+			return <LoadingContainer />;
 		} else if (profile.error) {
 			return <ErrorHandler statusCode={profile.error}/>;
 		} else {

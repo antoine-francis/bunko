@@ -9,3 +9,7 @@ export interface ModalState {
 	alertType: string | undefined;
 	showAlert: boolean;
 }
+
+export interface UiState {
+	showVerticalOptionsBar: boolean;
+}

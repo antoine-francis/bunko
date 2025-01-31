@@ -1,13 +1,13 @@
 import {FormattedDate} from "react-intl";
 import {Subscription} from "../../types/UserProfile.ts";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
-import {Loading} from "../Loading.tsx";
 import {EmptyList} from "./EmptyList.tsx";
 import {ErrorHandler} from "../ErrorHandler.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {paths} from "../../config/paths.ts";
 import {fetchProfile} from "../../slices/ProfilesSlice.ts";
 import {URL} from "../../constants/Url.ts";
+import {LoadingContainer} from "../LoadingContainer.tsx";
 
 interface UsersListProps {
 	subscriptionsKey: string
@@ -34,7 +34,7 @@ export const UsersList = ({subscriptionsKey} : UsersListProps) => {
 	if (profile === undefined) {
 		navigate(paths.notFound.getHref());
 	} else if (profile.loading) {
-		return <Loading/>;
+		return <LoadingContainer />;
 	} else if (profile.error) {
 		return <ErrorHandler statusCode={profile.error} redirectTo={location.pathname}/>;
 	} else if (subscriptions === undefined || (subscriptions).length === 0) {

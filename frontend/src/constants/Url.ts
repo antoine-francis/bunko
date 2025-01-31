@@ -1,11 +1,12 @@
 export const URL = {
 	SERVER: "http://localhost:8000",
 
-	NEW_TEXT: "new_text",
+	NEW_TEXT: "/new_text",
 	TEXT: "/text/",
 	TEXTS: "/texts",
 	TAG: "/tag/",
 	TAGS: "/tags",
+	SEARCH_TAGS: "/search_tags",
 	PROFILE: "/profile/",
 	SERIES: "/series_id/",
 	COLLECTIVE: "/collective/",

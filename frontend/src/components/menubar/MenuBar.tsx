@@ -1,40 +1,55 @@
 import {Link} from "react-router-dom";
 import {paths} from "../../config/paths.ts";
-import {useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
+import {useCallback} from "react";
+import {toggleVerticalBar} from "../../slices/UiStateSlice.ts";
+import {IconMenu2} from "@tabler/icons-react";
+import {Search} from "../search/Search.tsx";
 
 const messages = defineMessages({
 	browseTags: {
 		id: "menubar.browseTags",
 		description: "Menu bar button",
 		defaultMessage: "Browse tags",
-	}
+	},
 })
 
 export const MenuBar = () => {
 	const {formatMessage} = useIntl();
 	const {user} = useBunkoSelector((state) => state.currentUser);
+	const dispatch = useBunkoDispatch();
+
+	const toggleOtherBar = useCallback(() => {
+		dispatch(toggleVerticalBar());
+	}, [dispatch]);
+
 	if (user) {
 		return (
-			<div className="menu-bar">
-				<div className="home">
+			<>
+				<div className="menu-bar">
 					<Link to={paths.home.getHref()}>
-						poqopo.co
+						<div className="home">
+
+							poqopo.co
+						</div>
 					</Link>
+					<Search />
+					<Link to={{pathname: paths.newText.getHref()}}>
+						<div id="create-text" className="menu-bar-btn">
+							+
+						</div>
+					</Link>
+					<Link to={{pathname: paths.tags.getHref()}}>
+						<div id="browse-tags" className="menu-bar-btn">
+							{formatMessage(messages.browseTags)}
+						</div>
+					</Link>
+					<div id="vertical-bar-toggle" onClick={toggleOtherBar}>
+						<IconMenu2/>
+					</div>
 				</div>
-				<div className="browse-tags">
-					<Link to={{pathname: paths.tags.getHref()}}>{formatMessage(messages.browseTags)}</Link>
-				</div>
-				<div className="create-text">
-					<Link to={{pathname: paths.newText.getHref()}}>+</Link>
-				</div>
-				<div className="profile-button">
-					<Link to={{pathname: paths.profile.getHref() + user.username}}>{user.username}</Link>
-				</div>
-				<div className="logout-button">
-					<Link to={paths.auth.logout.getHref()}>Logout</Link>
-				</div>
-			</div>
+			</>
 		)
 	}
 }

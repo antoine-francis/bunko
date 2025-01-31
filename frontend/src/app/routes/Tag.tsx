@@ -1,12 +1,12 @@
 import {TextsList} from "../../components/texts-list/TextsList.tsx";
 import {useEffect} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {Loading} from "../../components/Loading.tsx";
 import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {paths} from "../../config/paths.ts";
 import {fetchTextsByTag} from "../../slices/TagSlice.ts";
 import {TagLoadingState} from "../../types/Genre.ts";
+import {LoadingContainer} from "../../components/LoadingContainer.tsx";
 
 export const Tag = () => {
 	const {tag: tagParam} = useParams();
@@ -29,7 +29,7 @@ export const Tag = () => {
 	if (!tag) {
 		return null;
 	} else if (tag.loading) {
-		return <Loading />;
+		return <LoadingContainer />;
 	} else if (tag.error) {
 		return <ErrorHandler statusCode={tag.error} redirectTo={location.pathname} />;
 	} else {

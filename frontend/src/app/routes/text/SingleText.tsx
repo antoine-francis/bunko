@@ -1,6 +1,5 @@
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {useCallback, useEffect} from "react";
-import {Loading} from "../../../components/Loading.tsx";
 import {NotFound} from "../../../components/NotFound.tsx";
 import {paths} from "../../../config/paths.ts";
 import {Genre} from "../../../types/Genre.ts";
@@ -27,6 +26,8 @@ import {C} from "../../../constants/Constants.ts";
 import {confirmDelete, confirmPublication} from "../../../slices/ModalSlice.ts";
 import {BunkoText} from "../../../types/Text.ts";
 import {toRoman} from "../../../utils/roman-numerals.ts";
+import {IconShare3} from "@tabler/icons-react";
+import {LoadingContainer} from "../../../components/LoadingContainer.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -136,6 +137,12 @@ export const SingleText = () => {
 		}
 	}, [text, navigate]);
 
+	const handleShareText = useCallback(() => {
+		if (text !== undefined) {
+			console.log(window.location.toString());
+		}
+	}, [text]);
+
 
 
 	const showDeletePrompt = useCallback(() => {
@@ -169,7 +176,7 @@ export const SingleText = () => {
 		return <NotFound/>;
 	}
 	if (text.loading) {
-		return <Loading/>;
+		return <LoadingContainer/>;
 	} else if (text.error) {
 		return <ErrorHandler statusCode={text.error} redirectTo={location.pathname} />;
 	} else {
@@ -199,7 +206,7 @@ export const SingleText = () => {
 								<BookmarkButton onClick={handleBookmark} bookmarked={isBookmarked} text={text}/>
 							</div>
 							{isOwner ? <>
-									<div className="options" onClick={toggleDropdown}>···</div>
+									<div className="options btn" onClick={toggleDropdown}>···</div>
 									<div id="dropdown-menu">
 										<ul>
 											<li onClick={handleEditText}>
@@ -215,20 +222,37 @@ export const SingleText = () => {
 										</ul>
 									</div>
 								</> :
-								<div className="options" onClick={toggleDropdown}>↩</div>
+								<>
+									<div className="options" onClick={toggleDropdown}><IconShare3/></div>
+									<div id="dropdown-menu">
+										<ul>
+											<li onClick={handleShareText}>
+												<FormattedMessage id="text.shareText"
+																  description="dropdown button"
+																  defaultMessage="Share text"/>
+											</li>
+											<li className="destructive-action" onClick={showDeletePrompt}>
+												<FormattedMessage
+													id="text.deleteText"
+													description="dropdown button"
+													defaultMessage="Delete text"/>
+											</li>
+										</ul>
+									</div>
+								</>
 							}
 						</div>
 						<CommentSection textId={text.id} comments={text.comments}/>
 					</>
-				) : isOwner ? (
+					) : isOwner ? (
 					<div id="draft-actions" className="action-buttons">
-						<button id="cancel-changes"
-								onClick={showDeletePrompt}>{formatMessage(messages.deleteDraft)}
-						</button>
-						<button id="edit-draft" onClick={handleEditText}>
-							{formatMessage(messages.editDraft)}
-						</button>
-						<button id="publish" onClick={showPublishPrompt}>
+					<button id="cancel-changes"
+					onClick={showDeletePrompt}>{formatMessage(messages.deleteDraft)}
+			</button>
+		<button id="edit-draft" onClick={handleEditText}>
+			{formatMessage(messages.editDraft)}
+		</button>
+		<button id="publish" onClick={showPublishPrompt}>
 							{formatMessage(messages.publishDraft)}
 						</button>
 					</div>

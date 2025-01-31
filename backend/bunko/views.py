@@ -123,10 +123,26 @@ def create_text(request):
 			'title': data.get('title'),
 			'genres': data.get('genres', []),
 			'is_draft': data.get('is_draft'),
-			'series': data.get('series'),
 			'series_entry': data.get('series_entry'),
 			'synopsis': data.get('synopsis')
 		}
+		print(data.get('series'))
+		if data.get('series'):
+			series = data.get('series')
+			series_id = series.get('id')
+			series_title = series.get('title')
+			series_synopsis = series.get('synopsis')
+			if series_id == 0:
+				logger.info(f"Creating new series '{series_title}' for user {request.user.id}")
+				new_series = Series.objects.create(title=series_title, synopsis=series_synopsis)
+				new_text['series'] = new_series.id
+			else:
+				logger.info(f"Assigning '{data.get('title')}' to series '{series_title}' for user {request.user.id}")
+				Series.objects.filter(pk=series_id).update(synopsis=series_synopsis)
+				new_text['series'] = series_id
+		else:
+			new_text['series'] = None
+			new_text['series_entry'] = None
 		serializer = NewTextSerializer(data=new_text, context={'request': request})
 		if serializer.is_valid():
 			saved_text = serializer.save()
@@ -147,10 +163,12 @@ def get_texts_by_tag(request, tag):
 	if request.method == 'GET':
 		logger.info(f"START GET get_texts_by_tag() for user {request.user.id}")
 		data = Text.objects.filter(genres__tag=tag)
+		print(data)
 		serializer = TextDescriptionSerializer(data, context={'request': request}, many=True)
-		if serializer.is_valid():
+		if serializer:
 			response = Response(data=serializer.data, status=status.HTTP_200_OK)
 		else:
+			logger.error(serializer.errors)
 			response = Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		logger.info(f"END GET get_texts_by_tag() for user {request.user.id}")
 		return response
@@ -161,6 +179,18 @@ def get_tags(request):
 	if request.method == 'GET':
 		logger.info(f"START GET get_tags() for user {request.user.id}")
 		data = Genre.objects.filter(text_genres__isnull=False, text_genres__is_draft=False).distinct()
+		print(data)
+		serializer = TextsByTagSerializer(data, context={'request': request}, many=True)
+		logger.info(f"END GET get_tags() for user {request.user.id}")
+		return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def search_tags(request):
+	if request.method == 'GET':
+		logger.info(f"START GET search_tags() for user {request.user.id}")
+		query = request.GET.get('tag_query')
+		data = Genre.objects.filter(tag__contains=query, text_genres__isnull=False, text_genres__is_draft=False).distinct()
 		serializer = TextsByTagSerializer(data, context={'request': request}, many=True)
 		logger.info(f"END GET get_tags() for user {request.user.id}")
 		return Response(data=serializer.data, status=status.HTTP_200_OK)

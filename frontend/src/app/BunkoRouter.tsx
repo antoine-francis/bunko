@@ -4,11 +4,23 @@ import { paths } from "../config/paths";
 import {MenuBar} from "../components/menubar/MenuBar.tsx";
 import React from "react";
 import {ProtectedRoute} from "../components/ProtectedRoute.tsx";
+import {VerticalOptionsBar} from "../components/menubar/VerticalOptionsBar.tsx";
 
 const AppLayout: React.FC = () => {
 	return (<>
 		<ProtectedRoute>
 			<MenuBar />
+			<div id="main-container">
+				<Outlet />
+				<VerticalOptionsBar/>
+			</div>
+		</ProtectedRoute>
+	</>);
+}
+
+const NoMenuBarAppLayout: React.FC = () => {
+	return (<>
+		<ProtectedRoute>
 			<Outlet />
 		</ProtectedRoute>
 	</>);
@@ -63,20 +75,6 @@ const bunkoRouter = createBrowserRouter([
 				lazy: async () => {
 					const { Profile } = await import('./routes/Profile');
 					return { Component: Profile };
-				},
-			},
-			{
-				path: paths.newText.path,
-				lazy: async () => {
-					const { TextEditor } = await import('./routes/text/TextEditor.tsx');
-					return { Component: TextEditor };
-				},
-			},
-			{
-				path: paths.editText.path,
-				lazy: async () => {
-					const { TextEditor } = await import('./routes/text/TextEditor.tsx');
-					return { Component: TextEditor };
 				},
 			},
 			{
@@ -144,6 +142,25 @@ const bunkoRouter = createBrowserRouter([
 			},
 		]
 	},
+	{
+		element: <NoMenuBarAppLayout/>,
+		children: [
+			{
+				path: paths.newText.path,
+				lazy: async () => {
+					const { TextEditor } = await import('./routes/text/TextEditor.tsx');
+					return { Component: TextEditor };
+				},
+			},
+			{
+				path: paths.editText.path,
+				lazy: async () => {
+					const { TextEditor } = await import('./routes/text/TextEditor.tsx');
+					return { Component: TextEditor };
+				},
+			},
+		]
+	}
 ])
 
 export const BunkoRouter = () => {

@@ -6,7 +6,6 @@ export const attemptLogin = async (username: string, password : string) => {
 		method: 'POST',
 		headers: {
 			"Content-Type": "application/json",
-			"X-CSRFToken": getCookie("csrftoken"),
 			"Authorization": "Basic " + btoa(username + ":" + password)
 		},
 		credentials: 'include',

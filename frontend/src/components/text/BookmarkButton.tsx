@@ -1,4 +1,8 @@
 import {BunkoText} from "../../types/Text.ts";
+import {
+	IconBookmark,
+	IconBookmarkFilled,
+} from "@tabler/icons-react";
 
 interface BookmarkButtonProps {
 	onClick: () => void;
@@ -10,9 +14,9 @@ export function BookmarkButton({ onClick, bookmarked, text } : BookmarkButtonPro
 	return (
 		<span className="bookmark reactions">
 			<span className="bookmark-btn btn" onClick={onClick}>
-				{bookmarked ? "★ " : "☆ "}
+				{bookmarked ? <IconBookmarkFilled/> : <IconBookmark />}
 			</span>
-			{text.bookmarkedBy.length}
+			<span>{text.bookmarkedBy.length}</span>
 		</span>
 		)
 }

@@ -14,6 +14,16 @@ export interface BrowseTagsState {
 	tags: Genre[];
 	loading: boolean;
 	error: HttpStatus | undefined;
+	tagSearch: {
+		loading: boolean;
+		error: HttpStatus | undefined;
+		searchBarText: string;
+		searchResults: GenreSearchResults;
+	}
+}
+
+export interface GenreSearchResults {
+	[key: string]: Genre[];
 }
 
 export interface TagLoadingState {

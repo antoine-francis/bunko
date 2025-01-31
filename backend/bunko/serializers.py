@@ -171,8 +171,6 @@ class NewTextSerializer(serializers.ModelSerializer):
 class TextEditSerializer(serializers.ModelSerializer):
 	author = AuthorSerializer(read_only=True)
 	series = serializers.PrimaryKeyRelatedField(queryset=Series.objects.all(), allow_null=True)
-	# series = serializers.SerializerMethodField()
-	# series = SeriesSerializer(allow_null=True, read_only=True)
 	genres = GenreTagSerializer(many=True, allow_null=True)
 
 	class Meta:

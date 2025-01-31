@@ -1,13 +1,13 @@
 import {TextsList} from "../../components/texts-list/TextsList.tsx";
 import React, {useEffect} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {Loading} from "../../components/Loading.tsx";
 import {ErrorHandler} from "../../components/ErrorHandler.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {paths} from "../../config/paths.ts";
 import {fetchSeries} from "../../slices/SeriesSlice.ts";
 import {BunkoText, TextDescription} from "../../types/Text.ts";
 import {convertTextToDesc} from "../../features/text/text-functions.ts";
+import {LoadingContainer} from "../../components/LoadingContainer.tsx";
 
 export const SeriesDescription = () => {
 	const {id} = useParams();
@@ -49,7 +49,7 @@ export const SeriesDescription = () => {
 	if (!series) {
 		return null;
 	} else if (series.loading) {
-		return <Loading />;
+		return <LoadingContainer />;
 	} else if (series.error) {
 		return <ErrorHandler statusCode={series.error} redirectTo={location.pathname} />;
 	} else if (series.entries !== undefined) {

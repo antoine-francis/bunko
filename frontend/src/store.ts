@@ -10,9 +10,11 @@ import tagsReducer from "./slices/TagSlice.ts";
 import browseTagsReducer from "./slices/BrowseTagsSlice.ts";
 import collectivesReducer from "./slices/CollectivesSlice.ts"
 import modalReducer from "./slices/ModalSlice.ts"
+import uiStateReducer from "./slices/UiStateSlice.ts"
 
 export const store = configureStore({
 	reducer: {
+		uiState: uiStateReducer,
 		dashboard: textListReducer,
 		userProfiles: profilesReducer,
 		currentUser: userReducer,
