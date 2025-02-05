@@ -1,16 +1,23 @@
 from django.contrib.auth.models import User
-from django.core.files.storage import default_storage
 from django.utils import timezone
 from rest_framework import serializers
 
+from users.models import Profile
 from .models import Text, Comment, Like, Genre, Bookmark, Series, Favorite
 
 
 class AuthorSerializer(serializers.ModelSerializer):
+	picture = serializers.SerializerMethodField()
 	class Meta:
 		model = User
-		fields = ['first_name', 'last_name', 'username']
+		fields = ['first_name', 'last_name', 'username', 'picture']
 
+	def get_picture(self, obj):
+		try:
+			profile = Profile.objects.get(user=obj)
+			return profile.picture.url  # Assuming 'picture' is an ImageField or FileField
+		except Profile.DoesNotExist:
+			return None
 
 class ReplySerializer(serializers.ModelSerializer):
 	author = AuthorSerializer()

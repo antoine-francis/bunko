@@ -126,7 +126,6 @@ def create_text(request):
 			'series_entry': data.get('series_entry'),
 			'synopsis': data.get('synopsis')
 		}
-		print(data.get('series'))
 		if data.get('series'):
 			series = data.get('series')
 			series_id = series.get('id')
@@ -163,7 +162,6 @@ def get_texts_by_tag(request, tag):
 	if request.method == 'GET':
 		logger.info(f"START GET get_texts_by_tag() for user {request.user.id}")
 		data = Text.objects.filter(genres__tag=tag)
-		print(data)
 		serializer = TextDescriptionSerializer(data, context={'request': request}, many=True)
 		if serializer:
 			response = Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -179,7 +177,6 @@ def get_tags(request):
 	if request.method == 'GET':
 		logger.info(f"START GET get_tags() for user {request.user.id}")
 		data = Genre.objects.filter(text_genres__isnull=False, text_genres__is_draft=False).distinct()
-		print(data)
 		serializer = TextsByTagSerializer(data, context={'request': request}, many=True)
 		logger.info(f"END GET get_tags() for user {request.user.id}")
 		return Response(data=serializer.data, status=status.HTTP_200_OK)

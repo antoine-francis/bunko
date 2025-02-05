@@ -2,7 +2,8 @@ import {Link} from "react-router-dom";
 import {paths} from "../../config/paths.ts";
 import {useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {FormattedMessage} from "react-intl";
-import {IconLogout, IconSettings, IconUserCircle} from "@tabler/icons-react";
+import {IconLogout, IconSettings} from "@tabler/icons-react";
+import {URL} from "../../constants/Url.ts";
 
 export const VerticalOptionsBar = () => {
 	const {showVerticalOptionsBar} = useBunkoSelector((state) => state.uiState)
@@ -13,7 +14,7 @@ export const VerticalOptionsBar = () => {
 			<div id="vertical-options-bar" style={showVerticalOptionsBar ? {display: "none"} : {display: "block"}}>
 				<ul>
 					<li>
-						<IconUserCircle/>
+						<img className="mini-profile-pic" src={`${URL.SERVER}${user.picture}`} alt={user.username}/>
 						<Link to={{pathname: paths.profile.getHref() + user.username}}>
 							{user.username}
 						</Link>

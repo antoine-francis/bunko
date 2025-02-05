@@ -12,7 +12,7 @@ export const fetchTexts = createAsyncThunk(
 const initialState: TextListState = {
 	texts: [] as BunkoText[],
 	error: undefined,
-	loaded: false,
+	loading: true,
 };
 
 const textListSlice = createSlice({
@@ -22,15 +22,15 @@ const textListSlice = createSlice({
 	extraReducers: builder => {
 		builder
 			.addCase(fetchTexts.pending, (state) => {
-				state.loaded = false;
+				state.loading = true;
 			})
 			.addCase(fetchTexts.fulfilled, (state, action : PayloadAction<BunkoText[]>) => {
 				state.texts = action.payload;
-				state.loaded = true;
+				state.loading = false;
 			})
 			.addCase(fetchTexts.rejected, (state, action) => {
 				state.texts = [];
-				state.loaded = true;
+				state.loading = false;
 				state.error = (action as any).error.message;
 			})
 	}

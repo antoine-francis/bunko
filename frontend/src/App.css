@@ -132,6 +132,13 @@
 
 #vertical-options-bar ul li img {
   height: 32px;
+  width: 32px;
+  border-radius: 50%;
+}
+
+#vertical-options-bar ul li svg {
+  height: 32px;
+  width: 32px;
   border-radius: 50%;
 }
 
@@ -310,8 +317,14 @@ input:not(.seamless-input):focus {
   margin: 32px auto 0;
 }
 
+#dashboard .dashboard-item {
+  display: flex;
+
+}
+
 #dashboard .text-preview {
   padding-bottom: 12px;
+  margin-left: 24px;
 }
 
 #dashboard p {
