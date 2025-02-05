@@ -1,4 +1,5 @@
 import base64
+import logging
 
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -12,6 +13,8 @@ from django.contrib.auth.models import User
 from .models import Profile, Subscription, Collective
 from .serializers import ProfileSerializer, SubscriptionFollowersSerializer, SubscriptionFollowingSerializer, \
 	CollectiveDetailedSerializer, UserSerializer
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -49,8 +52,6 @@ def get_user_data(request):
 	data = User.objects.filter(id=request.user.id).first()
 	if data:
 		serializer = UserSerializer(data, context={'request': request})
-		# TODO : Use the profile model instead and add settings/preferences to it
-		# serializer = ProfileSettingsSerializer(data, context={'request': request})
 		return Response(serializer.data, status=status.HTTP_200_OK)
 	else:
 		return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -82,6 +83,43 @@ def get_profile(request, username):
 		return Response(serializer.data)
 
 
+@api_view(['PATCH'])
+def update_profile(request):
+	logger.info(f"START update_profile() for user {request.user.id}")
+
+	try:
+		user = User.objects.get(id=request.user.id)
+		serializer = UserSerializer(instance=user, data=request.data, context={'request': request})
+		if serializer.is_valid():
+			serializer.save()
+			if request.data.get('picture') != 'null':
+				profile = Profile.objects.get(id=user.id)
+				picture_serializer = ProfileSerializer(profile, data=request.data, partial=True)
+				if picture_serializer.is_valid():
+					picture_serializer.save()
+				else:
+					logger.info(f"END update_profile() for user {request.user.id}")
+					return Response({"error": picture_serializer.errors},
+										status=status.HTTP_400_BAD_REQUEST)
+			response_data = serializer.data
+			response = Response(response_data)
+		else:
+			errors = serializer.errors
+			fields = []
+			if 'username' in errors:
+				fields.append('username')
+			if 'picture' in errors:
+				fields.append('picture')
+				logger.error(errors)
+				response = Response({"error": errors, "fields": fields}, status=status.HTTP_409_CONFLICT)
+	except IntegrityError as e:
+		message = f"Error while updating user {request.user.id} : {str(e)}"
+		logger.info(message)
+		response = Response({"error": message}, status=status.HTTP_417_EXPECTATION_FAILED)
+	logger.info(f"END update_profile() for user {request.user.id}")
+	return response
+
+
 @api_view(['GET'])
 def get_followers(request, username):
 	if request.method == 'GET':
@@ -90,7 +128,8 @@ def get_followers(request, username):
 		except User.DoesNotExist:
 			return Response({"error": "User not found with username: " + username}, status=status.HTTP_404_NOT_FOUND)
 		except User.MultipleObjectsReturned:
-			return Response({"error": "Multiple users found with the following username: " + username}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"error": "Multiple users found with the following username: " + username},
+							status=status.HTTP_400_BAD_REQUEST)
 
 		data = Subscription.objects.filter(following=user)
 
@@ -106,7 +145,8 @@ def get_following(request, username):
 		except User.DoesNotExist:
 			return Response({"error": "User not found with username: " + username}, status=status.HTTP_404_NOT_FOUND)
 		except User.MultipleObjectsReturned:
-			return Response({"error": "Multiple users found with the following username: " + username}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"error": "Multiple users found with the following username: " + username},
+							status=status.HTTP_400_BAD_REQUEST)
 
 		data = Subscription.objects.filter(follower=user)
 
@@ -120,7 +160,8 @@ def subscribe(request, username):
 		user = User.objects.filter(username=username).first()
 		subscription = Subscription.objects.filter(follower=request.user, following=user)
 		if subscription:
-			return Response({"error": "A subscription with those users already exists"}, status=status.HTTP_417_EXPECTATION_FAILED)
+			return Response({"error": "A subscription with those users already exists"},
+							status=status.HTTP_417_EXPECTATION_FAILED)
 		else:
 			new_subscription = Subscription.objects.create(follower=request.user, following=user)
 			return Response(status=status.HTTP_200_OK, data=SubscriptionFollowersSerializer(new_subscription).data)
@@ -134,7 +175,8 @@ def unsubscribe(request, username):
 		user = User.objects.filter(username=username).first()
 		subscription = Subscription.objects.get(follower=request.user, following=user)
 		if not subscription:
-			return Response({"error": "User " + request.user + "doesn't follow " + user}, status=status.HTTP_404_NOT_FOUND)
+			return Response({"error": "User " + request.user + "doesn't follow " + user},
+							status=status.HTTP_404_NOT_FOUND)
 		else:
 			subscription.delete()
 			print(request.user.username)
@@ -151,7 +193,8 @@ def get_collective(request, pk):
 		except Collective.DoesNotExist:
 			return Response({"error": "Collective not found with id: " + id}, status=status.HTTP_404_NOT_FOUND)
 		except Collective.MultipleObjectsReturned:
-			return Response({"error": "Multiple collectives found with the following id: " + id}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"error": "Multiple collectives found with the following id: " + id},
+							status=status.HTTP_400_BAD_REQUEST)
 
 		serializer = CollectiveDetailedSerializer(collective)
 		return Response(serializer.data)

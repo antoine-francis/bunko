@@ -11,6 +11,7 @@ import {TextDescription} from "../../types/Text.ts";
 import {BunkoDispatch} from "../../store.ts";
 import {TextsList} from "../../components/texts-list/TextsList.tsx";
 import {LoadingContainer} from "../../components/LoadingContainer.tsx";
+import {IconEdit} from "@tabler/icons-react";
 
 const messages = defineMessages({
 	textPlural: {
@@ -134,7 +135,6 @@ export const Profile = () => {
 			)
 		}
 	}, [isOwner, profile, formatMessage])
-
 	if (!profile) {
 		return null;
 	} else {
@@ -148,7 +148,14 @@ export const Profile = () => {
 					<>
 						<div className="user-info">
 							<img className="profile-pic" src={profile.picture} alt=""/>
-							<div className="full-name">{profile.firstName} {profile.lastName}</div>
+							<div className="name-edit">
+								<div className="full-name">{profile.firstName} {profile.lastName}</div>
+								{isOwner && <div id="profile-edit">
+									<Link to={paths.editProfile.getHref()}>
+										<IconEdit/>
+									</Link>
+								</div>}
+							</div>
 							<div className="username">@{profile.username}</div>
 							<div className="join-date">Member since <FormattedDate value={profile.signupDate}/></div>
 							{!isOwner && <div className="follow-button">

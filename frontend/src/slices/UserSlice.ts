@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {SignupForm, UserBadge, UserPwdPair, UserState} from "../types/UserProfile.ts";
 import {attemptLogin, attemptLogout, attemptSignup, checkSession} from "../features/auth/api/auth.ts";
+import {updateProfile} from "./ProfilesSlice.ts";
 
 
 export const fetchUser = createAsyncThunk<UserBadge | undefined>(
@@ -48,7 +49,7 @@ const userSlice = createSlice({
 				state.error = undefined;
 			})
 			.addCase(fetchUser.fulfilled, (state, action : PayloadAction<UserBadge | undefined>) => {
-				state.loading = true;
+				state.loading = false;
 				state.error = undefined;
 				state.user = action.payload
 			})
@@ -99,6 +100,17 @@ const userSlice = createSlice({
 				state.loading = false;
 				state.error = (action as any).error.message;
 				state.user = undefined;
+			})
+			.addCase(updateProfile.fulfilled, (state, action : PayloadAction<UserBadge | undefined>) => {
+				if (action.payload !== undefined) {
+					state.user = {
+						firstName: action.payload.firstName,
+						lastName: action.payload.lastName,
+						username: action.payload.username,
+						email: action.payload.email,
+						picture: action.payload.picture
+					}
+				}
 			})
 	}
 });

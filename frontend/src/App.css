@@ -160,7 +160,7 @@ h2 {
   text-align: center;
 }
 
-#dashboard, #user-profile, #collective-container, #series-info-container, #bookmarks-container, #text-container, #browse-by-tags-container, #followers-container {
+#dashboard, #user-profile, #genre-container, #collective-container, #series-info-container, #bookmarks-container, #text-container, #browse-by-tags-container, #followers-container {
   padding: 16px;
   width: 80%;
   margin: 0 auto;
@@ -193,12 +193,11 @@ h2 {
   height: calc(100vh - 75px);
 }
 
-#loading-container, #error-page {
+#loading-container, #error-page, #not-found-page, .container {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: calc(100vh - 64px);
   justify-content: center;
   flex: 1 1 auto;
   padding: 16px;
@@ -218,7 +217,6 @@ h2 {
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: calc(100vh - 64px);
   flex-wrap: wrap;
   width: 90%;
   max-width: 300px;
@@ -227,16 +225,17 @@ h2 {
   align-content: center;
 }
 
-.signup-container {
+.signup-container, .login-container {
   display: flex;
   flex-wrap: nowrap;
+  height: 50vh;
+  margin-top: 180px;
 }
 
 .about-us {
   max-width: 400px;
   flex: 1 1 auto;
-  margin: auto;
-  margin-right: 32px;
+  margin: 48px 32px auto auto;
   height: 350px;
   font-family: "Times New Roman", Times, serif;
 }
@@ -286,7 +285,7 @@ form div input {
   border: 1px solid #888;
 }
 
-form div input:focus {
+input:not(.seamless-input):focus {
   box-sizing: content-box;
   outline: 1px solid #c29b00;
   border: 1px solid #c29b00;

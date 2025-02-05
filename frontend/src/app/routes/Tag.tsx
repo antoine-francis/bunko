@@ -34,12 +34,12 @@ export const Tag = () => {
 		return <ErrorHandler statusCode={tag.error} redirectTo={location.pathname} />;
 	} else {
 		return (
-			<>
+			<div id="genre-container">
 				<div className="tag-name">#{tagParam}</div>
 				<div id="tag-info">
 					<TextsList texts={tag.texts} />
 				</div>
-			</>
+			</div>
 		);
 	}
 }

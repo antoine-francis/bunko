@@ -16,5 +16,5 @@ export const useIsFollowedByUser = (profile : UserProfile | undefined, reqUser :
 		const user = reqUser ? reqUser : state.currentUser.user?.username;
 		return user ? user : undefined;
 	});
-	return profile && !profile.loading && currentUser ? profile.followers.filter((sub) => {return sub.user.username === currentUser}).length > 0 : false;
+	return profile && !profile.loading && currentUser && profile.followers ? profile.followers.filter((sub) => {return sub.user.username === currentUser}).length > 0 : false;
 }

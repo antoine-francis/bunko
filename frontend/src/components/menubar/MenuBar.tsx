@@ -4,7 +4,7 @@ import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
 import {useCallback} from "react";
 import {toggleVerticalBar} from "../../slices/UiStateSlice.ts";
-import {IconMenu2} from "@tabler/icons-react";
+import {IconMenu2, IconPlus} from "@tabler/icons-react";
 import {Search} from "../search/Search.tsx";
 
 const messages = defineMessages({
@@ -37,7 +37,7 @@ export const MenuBar = () => {
 					<Search />
 					<Link to={{pathname: paths.newText.getHref()}}>
 						<div id="create-text" className="menu-bar-btn">
-							+
+							<IconPlus/>
 						</div>
 					</Link>
 					<Link to={{pathname: paths.tags.getHref()}}>

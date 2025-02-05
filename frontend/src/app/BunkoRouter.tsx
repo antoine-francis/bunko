@@ -78,6 +78,13 @@ const bunkoRouter = createBrowserRouter([
 				},
 			},
 			{
+				path: paths.editProfile.path,
+				lazy: async () => {
+					const { ProfileEdit } = await import('./routes/ProfileEdit');
+					return { Component: ProfileEdit };
+				},
+			},
+			{
 				path: paths.followers.path,
 				lazy: async () => {
 					const { Followers } = await import('./routes/Followers');

@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {ProfilesState, Subscription, UserProfile} from "../types/UserProfile.ts";
-import {loadUserProfile} from "../features/profile/api/load-user-profile.ts";
+import {ProfilesState, Subscription, UserBadge, UserProfile} from "../types/UserProfile.ts";
+import {loadUserProfile, updateUserProfile} from "../features/profile/api/load-user-profile.ts";
 import {LoadingState} from "../types/StateManagement.ts";
 import {subscribeToProfile, unsubscribeToProfile} from "../features/followers/api/followers.ts";
 
@@ -8,6 +8,13 @@ export const fetchProfile = createAsyncThunk<UserProfile | undefined, string>(
 	'profile_fetchProfile',
 	async (username: string) => {
 		return await loadUserProfile(username);
+	}
+)
+
+export const updateProfile = createAsyncThunk<UserBadge | undefined, FormData>(
+	'profile_updateProfile',
+	async (formData: FormData) => {
+		return await updateUserProfile(formData);
 	}
 )
 
@@ -47,6 +54,52 @@ const profilesSlice = createSlice({
 				const username = (action as any).meta.arg;
 				state[username].loading = false;
 				state[username].error = (action as any).error.message;
+			})
+			.addCase(updateProfile.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
+				const username = (action as any).meta.arg.get("formerUsername");
+				if (state[username] !== undefined) {
+					state[username].loading = true;
+					state[username].error = undefined;
+				} else {
+					(state[username] as LoadingState) = {loading: true, error: undefined};
+				}
+			})
+			.addCase(updateProfile.fulfilled, (state, action : PayloadAction<UserBadge | undefined>) => {
+				if (action !== undefined) {
+					const username = (action as any).meta.arg.get("username");
+					const formerUsername = (action as any).meta.arg.get("formerUsername");
+					if (action.payload !== undefined) {
+						if (action.payload.username !== formerUsername) {
+							state[action.payload.username] = Object.assign({}, state[formerUsername], {
+								loading: false,
+								error: undefined,
+								firstName: action.payload.firstName,
+								lastName: action.payload.lastName,
+								picture: action.payload.picture
+							});
+							delete state[formerUsername]
+						} else {
+							state[username] = {
+								...state[username],
+								loading: false,
+								error: undefined,
+								firstName: action.payload.firstName,
+								lastName: action.payload.lastName,
+								picture: action.payload.picture
+							};
+						}
+					}
+				}
+			})
+			.addCase(updateProfile.rejected, (state, action) => {
+				const username = (action as any).meta.arg.get("formerUsername");
+				if (state[username] !== undefined) {
+					state[username].loading = false;
+					state[username].error = (action as any).error.message;
+				} else {
+					(state[username] as LoadingState) = {loading: false, error: (action as any).error.message};
+				}
+
 			})
 			.addCase(subscribe.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
 				const username = (action as any).meta.arg;
