@@ -26,12 +26,16 @@ export const Dashboard = () => {
 	const dispatch = useBunkoDispatch();
 	const {formatMessage, locale} = useIntl();
 	const {texts, error, loaded} = useBunkoSelector(state => state.dashboard)
+	const {user} = useBunkoSelector((state) => state.currentUser);
+
 
 	useEffect(() => {
-		document.title = "Home - Bunko";
-		// Dashboard content should always be refreshed on reload
-		dispatch(fetchTexts());
-	}, [dispatch]);
+		if (user !== undefined) {
+			document.title = "Home - Bunko";
+			// Dashboard content should always be refreshed on reload
+			dispatch(fetchTexts());
+		}
+	}, [dispatch, user]);
 
 	const moreThanAWeek = useCallback((text : BunkoText) => {
 		return (new Date().getTime() - new Date(text.creationDate).getTime()) / 1000 > 604800;
