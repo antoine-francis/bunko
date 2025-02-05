@@ -82,7 +82,8 @@
 
 .mini-profile-pic {
     object-fit: cover;
-    max-height: 48px;
+    height: 32px;
+    width: 32px;
     border-radius: 50%;
 }
 

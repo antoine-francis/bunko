@@ -25,7 +25,7 @@ const messages = defineMessages({
 })
 
 export const Login = () => {
-	const {user, error} = useBunkoSelector(state => state.currentUser);
+	const {user, loading, error} = useBunkoSelector(state => state.currentUser);
 	const [username, setUsername] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [buttonLoading, setButtonLoading] = useState(false);
@@ -36,7 +36,7 @@ export const Login = () => {
 
 	useEffect(() => {
 		const redirection = params.get("redirectTo");
-		if (user) {
+		if (user && !loading) {
 			if (redirection) {
 				navigate(redirection);
 			}

@@ -26,15 +26,16 @@ export const Dashboard = () => {
 	const location = useLocation();
 	const dispatch = useBunkoDispatch();
 	const {formatMessage, locale} = useIntl();
+	const {loading: userLoading, error: userError} = useBunkoSelector(state => state.currentUser);
 	const {texts, error, loading} = useBunkoSelector(state => state.dashboard)
 
 	useEffect(() => {
-		if (loading) {
+		if (loading && !userLoading && !userError) {
 			document.title = "Home - Bunko";
 			// Dashboard content should always be refreshed on reload
 			dispatch(fetchTexts());
 		}
-	}, [dispatch, loading]);
+	}, [dispatch, !userLoading, !userError, loading]);
 
 	const moreThanAWeek = useCallback((text : BunkoText) => {
 		return (new Date().getTime() - new Date(text.creationDate).getTime()) / 1000 > 604800;
@@ -54,9 +55,9 @@ export const Dashboard = () => {
 						<FormattedDate value={text.publicationDate} year={undefined}/> :
 						<TimeAgo datetime={text.creationDate} locale={locale}/>;
 					return (
-						<div className="dashboard-item">
+						<div className="dashboard-item" key={`${text}-${index}`}>
 							<img className="mini-profile-pic" src={URL.SERVER+text.author.picture} alt={text.author.username}/>
-							<div className="text-preview" key={`${text}-${index}`}>
+							<div className="text-preview">
 								<Link to={{pathname: `${paths.singleText.getHref()}${text.hash}`}}>
 									<div>{text.title}</div>
 								</Link>
