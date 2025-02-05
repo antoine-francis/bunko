@@ -52,7 +52,7 @@ export interface MinimalTextDesc {
 export interface TextListState {
 	texts: BunkoText[];
 	error?: HttpStatus;
-	loaded: boolean;
+	loading: boolean;
 }
 
 export interface TextState {

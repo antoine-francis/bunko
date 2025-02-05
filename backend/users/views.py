@@ -179,7 +179,6 @@ def unsubscribe(request, username):
 							status=status.HTTP_404_NOT_FOUND)
 		else:
 			subscription.delete()
-			print(request.user.username)
 			return Response(status=status.HTTP_200_OK, data=request.user.username)
 	except IntegrityError:
 		return Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)

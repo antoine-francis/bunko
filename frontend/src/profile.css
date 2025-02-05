@@ -80,6 +80,12 @@
     margin: 0 auto;
 }
 
+.mini-profile-pic {
+    object-fit: cover;
+    max-height: 48px;
+    border-radius: 50%;
+}
+
 #profile-pic-upload {
     margin: 40px 0;
 }
