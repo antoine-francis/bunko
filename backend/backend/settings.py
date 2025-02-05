@@ -180,7 +180,6 @@ REST_FRAMEWORK = {
 	),
 
 	'DEFAULT_PARSER_CLASSES': (
-		# If you use MultiPartFormParser or FormParser, we also have a camel case version
 		'djangorestframework_camel_case.parser.CamelCaseFormParser',
 		'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
 		'djangorestframework_camel_case.parser.CamelCaseJSONParser',

@@ -7,6 +7,7 @@ import {Series} from "./Series.ts";
 
 export interface UserBadge {
 	username: string;
+	email?: string;
 	firstName: string;
 	lastName: string;
 	picture: string;

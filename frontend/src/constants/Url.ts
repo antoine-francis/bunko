@@ -7,6 +7,7 @@ export const URL = {
 	TAG: "/tag/",
 	TAGS: "/tags",
 	SEARCH_TAGS: "/search_tags",
+	UPDATE_PROFILE: "/update_profile",
 	PROFILE: "/profile/",
 	SERIES: "/series_id/",
 	COLLECTIVE: "/collective/",

@@ -54,36 +54,38 @@ export const Login = () => {
 	return (
 		<>
 			<h2 className="login-title">Login</h2>
-			<div className="login-form">
-				{error && error === "Bad credentials" && <p style={{color: 'red'}}>
-					<FormattedMessage id="auth.badCredentials"
-									  defaultMessage="Invalid Credentials"
-									  description="Invalid credentials"/>
-				</p>}
-				<form onSubmit={handleSubmit}>
-					<div>
-						<input
-							placeholder={formatMessage(messages.usernamePlaceholder)}
-							type="username"
-							value={username}
-							onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-							required
-						/>
-					</div>
-					<div>
-						<input
-							placeholder={formatMessage(messages.pwdPlaceholder)}
-							type="password"
-							value={password}
-							onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-							required
-						/>
-					</div>
-					<button className="submit-btn" type="submit">
-						{buttonLoading ? 'Logging in...' : 'Login'}
-					</button>
-				</form>
-				<Link className="register-link" to={paths.auth.register.getHref()}>{formatMessage(messages.registerLink)}</Link>
+			<div className="login-container">
+				<div className="login-form">
+					{error && error === "Bad credentials" && <p style={{color: 'red'}}>
+						<FormattedMessage id="auth.badCredentials"
+										  defaultMessage="Invalid Credentials"
+										  description="Invalid credentials"/>
+					</p>}
+					<form onSubmit={handleSubmit}>
+						<div>
+							<input
+								placeholder={formatMessage(messages.usernamePlaceholder)}
+								type="username"
+								value={username}
+								onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+								required
+							/>
+						</div>
+						<div>
+							<input
+								placeholder={formatMessage(messages.pwdPlaceholder)}
+								type="password"
+								value={password}
+								onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+								required
+							/>
+						</div>
+						<button className="submit-btn" type="submit">
+							{buttonLoading ? 'Logging in...' : 'Login'}
+						</button>
+					</form>
+					<Link className="register-link" to={paths.auth.register.getHref()}>{formatMessage(messages.registerLink)}</Link>
+				</div>
 			</div>
 		</>
 	);

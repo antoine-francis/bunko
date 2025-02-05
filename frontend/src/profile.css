@@ -5,8 +5,101 @@
 
 .user-info .profile-pic {
     max-height: 100px;
+    max-width: 100px;
     border-radius: 50%;
     margin-bottom: 30px;
+}
+
+.name-edit {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+#profile-edit {
+    position: relative;
+    width: 0;
+    left: 20px;
+}
+
+#profile-edit-form {
+    display: flex;
+    flex-wrap:wrap;
+    margin: 0 auto;
+    width: 80%;
+    max-width: 600px;
+}
+
+#profile-edit-form > * {
+    width: 100%;
+    margin: 16px;
+}
+
+#profile-edit-form input[type="text"] {
+    border: 1px solid #888;
+    padding: 4px;
+}
+
+#profile-edit-form .invalid-input[type="text"] {
+    border: 1px solid #a00000;
+    background-color: #3d2929;
+}
+
+#username {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#at-symbol {
+
+}
+
+#username input {
+    margin-left: 12px;
+    flex: 1 1 auto;
+}
+
+#profile-edit-form input[type="text"]:focus {
+    border: 1px solid #c29b00;
+}
+
+#profile-edit-container #full-name {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.profile-pic {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto;
+}
+
+#profile-pic-upload {
+    margin: 40px 0;
+}
+
+#full-name input:not(:first-child) {
+    margin-left: 16px;
+}
+
+#full-name > * {
+    flex: 1 1 auto;
+}
+
+#profile-edit-buttons {
+    justify-content: flex-end;
+}
+
+.alert-banner {
+    background-color: #3d2929;
+    padding:16px;
+    font-size: 14px;
 }
 
 .full-name {
@@ -56,6 +149,7 @@
     margin: 16px auto 16px 16px;
     display: flex;
     min-width: 200px;
+    max-width: 600px;
 }
 
 .text-item .synopsis {

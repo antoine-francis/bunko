@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -5,13 +7,22 @@ from bunko.models import Bookmark, Text, Favorite, Series
 from bunko.serializers import BookmarkSerializer, TextDescriptionSerializer, SeriesSerializer
 from users.models import Profile, Subscription, Membership, Collective
 
+logger = logging.getLogger(__name__)
+
+
+class ProfilePictureSerializer(serializers.Serializer):
+	picture = serializers.ImageField(required=False)
+	class Meta:
+		model = Profile
+		fields = ['picture']
+
 
 class UserSerializer(serializers.ModelSerializer):
 	picture = serializers.SerializerMethodField()
 
 	class Meta:
 		model = User
-		fields = ['first_name', 'last_name', 'username', 'picture']
+		fields = ['first_name', 'last_name', 'username', 'email', 'picture']
 
 	def get_picture(self, obj):
 		try:

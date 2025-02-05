@@ -6,5 +6,5 @@ export const NotFound = () => {
 		document.title = "Not Found";
 	}, []);
 
-	return <p>Page not found</p>;
+	return <p id="not-found-page">Page not found</p>;
 }

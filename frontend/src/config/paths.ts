@@ -26,6 +26,11 @@ export const paths = {
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/user/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
+	editProfile: {
+		path: '/edit/user',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/edit/user${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
 	newText: {
 		path: '/new/',
 		getHref: (redirectTo?: string | null | undefined) =>

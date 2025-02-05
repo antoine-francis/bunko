@@ -60,6 +60,11 @@ const messages = defineMessages({
 		description: "untitled text title",
 		defaultMessage: "(Untitled)",
 	},
+	linkCopied: {
+		id: "alert.linkCopied",
+		description: "alert message",
+		defaultMessage: "The link has been copied to your clipboard",
+	},
 })
 
 
@@ -139,7 +144,15 @@ export const SingleText = () => {
 
 	const handleShareText = useCallback(() => {
 		if (text !== undefined) {
-			console.log(window.location.toString());
+			navigator.clipboard.writeText(window.location.toString()).then(() => {
+				alert(formatMessage(messages.linkCopied))
+			});
+		}
+	}, [text, formatMessage]);
+
+	const handleReport = useCallback(() => {
+		if (text !== undefined) {
+			// Handle report feature later
 		}
 	}, [text]);
 
@@ -231,11 +244,10 @@ export const SingleText = () => {
 																  description="dropdown button"
 																  defaultMessage="Share text"/>
 											</li>
-											<li className="destructive-action" onClick={showDeletePrompt}>
-												<FormattedMessage
-													id="text.deleteText"
-													description="dropdown button"
-													defaultMessage="Delete text"/>
+											<li onClick={handleReport}>
+												<FormattedMessage id="text.reportText"
+																  description="dropdown button"
+																  defaultMessage="Report"/>
 											</li>
 										</ul>
 									</div>
@@ -244,7 +256,7 @@ export const SingleText = () => {
 						</div>
 						<CommentSection textId={text.id} comments={text.comments}/>
 					</>
-					) : isOwner ? (
+				) : isOwner ? (
 					<div id="draft-actions" className="action-buttons">
 					<button id="cancel-changes"
 					onClick={showDeletePrompt}>{formatMessage(messages.deleteDraft)}

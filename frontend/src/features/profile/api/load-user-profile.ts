@@ -1,5 +1,6 @@
-import {UserProfile} from "../../../types/UserProfile.ts";
+import {UserBadge, UserProfile} from "../../../types/UserProfile.ts";
 import {URL} from "../../../constants/Url.ts";
+import {getCookie} from "../../../utils/get-cookie.ts";
 
 export const loadUserProfile : (username : string) => Promise<UserProfile | undefined> = async (username: string) => {
 
@@ -25,6 +26,27 @@ export const loadUserProfile : (username : string) => Promise<UserProfile | unde
 			lastName: data.user.lastName
 		})
 		return flattenedProfile;
+	} else {
+		throw new Error(response.status.toString());
+	}
+};
+
+export const updateUserProfile : (formData : FormData) => Promise<UserBadge | undefined> = async (formData : FormData) => {
+
+	const response = await fetch(URL.SERVER + URL.UPDATE_PROFILE, {
+		method: 'PATCH',
+		body: formData,
+		credentials: 'include',
+		headers: {
+			// "Content-Type": "multipart/form-data",
+			"X-CSRFToken": getCookie("csrftoken"),
+
+		}
+	});
+
+	if (response.ok) {
+		const data : UserBadge = await response.json();
+		return data;
 	} else {
 		throw new Error(response.status.toString());
 	}
