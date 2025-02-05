@@ -15,6 +15,19 @@
   background-color: #242424;
 }
 
+.menu-bar a#profile-pic {
+  width: 48px;
+  display: flex;
+  justify-content: center;
+
+  .mini-profile-pic {
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin: auto;
+  }
+}
+
 .search-bar-container {
   margin: auto 12px auto auto;
   padding: 3px;
@@ -131,12 +144,6 @@
 }
 
 #vertical-options-bar ul li img {
-  height: 32px;
-  width: 32px;
-  border-radius: 50%;
-}
-
-#vertical-options-bar ul li svg {
   height: 32px;
   width: 32px;
   border-radius: 50%;

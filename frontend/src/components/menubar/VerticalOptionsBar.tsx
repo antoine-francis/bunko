@@ -1,11 +1,19 @@
 import {Link} from "react-router-dom";
 import {paths} from "../../config/paths.ts";
 import {useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {FormattedMessage} from "react-intl";
-import {IconLogout, IconSettings} from "@tabler/icons-react";
-import {URL} from "../../constants/Url.ts";
+import {defineMessages, FormattedMessage, useIntl} from "react-intl";
+import {IconHash, IconLogout, IconSettings} from "@tabler/icons-react";
+
+const messages = defineMessages({
+	browseTags: {
+		id: "menubar.browseTags",
+		description: "Menu bar button",
+		defaultMessage: "Browse tags",
+	},
+})
 
 export const VerticalOptionsBar = () => {
+	const {formatMessage} = useIntl();
 	const {showVerticalOptionsBar} = useBunkoSelector((state) => state.uiState)
 	const {user} = useBunkoSelector((state) => state.currentUser);
 
@@ -14,9 +22,11 @@ export const VerticalOptionsBar = () => {
 			<div id="vertical-options-bar" style={showVerticalOptionsBar ? {display: "none"} : {display: "block"}}>
 				<ul>
 					<li>
-						<img className="mini-profile-pic" src={`${URL.SERVER}${user.picture}`} alt={user.username}/>
-						<Link to={{pathname: paths.profile.getHref() + user.username}}>
-							{user.username}
+						<IconHash/>
+						<Link to={{pathname: paths.tags.getHref()}}>
+							<div id="browse-tags" className="menu-bar-btn">
+								{formatMessage(messages.browseTags)}
+							</div>
 						</Link>
 					</li>
 					<li>
