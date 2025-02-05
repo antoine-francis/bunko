@@ -198,7 +198,6 @@ h2 {
   display: flex;
   place-items: center;
   min-width: 320px;
-  /*min-height: calc(100vh - 64px);*/
   justify-content: center;
   flex: 1 1 auto;
   padding: 16px;

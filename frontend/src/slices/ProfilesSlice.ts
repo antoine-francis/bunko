@@ -56,7 +56,6 @@ const profilesSlice = createSlice({
 				state[username].error = (action as any).error.message;
 			})
 			.addCase(updateProfile.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
-				// const username = (action as any).meta.arg.get('username');
 				const username = (action as any).meta.arg.get("formerUsername");
 				if (state[username] !== undefined) {
 					state[username].loading = true;
