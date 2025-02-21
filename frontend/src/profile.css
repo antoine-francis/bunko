@@ -152,6 +152,10 @@
     margin-top: 12px;
 }
 
+.text-list-container > a {
+    margin: 0 auto;
+}
+
 .text-item {
     margin: 16px auto 16px 16px;
     display: flex;

@@ -35,7 +35,7 @@ export const Dashboard = () => {
 			// Dashboard content should always be refreshed on reload
 			dispatch(fetchTexts());
 		}
-	}, [dispatch, !userLoading, !userError, loading]);
+	}, [dispatch, userLoading, userError, loading]);
 
 	const moreThanAWeek = useCallback((text : BunkoText) => {
 		return (new Date().getTime() - new Date(text.creationDate).getTime()) / 1000 > 604800;

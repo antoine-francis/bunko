@@ -34,6 +34,11 @@ const messages = defineMessages({
 		defaultMessage: "{nb} draft",
 		description: "Profile page",
 	},
+	noDraft: {
+		id: "profile.noDraft",
+		defaultMessage: "You currently have no draft saved",
+		description: "Profile page",
+	},
 	followerSing: {
 		id: "profile.followerSing",
 		defaultMessage: "{nb} follower",
@@ -64,6 +69,11 @@ const messages = defineMessages({
 		defaultMessage: "{nb} bookmarks",
 		description: "Profile page",
 	},
+	newText: {
+		id: "profile.newText",
+		defaultMessage: "New text",
+		description: "Profile page",
+	}
 })
 
 export const Profile = () => {
@@ -100,8 +110,6 @@ export const Profile = () => {
 	}, [profile, dispatch, isFollowedByUser]);
 
 	const getSortedTexts = useCallback(() => {
-		// const published : ReactNode[] = [];
-		// const drafts : ReactNode[] = [];
 		const published : TextDescription[] = []
 		const drafts : TextDescription[] = []
 		if (profile !== undefined) {
@@ -118,11 +126,20 @@ export const Profile = () => {
 					<div id="texts">
 						{isOwner && (
 							<div id="drafts">
-							<span className="text-count">{drafts.length > 1 ? formatMessage(messages.draftPlural, {nb: drafts.length}) :
-								formatMessage(messages.draftSing, {nb: drafts.length})}</span>
-								<div className="text-list-container">
-									<TextsList texts={drafts} showDescription={false}/>
-								</div>
+								<span className="text-count">{drafts.length > 1 ? formatMessage(messages.draftPlural, {nb: drafts.length}) :
+									formatMessage(messages.draftSing, {nb: drafts.length})}</span>
+									<div className="text-list-container">
+										{drafts.length > 0 ?
+										<TextsList texts={drafts} showDescription={false}/>
+											:
+											<Link to={paths.newText.getHref()}>
+												<button>
+													{formatMessage(messages.newText)}
+												</button>
+											</Link>}
+									</div>
+
+
 							</div>
 						)}
 						<span className="text-count">{published.length > 1 ? formatMessage(messages.textPlural, {nb: published.length}) :
