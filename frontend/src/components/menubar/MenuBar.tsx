@@ -21,7 +21,6 @@ export const MenuBar = () => {
 				<div className="menu-bar">
 					<Link to={paths.home.getHref()}>
 						<div className="home">
-
 							poqopo.co
 						</div>
 					</Link>

@@ -42,7 +42,7 @@ export const Login = () => {
 			}
 			navigate(paths.home.getHref());
 		}
-	}, [user, params, navigate]);
+	}, [user, params, loading, navigate]);
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
