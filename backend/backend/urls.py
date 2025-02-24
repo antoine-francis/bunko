@@ -21,10 +21,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
-	# path('profile/modifier', users_views.profile_edit, name='profile-edit'),
-	# path('profile/@<username>', users_views.profile, name='profile'),
-	# path('connexion/', auth_views.LoginView.as_view(template_name='users/connexion.html'), name='connexion'),
-	# path('deconnexion/', auth_views.LogoutView.as_view(template_name='users/deconnexion.html'), name='deconnexion'),
 	path('api/', include('bunko.urls')),
 	path('api/', include('users.urls')),
 ]

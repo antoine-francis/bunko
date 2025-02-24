@@ -136,11 +136,15 @@ export const TextEditor = () => {
 				setTags(text.genres.map(genre => {
 					return genre.tag
 				}).join(", "));
-				text.synopsis && setSynopsis(text.synopsis);
+				if (text.synopsis !== undefined) {
+					setSynopsis(text.synopsis);
+				}
 				if (text.series) {
 					setPartOfSeries(true);
 					setSelectedSeries(text.series.id);
-					text.series.synopsis && setSeriesSynopsis(text.series.synopsis);
+					if (text.series.synopsis !== undefined) {
+						setSeriesSynopsis(text.series.synopsis);
+					}
 				}
 			}
 		} else {
@@ -212,7 +216,7 @@ export const TextEditor = () => {
 		const genres = [];
 		if (tags !== "") {
 			const tagList = tags.split(",");
-			for (let tag of tagList) {
+			for (const tag of tagList) {
 				genres.push({tag: tag.toLowerCase().trim()} as Genre);
 			}
 		}
@@ -269,11 +273,19 @@ export const TextEditor = () => {
 		switch (alertType) {
 			case C.PUBLISH_TEXT:
 				save(false);
-				text !== undefined ? navigate(paths.singleText.getHref() + text.hash) : navigate(paths.home.getHref());
+				if (text !== undefined) {
+					navigate(paths.singleText.getHref() + text.hash);
+				} else {
+					navigate(paths.home.getHref());
+				}
 				break;
 			case C.CANCEL_EDIT:
 				dispatch(closeModal());
-				text !== undefined ? navigate(paths.singleText.getHref() + text.hash) : navigate(paths.home.getHref());
+				if (text !== undefined) {
+					navigate(paths.singleText.getHref() + text.hash);
+				} else {
+					navigate(paths.home.getHref());
+				}
 		}
 	}, [save, text, navigate, dispatch, alertType]);
 

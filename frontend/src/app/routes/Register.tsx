@@ -78,7 +78,9 @@ export const Register = () => {
 			setError("You must agree to the terms and conditions");
 		} else {
 			dispatch(register({firstName, lastName, email, username, password}))
-			!error && setSuccess(true);
+			if (!error) {
+				setSuccess(true);
+			}
 		}
 		setButtonLoading(false);
 	};

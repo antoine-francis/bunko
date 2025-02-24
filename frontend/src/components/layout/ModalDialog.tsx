@@ -128,9 +128,10 @@ export const ModalDialog = ({isOpen, type, confirmFunction}: ModalDialogProps) =
 			appElement={document.body}
 			style={customStyles}
 			isOpen={isOpen}
-			children={getModalContent()}
 			shouldCloseOnEsc={true}
 			onRequestClose={closeDialog}
-			shouldCloseOnOverlayClick={true}/>
+			shouldCloseOnOverlayClick={true}>
+			{getModalContent()}
+		</ReactModal>
 	);
 }

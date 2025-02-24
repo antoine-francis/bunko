@@ -9,12 +9,12 @@ export const loadCollectiveDetails : (id : string) => Promise<Collective | undef
 
 	if (response.ok) {
 		const data = await response.json();
-		let starredMembers = [];
-		let admins = [];
-		let flattenedMembers = [];
+		const starredMembers = [];
+		const admins = [];
+		const flattenedMembers = [];
 
 		for (const member of data.members) {
-			let flattenedMember : Membership = {
+			const flattenedMember : Membership = {
 				firstName: member.user.firstName,
 				lastName: member.user.lastName,
 				username: member.user.username,

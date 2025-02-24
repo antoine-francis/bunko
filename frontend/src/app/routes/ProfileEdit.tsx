@@ -148,7 +148,9 @@ export const ProfileEdit = () => {
 				100,
 				0,
 				(file : string | File | Blob | ProgressEvent<FileReader>) : void => {
-					e.target.files !== null && setImgFile((file as File))
+					if (e.target.files !== null) {
+						setImgFile((file as File))
+					}
 				},
 				"file"
 			);

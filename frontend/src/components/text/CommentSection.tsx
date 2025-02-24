@@ -25,7 +25,7 @@ export function CommentSection({comments, textId} : CommentSectionProps ) {
 
 	const getCommentCount = useCallback(() => {
 		let count = 0;
-		for (let comment of comments) {
+		for (const comment of comments) {
 			count++;
 			if (comment.replies) {
 				count += comment.replies.length

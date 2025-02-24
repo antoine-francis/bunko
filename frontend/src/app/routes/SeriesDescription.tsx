@@ -32,7 +32,7 @@ export const SeriesDescription = () => {
 	const getSeriesAuthorsNames = () : React.JSX.Element => {
 		const authorsList: string[] = [];
 		if (series !== undefined && series.entries !== undefined && series.entries.length > 0) {
-			for (let entry of series.entries) {
+			for (const entry of series.entries) {
 				if (!authorsList.includes(entry.author.firstName + " " + entry.author.lastName)) {
 					authorsList.push(entry.author.firstName + " " + entry.author.lastName);
 				}
