@@ -15,9 +15,7 @@ Including another URLconf
 	2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from users import views as users_views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -25,10 +23,10 @@ urlpatterns = [
 	path('admin/', admin.site.urls),
 	# path('profile/modifier', users_views.profile_edit, name='profile-edit'),
 	# path('profile/@<username>', users_views.profile, name='profile'),
-	path('connexion/', auth_views.LoginView.as_view(template_name='users/connexion.html'), name='connexion'),
-	path('deconnexion/', auth_views.LogoutView.as_view(template_name='users/deconnexion.html'), name='deconnexion'),
-	path('', include('bunko.urls')),
-	path('', include('users.urls')),
+	# path('connexion/', auth_views.LoginView.as_view(template_name='users/connexion.html'), name='connexion'),
+	# path('deconnexion/', auth_views.LogoutView.as_view(template_name='users/deconnexion.html'), name='deconnexion'),
+	path('api/', include('bunko.urls')),
+	path('api/', include('users.urls')),
 ]
 
 if settings.DEBUG:

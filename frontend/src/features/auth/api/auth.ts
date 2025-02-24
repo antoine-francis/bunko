@@ -1,8 +1,9 @@
 import {getCookie} from "../../../utils/get-cookie.ts";
 import {UserBadge} from "../../../types/UserProfile.ts";
+import {URL} from "../../../constants/Url.ts";
 
 export const attemptLogin = async (username: string, password : string) => {
-	const response = await fetch('http://localhost:8000/auth/login', {
+	const response = await fetch(URL.SERVER + URL.AUTH + URL.LOGIN, {
 		method: 'POST',
 		headers: {
 			"Content-Type": "application/json",
@@ -19,7 +20,7 @@ export const attemptLogin = async (username: string, password : string) => {
 }
 
 export const attemptLogout = async () => {
-	const response = await fetch('http://localhost:8000/auth/logout', {
+	const response = await fetch(URL.SERVER + URL.AUTH + URL.LOGOUT, {
 		method: 'DELETE',
 		credentials: 'include',
 		headers: {
@@ -31,7 +32,7 @@ export const attemptLogout = async () => {
 }
 
 export const checkSession = async (): Promise<UserBadge | undefined> => {
-	const response = await fetch('http://localhost:8000/user_data', {
+	const response = await fetch(URL.SERVER + URL.USER_DATA, {
 		credentials: "include",
 	});
 	if (!response.ok) {
@@ -49,7 +50,7 @@ export const attemptSignup = async (
 	firstName : string,
 	lastName : string,
 	password : string) => {
-	const response = await fetch('http://localhost:8000/auth/signup', {
+	const response = await fetch(URL.SERVER + URL.AUTH + URL.SIGNUP, {
 		method: 'POST',
 		headers: {
 			"Content-Type": "application/json",

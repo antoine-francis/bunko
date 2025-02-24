@@ -1,6 +1,5 @@
 export const URL = {
-	SERVER: "http://localhost:8000",
-
+	SERVER: import.meta.env.BASE_URL,
 	NEW_TEXT: "/new_text",
 	TEXT: "/text/",
 	TEXTS: "/texts",
@@ -18,4 +17,9 @@ export const URL = {
 	SUBSCRIBE: "/subscribe/",
 	UNSUBSCRIBE: "/unsubscribe/",
 	COMMENT: "/comment/",
+	AUTH:"/auth",
+	LOGIN: "/login",
+	LOGOUT: "/logout",
+	SIGNUP: "/signup",
+	USER_DATA: "/user_data",
 }
