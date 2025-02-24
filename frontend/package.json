@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && rm -rf /var/www/bunko/* && cp -r dist/* /var/www/bunko/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
