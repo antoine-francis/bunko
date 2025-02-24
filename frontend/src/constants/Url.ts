@@ -1,5 +1,5 @@
 export const URL = {
-	SERVER: import.meta.env.BASE_URL,
+	SERVER: import.meta.env.BACKEND_URL,
 	NEW_TEXT: "/new_text",
 	TEXT: "/text/",
 	TEXTS: "/texts",
