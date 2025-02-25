@@ -207,7 +207,7 @@ h2 {
   height: calc(100vh - 75px);
 }
 
-#loading-container, #error-page, #not-found-page, .container {
+#loading-container, #empty-list-container, #error-page, #not-found-page, .container {
   margin: 0;
   display: flex;
   place-items: center;

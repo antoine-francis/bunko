@@ -22,6 +22,7 @@ export default [
       "react/react-in-jsx-scope": "off",
       "no-unused-expressions": ["error", { "allowTernary": true, "allowShortCircuit": true }],
       "@typescript-eslint/no-explicit-any": "off",
+      "no-console": "warn",
     },
     settings: {
       "react": {

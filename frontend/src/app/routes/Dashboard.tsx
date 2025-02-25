@@ -4,7 +4,6 @@ import {useCallback, useEffect} from "react";
 import {paths} from "../../config/paths.ts";
 import {Link, useLocation} from "react-router-dom";
 import {ErrorHandler} from "../../components/ErrorHandler.tsx";
-import {EmptyList} from "../../components/users-list/EmptyList.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
 import {fetchTexts} from "../../slices/TextListSlice.ts";
 import {defineMessages, FormattedDate, useIntl} from "react-intl";
@@ -13,6 +12,7 @@ import Markdown from "marked-react";
 import {TagList} from "../../components/texts-list/TagList.tsx";
 import {LoadingContainer} from "../../components/LoadingContainer.tsx";
 import {URL} from "../../constants/Url.ts";
+import {EmptyListContainer} from "../../components/EmptyListContainer.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -46,7 +46,7 @@ export const Dashboard = () => {
 	} else if (error) {
 		return <ErrorHandler statusCode={error} redirectTo={location.pathname} />;
 	} else if (texts === undefined || !texts.length) {
-		return <EmptyList/>;
+		return <EmptyListContainer/>;
 	} else {
 		return (
 			<div id="dashboard">
