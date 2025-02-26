@@ -7,12 +7,18 @@
   display: flex;
   flex-wrap: nowrap;
   min-height: calc(100% - 57px);
+  overflow-x: hidden;
 }
 
 .menu-bar {
   display: flex;
   border-bottom: 1px solid #c0c2c6;
   background-color: #242424;
+}
+
+input[type=text], textarea {
+  color: var(--input-text-color);
+  background-color: var(--input-background-color);
 }
 
 .menu-bar a#profile-pic {
@@ -61,7 +67,7 @@
 .search-results {
   width: 100%;
   background-color: #242424;
-  padding: 0px 2px !important;
+  padding: 0 2px !important;
   position: relative;
   border: 1px solid #c29b00;
   border-top: none;
@@ -126,16 +132,27 @@
   color: #c29b00;
 }
 
+.close-bar-veil {
+  width: 0;
+  height: 0;
+}
+
 #vertical-options-bar {
   width: 250px;
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   background-color: #353535;
+  transition: 0.4s;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  align-content: space-between;
 }
 
 #vertical-options-bar ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  white-space: nowrap;
 }
 
 #vertical-options-bar ul li {
@@ -156,6 +173,10 @@
 
 #vertical-options-bar ul li:hover {
   background-color: #474747;
+}
+
+#toggle-dark-mode {
+  padding: 24px;
 }
 
 .yellow {
@@ -326,7 +347,23 @@ input:not(.seamless-input):focus {
 
 #dashboard .dashboard-item {
   display: flex;
+  background-color: var(--dark-background-color);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 32px 60px 0;
+  border: 1px solid var(--golden-accent-color);
+  max-width: 600px;
+}
 
+.mini-profile-pic {
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  min-width: 32px;
+  margin-top: 8px;
 }
 
 #dashboard .text-preview {
@@ -378,7 +415,7 @@ textarea:focus {
   position: absolute;
   min-width: max-content;
   border-radius: 5px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   padding: 0;
   right: 0;
   background-color: #3f3d3d;
@@ -482,6 +519,7 @@ textarea:focus {
   font-weight: 500;
   max-width: 600px;
   font-family: "Times New Roman", Times, serif;
+  color: var(--font-color);
 }
 
 .text-description {
@@ -495,13 +533,14 @@ textarea:focus {
 }
 
 .genres {
-  line-height: 16px;
+  line-height: 32px;
+  margin-top: 10px;
 }
 
 .genre-tag {
   color: #888888 !important;
   font-size: 13px;
-  padding-right: 3px;
+  padding-right: 12px;
   font-weight: 400;
 }
 
@@ -513,7 +552,7 @@ textarea:focus {
 
 .seamless-input {
   border: 0;
-  background-color: transparent;
+  background-color: transparent !important;
   width: 90%;
   margin: 0 auto;
   display: flex;

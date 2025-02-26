@@ -1,5 +1,7 @@
+import '../variables.css';
 import '../App.css';
 import '../profile.css';
+import '../mobile.css';
 import {BunkoRouter} from "./BunkoRouter.tsx";
 import {IntlProvider} from "react-intl";
 import {Provider} from "react-redux";
