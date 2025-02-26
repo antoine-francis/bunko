@@ -12,4 +12,5 @@ export interface ModalState {
 
 export interface UiState {
 	showVerticalOptionsBar: boolean;
+	isDarkMode: boolean;
 }

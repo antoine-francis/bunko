@@ -55,8 +55,9 @@ const customStyles = {
 		bottom: 'auto',
 		marginRight: '-100%',
 		transform: 'translate(-50%, -50%)',
-		backgroundColor: '#242424',
+		backgroundColor: 'var(--background-color)',
 		minHeight: '150px',
+		maxWidth: '80%',
 	},
 };
 

@@ -1,11 +1,13 @@
+@import url('variables.css');
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--font-color);
+  background-color: var(--background-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,11 +17,11 @@
 
 a {
   font-weight: 700;
-  color: #c0c2c6;
+  color: var(--link-color);
   text-decoration: inherit;
 }
 a:hover {
-  color: #c29b00;
+  color: var(--link-hover-color);
 }
 
 body {
@@ -40,28 +42,39 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  color: var(--button-text-color);
+  background-color: var(--button-background-color);
 }
 button:hover {
-  border-color: #c29b00;
-  color: #c29b00;
+  border-color: var(--golden-accent-color);
+  color: var(--button-hover-color);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+
+  svg {
+    color: var(--golden-accent-color);
   }
-  a:hover {
-    color: #747bff;
+
+  .menu-bar {
+    a {
+      color: var(--menu-link-color);
+    }
   }
-  button {
-    background-color: #f9f9f9;
+
+  #vertical-options-bar {
+
+    button {
+      border: none;
+      background-color: unset;
+    }
+
+    a {
+      color: var(--menu-link-color);
+    }
   }
-}
