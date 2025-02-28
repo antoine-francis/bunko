@@ -37,7 +37,7 @@ class CommentSerializer(serializers.ModelSerializer):
 		fields = ['id', 'content', 'creation_date', 'replies', 'modification_date', 'text', 'author']
 
 	def get_replies(self, obj):
-		return ReplySerializer(Comment.objects.filter(parent=obj), many=True).data
+		return CommentSerializer(Comment.objects.filter(parent=obj), many=True).data
 
 	def get_text(self, obj):
 		return obj.text.hash

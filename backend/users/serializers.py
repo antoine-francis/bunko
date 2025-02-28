@@ -68,6 +68,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 	collectives = serializers.SerializerMethodField()
 	texts = serializers.SerializerMethodField()
 	favorites = serializers.SerializerMethodField()
+	picture = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Profile
@@ -97,6 +98,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 	def get_favorites(self, obj):
 		return TextDescriptionSerializer(Favorite.objects.filter(user=obj.user), many=True).data
+
+	def get_picture(self, obj):
+		try:
+			return obj.picture.url  # Assuming 'picture' is an ImageField or FileField
+		except Profile.DoesNotExist:
+			return None
 
 
 class UserMembershipSerializer(serializers.ModelSerializer):
