@@ -6,13 +6,13 @@
 #main-container {
   display: flex;
   flex-wrap: nowrap;
-  min-height: calc(100% - 57px);
+  min-height: calc(100% - 63px);
   overflow-x: hidden;
 }
 
 .menu-bar {
   display: flex;
-  border-bottom: 1px solid #c0c2c6;
+  border-bottom: 1px solid var(--golden-accent-color);
   background-color: #242424;
 }
 
@@ -30,18 +30,23 @@ input[type=text], textarea {
     display: block;
     width: 32px;
     height: 32px;
+    min-height: 32px;
+    min-width: 32px;
     margin: auto;
   }
 }
 
 .search-bar-container {
-  margin: auto 12px auto auto;
-  padding: 3px;
+  margin: auto 32px auto auto;
+  padding: 3px !important;
   width: 50%;
 }
 
 #search-bar {
   width: 100%;
+  border-radius: 20px;
+  padding: 10px;
+  border: 0;
 }
 
 #clear-input {
@@ -49,10 +54,10 @@ input[type=text], textarea {
   width: 22px;
   padding: 0;
   float: right;
-  top: -22px;
+  top: -30px;
   height: 0;
   box-sizing: border-box;
-  left: 8px;
+  left: 14px;
   cursor: pointer;
 }
 
@@ -69,20 +74,17 @@ input[type=text], textarea {
   background-color: #242424;
   padding: 0 2px !important;
   position: relative;
-  border: 1px solid #c29b00;
-  border-top: none;
 }
 
 .list-results {
   position:absolute;
-  width: 100%;
+  width: calc(100% + 16px);
   padding: 8px 0 !important;
-  border: 2px solid #c29b00;
-  border-top: none;
   margin: 0 auto;
+  border-radius: 12px;
   box-sizing: content-box;
-  left: -1px;
-  background-color: #474747;
+  top: 3px;
+  background-color: var(--dark-background-color);
   z-index: 10000;
   max-height: 300px;
 }
@@ -93,7 +95,7 @@ input[type=text], textarea {
 }
 
 .result {
-  padding: 16px;
+  padding: 8px 8px 8px 16px;
   cursor: pointer;
 }
 
@@ -102,9 +104,8 @@ input[type=text], textarea {
 }
 
 #search-bar:focus {
-  box-sizing: content-box;
   outline: none;
-  border: 2px solid #c29b00;
+  border: 1px solid #c29b00;
 }
 
 #vertical-bar-toggle {
@@ -120,7 +121,7 @@ input[type=text], textarea {
 }
 
 .menu-bar-btn {
-  font-weight: 800;
+  font-weight: 600;
   margin-left: auto;
   cursor: pointer;
   min-width: 24px;
@@ -141,7 +142,7 @@ input[type=text], textarea {
   width: 250px;
   flex: 0 0 auto;
   background-color: #353535;
-  transition: 0.4s;
+  transition: 0.2s;
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
@@ -158,6 +159,7 @@ input[type=text], textarea {
 #vertical-options-bar ul li {
   padding: 24px;
   display: flex;
+  width: 100%;
 }
 
 #vertical-options-bar ul li img {
@@ -183,10 +185,6 @@ input[type=text], textarea {
   color: #c29b00;
 }
 
-.menu-bar > .home {
-  flex: 1 1 auto;
-}
-
 .menu-bar div {
   padding: 16px;
 }
@@ -195,21 +193,23 @@ h2 {
   text-align: center;
 }
 
-#dashboard, #user-profile, #genre-container, #collective-container, #series-info-container, #bookmarks-container, #text-container, #browse-by-tags-container, #followers-container {
+#dashboard, #user-profile, #genre-container, #collective-container, #series-info-container, #bookmarks-container, #text-container, #browse-by-tags-container, #error-container, #followers-container {
   padding: 16px;
   width: 80%;
   margin: 0 auto;
   flex: 1 1 auto;
 }
 
+#text-container {
+  max-width: 800px;
+}
+
 .text-list {
-  padding: 16px;
   margin: 0 auto;
   width: 100%;
 }
 
 .text-list-cards {
-  padding: 16px;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -350,29 +350,54 @@ input:not(.seamless-input):focus {
   background-color: var(--dark-background-color);
   border-radius: 8px;
   padding: 24px;
-  margin: 32px 60px 0;
-  border: 1px solid var(--golden-accent-color);
+  margin-top: 32px;
   max-width: 600px;
+}
+
+.text-info {
+  display: block;
+  margin-left: 16px;
+  width: 100%;
 }
 
 .mini-profile-pic {
   object-fit: cover;
   border-radius: 50%;
   display: block;
-  width: 32px;
-  height: 32px;
-  min-height: 32px;
-  min-width: 32px;
-  margin-top: 8px;
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
+  min-width: 48px;
 }
 
 #dashboard .text-preview {
   padding-bottom: 12px;
-  margin-left: 24px;
 }
 
 #dashboard p {
   margin: 0;
+}
+
+.read-by {
+  flex: 1 1 auto;
+  align-self: center;
+  font-size: 14px;
+  color: var(--tag-color);
+}
+
+.likes-comments-saves {
+  border-top: 1px solid var(--golden-accent-color);
+  padding-top: 6px;
+  display: flex;
+  justify-content: right;
+  gap: 16px;
+
+  span {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    column-gap: 2px;
+  }
 }
 
 .btn {
@@ -391,7 +416,7 @@ input:not(.seamless-input):focus {
 
 textarea {
   resize: none;
-  width: calc(100% - 20px);
+  width: calc(100%);
   margin: 8px auto;
   min-height: 60px;
   padding: 8px;
@@ -424,7 +449,9 @@ textarea:focus {
 #dropdown-menu > ul > li {
   list-style: none;
   cursor: pointer;
-  padding: 10px 16px;
+  padding: 10px 24px 10px 16px;
+  display: flex;
+  column-gap: 12px;
 }
 
 .destructive-action {
@@ -459,21 +486,41 @@ textarea:focus {
 }
 
 .reactions {
-  margin-right: 12px;
   font-size: 20px;
-  flex-wrap: nowrap;
+  flex-wrap: nowrap !important;
   display: flex;
   align-items: center;
 }
 
-.like, .bookmark {
+.like, .bookmark, .comment {
   padding: 8px;
   border-radius: 5px;
   cursor: pointer;
+  width: min-content;
 }
 
-.like:hover, .bookmark:hover, .options:hover {
-  background-color: #474747;
+.comment-item {
+  padding: 10px;
+  display: flex;
+  flex-wrap: nowrap;
+  column-gap: 16px;
+}
+
+.comment-thumbnail {
+  width: 48px;
+}
+
+.comment-wrapper {
+  width: 100%;
+}
+
+.comment-timestamp {
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.like:hover, .bookmark:hover, .comment:hover, .options:hover {
+  background-color: var(--background-hover-color);
   color: #c29b00;
 }
 
@@ -518,14 +565,23 @@ textarea:focus {
 .synopsis {
   font-weight: 500;
   max-width: 600px;
-  font-family: "Times New Roman", Times, serif;
   color: var(--font-color);
 }
 
 .text-description {
   font-weight: 500;
-  font-family: "Times New Roman", Times, serif;
   margin-left: 32px;
+  width: 100%;
+
+  .title {
+    font-weight: 600;
+  }
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 16px;
 }
 
 .publish-date {
@@ -608,7 +664,7 @@ textarea:focus {
   outline: none;
 }
 
-.action-buttons {
+.button-wrapper {
   display: flex;
   width: 100%;
   margin: 10px auto 5px;
@@ -623,7 +679,7 @@ textarea:focus {
   padding: 0 5%;
 }
 
-.action-buttons button:not(:first-child) {
+.button-wrapper button:not(:first-child) {
   margin-left:8px;
 }
 
@@ -669,4 +725,12 @@ textarea:focus {
 
 .read-the-docs {
   color: #888;
+}
+
+footer {
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 32px;
+  border-top: 1px solid var(--golden-accent-color);
 }

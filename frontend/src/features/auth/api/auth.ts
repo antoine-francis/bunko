@@ -1,6 +1,6 @@
-import {getCookie} from "../../../utils/get-cookie.ts";
-import {UserBadge} from "../../../types/UserProfile.ts";
-import {URL} from "../../../constants/Url.ts";
+import {getCookie} from "@/utils/get-cookie.ts";
+import {UserBadge} from "@/types/UserProfile.ts";
+import {URL} from "@/constants/Url.ts";
 
 export const attemptLogin = async (username: string, password : string) => {
 	const response = await fetch(URL.SERVER + URL.AUTH + URL.LOGIN, {

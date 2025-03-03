@@ -8,4 +8,6 @@ export const C = {
 	TAGS: "TAGS",
 	USERS: "USERS",
 	TITLES: "TITLES",
+
+	MORE_OPTIONS: "MORE_OPTIONS",
 }

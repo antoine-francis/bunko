@@ -1,6 +1,6 @@
-import {Subscription, UserProfile} from "../../../types/UserProfile.ts";
-import {getCookie} from "../../../utils/get-cookie.ts";
-import {URL} from "../../../constants/Url.ts";
+import {Subscription, UserProfile} from "@/types/UserProfile.ts";
+import {getCookie} from "@/utils/get-cookie.ts";
+import {URL} from "@/constants/Url.ts";
 
 export const subscribeToProfile = async (profile : UserProfile) : Promise<Subscription> => {
 	const response = await fetch(URL.SERVER + URL.SUBSCRIBE + profile.username, {

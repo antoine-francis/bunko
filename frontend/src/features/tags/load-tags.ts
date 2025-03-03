@@ -1,5 +1,5 @@
-import {URL} from "../../constants/Url.ts";
-import {Genre} from "../../types/Genre.ts";
+import {URL} from "@/constants/Url.ts";
+import {Genre} from "@/types/Genre.ts";
 
 export const loadTags : () => Promise<Genre[]> = async () : Promise<Genre[]> => {
 	const response = await fetch(URL.SERVER + URL.TAGS, {

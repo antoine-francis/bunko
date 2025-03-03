@@ -1,9 +1,9 @@
-import {BunkoText, EditorContent} from "../../../types/Text.ts";
-import {URL} from "../../../constants/Url.ts";
-import {Like} from "../../../types/Like.ts";
-import {getCookie} from "../../../utils/get-cookie.ts";
-import {BunkoComment} from "../../../types/Comment.ts";
-import {Bookmark} from "../../../types/Bookmark.ts";
+import {BunkoText, EditorContent} from "@/types/Text.ts";
+import {URL} from "@/constants/Url.ts";
+import {Like} from "@/types/Like.ts";
+import {getCookie} from "@/utils/get-cookie.ts";
+import {BunkoComment} from "@/types/Comment.ts";
+import {Bookmark} from "@/types/Bookmark.ts";
 
 export const loadText : (id : string) => Promise<BunkoText | undefined> = async (hash) => {
 	const response = await fetch(URL.SERVER + URL.TEXT + hash, {

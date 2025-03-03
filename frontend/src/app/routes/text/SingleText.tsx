@@ -1,33 +1,31 @@
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {useCallback, useEffect} from "react";
-import {NotFound} from "../../../components/NotFound.tsx";
-import {paths} from "../../../config/paths.ts";
-import {Genre} from "../../../types/Genre.ts";
-import {ErrorHandler} from "../../../components/ErrorHandler.tsx";
-import {useBunkoDispatch, useBunkoSelector} from "../../../hooks/redux-hooks.ts";
+import {NotFound} from "@/components/NotFound.tsx";
+import {paths} from "@/config/paths.ts";
+import {Genre} from "@/types/Genre.ts";
+import {ErrorHandler} from "@/components/ErrorHandler.tsx";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {
-	bookmarkText,
 	deleteText,
 	fetchText,
-	likeText,
-	unbookmarkText,
-	unlikeText, updateText
-} from "../../../slices/TextSlice.ts";
-import {UserBadge} from "../../../types/UserProfile.ts";
-import {LikeButton} from "../../../components/text/LikeButton.tsx";
-import {BookmarkButton} from "../../../components/text/BookmarkButton.tsx";
-import {CommentSection} from "../../../components/text/CommentSection.tsx";
+	updateText
+} from "@/slices/TextSlice.ts";
+import {UserBadge} from "@/types/UserProfile.ts";
+import {LikeButton} from "@/components/text/LikeButton.tsx";
+import {BookmarkButton} from "@/components/text/BookmarkButton.tsx";
+import {CommentSection} from "@/components/text/CommentSection.tsx";
 import {defineMessages, FormattedMessage, useIntl} from "react-intl";
 import Markdown from "marked-react";
-import {ClickableTag} from "../../../components/text/ClickableTag.tsx";
-import {useIsOwner} from "../../../hooks/users-relationships-hooks.ts";
-import {ModalDialog} from "../../../components/layout/ModalDialog.tsx";
-import {C} from "../../../constants/Constants.ts";
-import {confirmDelete, confirmPublication} from "../../../slices/ModalSlice.ts";
-import {BunkoText} from "../../../types/Text.ts";
-import {toRoman} from "../../../utils/roman-numerals.ts";
-import {IconShare3} from "@tabler/icons-react";
-import {LoadingContainer} from "../../../components/LoadingContainer.tsx";
+import {ClickableTag} from "@/components/text/ClickableTag.tsx";
+import {useIsOwner} from "@/hooks/users-relationships-hooks.ts";
+import {ModalDialog} from "@/components/layout/ModalDialog.tsx";
+import {C} from "@/constants/Constants.ts";
+import {confirmDelete, confirmPublication} from "@/slices/ModalSlice.ts";
+import {BunkoText} from "@/types/Text.ts";
+import {toRoman} from "@/utils/roman-numerals.ts";
+import {IconDots, IconShare3} from "@tabler/icons-react";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
+import {CommentButton} from "@/components/text/CommentButton.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -94,28 +92,18 @@ export const SingleText = () => {
 	useEffect(() => {
 		if (text !== undefined) {
 			document.title = text.title ? text.title : formatMessage(messages.untitledText);
-		}
-	}, [formatMessage, text]);
 
-	const handleLike = useCallback(() => {
-		if (text !== undefined) {
-			if (!isLiked) {
-				dispatch(likeText(text));
-			} else {
-				dispatch(unlikeText(text));
+			if (location.hash !== "") {
+				const hashlink = document.getElementById(location.hash.substring(1));
+				if (hashlink !== null) {
+					hashlink.scrollIntoView({behavior: "smooth"});
+					window.setTimeout(() => {
+						hashlink.focus();
+					}, 300);
+				}
 			}
 		}
-	}, [text, dispatch, isLiked])
-
-	const handleBookmark = useCallback(() => {
-		if (text !== undefined) {
-			if (!isBookmarked) {
-				dispatch(bookmarkText(text));
-			} else {
-				dispatch(unbookmarkText(text));
-			}
-		}
-	}, [text, dispatch, isBookmarked]);
+	}, [formatMessage, location, text]);
 
 	if (hash === undefined) {
 		navigate(paths.notFound.getHref());
@@ -160,11 +148,11 @@ export const SingleText = () => {
 
 	const showDeletePrompt = useCallback(() => {
 		dispatch(confirmDelete());
-	}, [dispatch])
+	}, [dispatch]);
 
 	const showPublishPrompt = useCallback(() => {
 		dispatch(confirmPublication());
-	}, [dispatch])
+	}, [dispatch]);
 
 
 
@@ -215,11 +203,12 @@ export const SingleText = () => {
 					<>
 						<div className="actions">
 							<div className="reactions">
-								<LikeButton onClick={handleLike} liked={isLiked} text={text}/>
-								<BookmarkButton onClick={handleBookmark} bookmarked={isBookmarked} text={text}/>
+								<LikeButton liked={isLiked} text={text}/>
+								<CommentButton text={text}/>
+								<BookmarkButton bookmarked={isBookmarked} text={text}/>
 							</div>
 							{isOwner ? <>
-									<div className="options btn" onClick={toggleDropdown}>···</div>
+									<div className="options btn" onClick={toggleDropdown}><IconDots/></div>
 									<div id="dropdown-menu">
 										<ul>
 											<li onClick={handleEditText}>
@@ -254,17 +243,17 @@ export const SingleText = () => {
 								</>
 							}
 						</div>
-						<CommentSection textId={text.id} comments={text.comments}/>
+						<CommentSection text={text} comments={text.comments}/>
 					</>
 				) : isOwner ? (
-					<div id="draft-actions" className="action-buttons">
-					<button id="cancel-changes"
-					onClick={showDeletePrompt}>{formatMessage(messages.deleteDraft)}
-			</button>
-		<button id="edit-draft" onClick={handleEditText}>
-			{formatMessage(messages.editDraft)}
-		</button>
-		<button id="publish" onClick={showPublishPrompt}>
+					<div id="draft-actions" className="button-wrapper">
+						<button id="cancel-changes"
+							onClick={showDeletePrompt}>{formatMessage(messages.deleteDraft)}
+						</button>
+						<button id="edit-draft" onClick={handleEditText}>
+							{formatMessage(messages.editDraft)}
+						</button>
+						<button id="publish" onClick={showPublishPrompt}>
 							{formatMessage(messages.publishDraft)}
 						</button>
 					</div>

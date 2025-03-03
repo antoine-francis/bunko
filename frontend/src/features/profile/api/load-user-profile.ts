@@ -1,6 +1,6 @@
-import {UserBadge, UserProfile} from "../../../types/UserProfile.ts";
-import {URL} from "../../../constants/Url.ts";
-import {getCookie} from "../../../utils/get-cookie.ts";
+import {UserBadge, UserProfile} from "@/types/UserProfile.ts";
+import {URL} from "@/constants/Url.ts";
+import {getCookie} from "@/utils/get-cookie.ts";
 
 export const loadUserProfile : (username : string) => Promise<UserProfile | undefined> = async (username: string) => {
 

@@ -1,6 +1,6 @@
-import {Collective} from "../../../types/Collective.ts";
-import {Membership} from "../../../types/UserProfile.ts";
-import {URL} from "../../../constants/Url.ts";
+import {Collective} from "@/types/Collective.ts";
+import {Membership} from "@/types/UserProfile.ts";
+import {URL} from "@/constants/Url.ts";
 
 export const loadCollectiveDetails : (id : string) => Promise<Collective | undefined> = async (id: string) => {
 	const response = await fetch(URL.SERVER + URL.COLLECTIVE + id, {

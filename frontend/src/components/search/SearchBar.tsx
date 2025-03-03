@@ -1,7 +1,7 @@
 import {ChangeEvent, useCallback, useEffect, useState} from "react";
 import {defineMessages, useIntl} from "react-intl";
-import {useBunkoDispatch} from "../../hooks/redux-hooks.ts";
-import {resetSearchBar, searchTags} from "../../slices/BrowseTagsSlice.ts";
+import {useBunkoDispatch} from "@/hooks/redux-hooks.ts";
+import {resetSearchBar, searchTags} from "@/slices/BrowseTagsSlice.ts";
 import {IconX} from "@tabler/icons-react";
 
 const messages = defineMessages({
@@ -24,14 +24,14 @@ export function SearchBar() {
 	const [debounceValue, setDebouncedValue] = useState("");
 
 	useEffect(() => {
-		const timeoutId : number = setTimeout(() => {
+		const timeoutId : ReturnType<typeof setTimeout> = setTimeout(() => {
 			setDebouncedValue(searchVal);
 			if (debounceValue !== "") {
 				dispatch(searchTags(debounceValue));
 			} else {
 				dispatch(resetSearchBar());
 			}
-		}, 500);
+		}, 300);
 		return () => clearTimeout(timeoutId);
 	}, [searchVal, debounceValue, dispatch]);
 

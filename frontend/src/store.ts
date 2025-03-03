@@ -8,9 +8,10 @@ import profilesReducer from "./slices/ProfilesSlice.ts";
 import seriesReducer from "./slices/SeriesSlice.ts";
 import tagsReducer from "./slices/TagSlice.ts";
 import browseTagsReducer from "./slices/BrowseTagsSlice.ts";
-import collectivesReducer from "./slices/CollectivesSlice.ts"
-import modalReducer from "./slices/ModalSlice.ts"
-import uiStateReducer from "./slices/UiStateSlice.ts"
+import collectivesReducer from "./slices/CollectivesSlice.ts";
+import modalReducer from "./slices/ModalSlice.ts";
+import uiStateReducer from "./slices/UiStateSlice.ts";
+import commentsReducer from "./slices/CommentsSlice.ts";
 
 export const store = configureStore({
 	reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
 		texts: textReducer,
 		textEditor: textEditorReducer,
 		modal: modalReducer,
+		comments: commentsReducer,
 	},
 	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(createLogger({
 		collapsed: true,

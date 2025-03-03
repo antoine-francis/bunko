@@ -1,12 +1,12 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {defineMessages, FormattedMessage, useIntl} from "react-intl";
 import {Link, NavigateFunction, useNavigate, useSearchParams} from "react-router-dom";
-import {paths} from "../../config/paths.ts";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {login} from "../../slices/UserSlice.ts";
-import {useSession} from "../../hooks/session-hook.ts";
-import {UserBadge} from "../../types/UserProfile.ts";
-import {LoadingContainer} from "../../components/LoadingContainer.tsx";
+import {paths} from "@/config/paths.ts";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {login} from "@/slices/UserSlice.ts";
+import {useSession} from "@/hooks/session-hook.ts";
+import {UserBadge} from "@/types/UserProfile.ts";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 
 
 const messages = defineMessages({

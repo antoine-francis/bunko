@@ -15,3 +15,7 @@ export interface CommentPost {
 	textId: number;
 	parent: number | undefined;
 }
+
+export interface CommentState {
+	replyTo: BunkoComment | undefined;
+}

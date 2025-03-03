@@ -1,10 +1,11 @@
 import {RouterProvider, createBrowserRouter, Outlet} from "react-router-dom";
 
 import { paths } from "../config/paths";
-import {MenuBar} from "../components/menubar/MenuBar.tsx";
+import {MenuBar} from "../components/layout/MenuBar.tsx";
 import React from "react";
 import {ProtectedRoute} from "../components/ProtectedRoute.tsx";
-import {VerticalOptionsBar} from "../components/menubar/VerticalOptionsBar.tsx";
+import {VerticalOptionsBar} from "../components/layout/VerticalOptionsBar.tsx";
+import {Footer} from "@/components/layout/Footer.tsx";
 
 const AppLayout: React.FC = () => {
 	return (<>
@@ -14,6 +15,7 @@ const AppLayout: React.FC = () => {
 				<Outlet />
 				<VerticalOptionsBar/>
 			</div>
+			<Footer/>
 		</ProtectedRoute>
 	</>);
 }

@@ -1,8 +1,16 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, current, PayloadAction} from '@reduxjs/toolkit';
 import {LoadingState} from "../types/StateManagement.ts";
-import {deleteSingleText, loadText, postComment, updateExistingText} from "../features/text/api/single-text.ts";
+import {
+	bookmark,
+	deleteSingleText,
+	like,
+	loadText,
+	postComment,
+	unbookmark,
+	unlike,
+	updateExistingText
+} from "../features/text/api/single-text.ts";
 import {BunkoText, TextState} from "../types/Text.ts";
-import {bookmark, like, unbookmark, unlike} from "../features/text/api/single-text.ts";
 import {Like} from "../types/Like.ts";
 import {Bookmark} from "../types/Bookmark.ts";
 import {BunkoComment, CommentPost} from "../types/Comment.ts";
@@ -154,7 +162,17 @@ const textSlice = createSlice({
 			.addCase(comment.fulfilled, (state, action : PayloadAction<BunkoComment | undefined>) => {
 				if (action.payload !== undefined) {
 					const {text} = action.payload;
-					state[text].comments = state[text].comments.concat(action.payload);
+					const {parent} = (action as any).meta.arg;
+					if (parent !== undefined) {
+						const index = current(state)[text].comments.map(function(c) {
+							return c.id;
+						}).indexOf(parent);
+						if (index !== undefined && state[text].comments[index].replies !== undefined) {
+							state[text].comments[index].replies = state[text].comments[index].replies.concat(action.payload);
+						}
+					} else {
+						state[text].comments = state[text].comments.concat(action.payload);
+					}
 				}
 			})
 			.addCase(comment.rejected, (state, action) => {

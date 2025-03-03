@@ -1,14 +1,14 @@
 import {defineMessages, useIntl} from "react-intl";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {UserBadge, UserProfile} from "../../types/UserProfile.ts";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {UserBadge, UserProfile} from "@/types/UserProfile.ts";
 import {ChangeEvent, useCallback, useEffect, useState} from "react";
-import {paths} from "../../config/paths.ts";
-import {fetchProfile, updateProfile} from "../../slices/ProfilesSlice.ts";
+import {paths} from "@/config/paths.ts";
+import {fetchProfile, updateProfile} from "@/slices/ProfilesSlice.ts";
 import {useNavigate} from "react-router-dom";
-import {LoadingContainer} from "../../components/LoadingContainer.tsx";
-import {isValidName} from "../../utils/validation-functions.ts";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
+import {isValidName} from "@/utils/validation-functions.ts";
 import Resizer from "react-image-file-resizer";
-import {HttpStatus} from "../../constants/Http.ts";
+import {HttpStatus} from "@/constants/Http.ts";
 
 const messages = defineMessages({
 	bioPlaceholder: {
@@ -205,7 +205,7 @@ export const ProfileEdit = () => {
 							  defaultValue={bio} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
 						setBio(e.target.value)
 					}}/>
-					<footer className="action-buttons" id="profile-edit-buttons">
+					<footer className="button-wrapper" id="profile-edit-buttons">
 						<button id="cancel-changes" onClick={handleCancel}>{formatMessage(messages.cancelChanges)}
 						</button>
 						<button id="save-changes" onClick={handleSave}>{formatMessage(messages.saveChanges)}

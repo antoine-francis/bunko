@@ -1,11 +1,11 @@
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {FormattedDate} from "react-intl";
-import {paths} from "../../config/paths.ts";
-import {ErrorHandler} from "../../components/ErrorHandler.tsx";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {paths} from "@/config/paths.ts";
+import {ErrorHandler} from "@/components/ErrorHandler.tsx";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {useEffect} from "react";
-import {fetchCollective} from "../../slices/CollectivesSlice.ts";
-import {LoadingContainer} from "../../components/LoadingContainer.tsx";
+import {fetchCollective} from "@/slices/CollectivesSlice.ts";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 
 export const CollectiveDetails = () => {
 	const {id} = useParams();

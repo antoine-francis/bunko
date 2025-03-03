@@ -1,14 +1,14 @@
 import {useEffect} from "react";
 
-import {paths} from "../../config/paths.ts";
+import {paths} from "@/config/paths.ts";
 import {Link, useLocation} from "react-router-dom";
-import {ErrorHandler} from "../../components/ErrorHandler.tsx";
-import {EmptyList} from "../../components/users-list/EmptyList.tsx";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {ErrorHandler} from "@/components/ErrorHandler.tsx";
+import {EmptyList} from "@/components/users-list/EmptyList.tsx";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
-import {fetchTags} from "../../slices/BrowseTagsSlice.ts";
-import {Genre} from "../../types/Genre.ts";
-import {LoadingContainer} from "../../components/LoadingContainer.tsx";
+import {fetchTags} from "@/slices/BrowseTagsSlice.ts";
+import {Genre} from "@/types/Genre.ts";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 
 const messages = defineMessages({
 	browseTags: {

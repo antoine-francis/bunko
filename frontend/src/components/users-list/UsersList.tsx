@@ -1,12 +1,12 @@
 import {FormattedDate} from "react-intl";
-import {Subscription} from "../../types/UserProfile.ts";
+import {Subscription} from "@/types/UserProfile.ts";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {EmptyList} from "./EmptyList.tsx";
 import {ErrorHandler} from "../ErrorHandler.tsx";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {paths} from "../../config/paths.ts";
-import {fetchProfile} from "../../slices/ProfilesSlice.ts";
-import {URL} from "../../constants/Url.ts";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {paths} from "@/config/paths.ts";
+import {fetchProfile} from "@/slices/ProfilesSlice.ts";
+import {URL} from "@/constants/Url.ts";
 import {LoadingContainer} from "../LoadingContainer.tsx";
 
 interface UsersListProps {

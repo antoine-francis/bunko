@@ -1,9 +1,9 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
-import {paths} from "../../config/paths.ts";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {register} from "../../slices/UserSlice.ts";
-import {isValidEmail} from "../../utils/validation-functions.ts";
+import {paths} from "@/config/paths.ts";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {register} from "@/slices/UserSlice.ts";
+import {isValidEmail} from "@/utils/validation-functions.ts";
 import {defineMessages, useIntl} from "react-intl";
 
 const messages = defineMessages({

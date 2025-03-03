@@ -1,5 +1,5 @@
 import {SearchBar} from "./SearchBar.tsx";
-import {useBunkoSelector} from "../../hooks/redux-hooks.ts";
+import {useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {SearchResults} from "./SearchResults.tsx";
 
 export function Search() {

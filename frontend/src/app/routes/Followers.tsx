@@ -1,4 +1,4 @@
-import {UsersList} from "../../components/users-list/UsersList.tsx";
+import {UsersList} from "@/components/users-list/UsersList.tsx";
 import {useParams} from "react-router-dom";
 import {useEffect} from "react";
 

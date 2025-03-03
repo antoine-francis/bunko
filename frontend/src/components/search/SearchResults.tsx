@@ -1,11 +1,11 @@
-import {useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {Genre} from "../../types/Genre.ts";
+import {useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {Genre} from "@/types/Genre.ts";
 import {Loading} from "../Loading.tsx";
 import {ErrorHandler} from "../ErrorHandler.tsx";
 import {Link, useLocation} from "react-router-dom";
 import {useCallback, useEffect, useState} from "react";
 import {defineMessages, useIntl} from "react-intl";
-import {paths} from "../../config/paths.ts";
+import {paths} from "@/config/paths.ts";
 
 const messages = defineMessages({
 	noResultFound: {

@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
-import {paths} from "../../config/paths.ts";
-import {Genre} from "../../types/Genre.ts";
+import {paths} from "@/config/paths.ts";
+import {Genre} from "@/types/Genre.ts";
 
 interface TagListProps {
 	genres: Genre[];

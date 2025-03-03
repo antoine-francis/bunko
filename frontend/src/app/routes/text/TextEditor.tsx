@@ -1,26 +1,26 @@
 import {defineMessages, useIntl} from "react-intl";
 import {ChangeEvent, useCallback, useEffect, useState} from "react";
-import {useBunkoDispatch, useBunkoSelector} from "../../../hooks/redux-hooks.ts";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {
 	closeModal,
 	confirmLostChanges,
 	confirmPublication,
-} from "../../../slices/ModalSlice.ts";
+} from "@/slices/ModalSlice.ts";
 import {
 	createText,
 	finishLoading, resetEditor
-} from "../../../slices/TextEditorSlice.ts";
-import {ModalDialog} from "../../../components/layout/ModalDialog.tsx";
-import {C} from "../../../constants/Constants.ts";
+} from "@/slices/TextEditorSlice.ts";
+import {ModalDialog} from "@/components/layout/ModalDialog.tsx";
+import {C} from "@/constants/Constants.ts";
 import {Navigate, useNavigate, useParams} from "react-router-dom";
-import {paths} from "../../../config/paths.ts";
-import {BunkoText, EditorContent} from "../../../types/Text.ts";
-import {Genre} from "../../../types/Genre.ts";
-import {fetchText, updateText} from "../../../slices/TextSlice.ts";
-import {Series} from "../../../types/Series.ts";
-import {UserBadge, UserProfile} from "../../../types/UserProfile.ts";
-import {fetchProfile} from "../../../slices/ProfilesSlice.ts";
-import {LoadingContainer} from "../../../components/LoadingContainer.tsx";
+import {paths} from "@/config/paths.ts";
+import {BunkoText, EditorContent} from "@/types/Text.ts";
+import {Genre} from "@/types/Genre.ts";
+import {fetchText, updateText} from "@/slices/TextSlice.ts";
+import {Series} from "@/types/Series.ts";
+import {UserBadge, UserProfile} from "@/types/UserProfile.ts";
+import {fetchProfile} from "@/slices/ProfilesSlice.ts";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 
 const messages = defineMessages({
 	textPlaceholder: {
@@ -182,8 +182,16 @@ export const TextEditor = () => {
 	}
 
 	const cancelChanges = useCallback(() => {
-		dispatch(confirmLostChanges());
-	}, [dispatch]);
+		if ((text !== undefined && content === text.content) || text === undefined && content === "") {
+			if (text !== undefined) {
+				navigate(paths.singleText.getHref() + text.hash);
+			} else {
+				navigate(paths.home.getHref());
+			}
+		} else {
+			dispatch(confirmLostChanges());
+		}
+	}, [dispatch, navigate, text, content]);
 
 	const getSeriesInfo = useCallback(() => {
 		let series : Series | undefined = undefined;
@@ -361,7 +369,7 @@ export const TextEditor = () => {
 						className="seamless-input"
 						placeholder={formatMessage(messages.seriesSynopsisPlaceholder)}/>}
 				</div>
-				<footer id="editor-footer" className="action-buttons text-editor-buttons">
+				<footer id="editor-footer" className="button-wrapper text-editor-buttons">
 					<button id="cancel-changes"
 							onClick={cancelChanges}>{formatMessage(messages.cancelChanges)}</button>
 					<button id="" onClick={toggleExtraFields}>{extraFieldsToggled ? "▼" : "▲"}</button>

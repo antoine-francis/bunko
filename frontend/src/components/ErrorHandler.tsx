@@ -14,6 +14,6 @@ export const ErrorHandler = ({statusCode, redirectTo} : ErrorHandlerProps) => {
 	} else if (statusCode === HttpStatus.NOT_FOUND) {
 		return (<NotFound/>);
 	} else {
-		return (<div id="error">Something happened, try again later...</div>);
+		return (<div id="error-container">Something happened, try again later...</div>);
 	}
 }

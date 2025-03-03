@@ -1,4 +1,4 @@
-import {BunkoText, TextDescription} from "../../types/Text.ts";
+import {BunkoText, TextDescription} from "@/types/Text.ts";
 
 export const convertTextToDesc = (text : BunkoText) : TextDescription => {
 	return {

@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import {paths} from "../../config/paths.ts";
+import {paths} from "@/config/paths.ts";
 
 interface ClickableTagProps {
 	tag: string;

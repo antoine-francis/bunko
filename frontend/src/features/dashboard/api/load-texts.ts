@@ -1,6 +1,6 @@
-import {BunkoText} from "../../../types/Text.ts";
-import {Series} from "../../../types/Series.ts";
-import {URL} from "../../../constants/Url.ts";
+import {BunkoText} from "@/types/Text.ts";
+import {Series} from "@/types/Series.ts";
+import {URL} from "@/constants/Url.ts";
 
 export const loadTexts : () => Promise<BunkoText[]> = async () => {
 	const response = await fetch(URL.SERVER + URL.TEXTS, {

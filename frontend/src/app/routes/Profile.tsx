@@ -1,18 +1,18 @@
 import {Link, NavigateFunction, useNavigate, useParams} from "react-router-dom";
-import {paths} from "../../config/paths.ts";
-import {fetchProfile, subscribe, unsubscribe} from "../../slices/ProfilesSlice.ts";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {ErrorHandler} from "../../components/ErrorHandler.tsx";
+import {paths} from "@/config/paths.ts";
+import {fetchProfile, subscribe, unsubscribe} from "@/slices/ProfilesSlice.ts";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {ErrorHandler} from "@/components/ErrorHandler.tsx";
 import {defineMessages, FormattedDate, useIntl} from "react-intl";
-import {useIsFollowedByUser, useIsOwner} from "../../hooks/users-relationships-hooks.ts";
-import {UserBadge, UserProfile} from "../../types/UserProfile.ts";
+import {useIsFollowedByUser, useIsOwner} from "@/hooks/users-relationships-hooks.ts";
+import {UserBadge, UserProfile} from "@/types/UserProfile.ts";
 import {useCallback, useEffect} from "react";
-import {TextDescription} from "../../types/Text.ts";
-import {BunkoDispatch} from "../../store.ts";
-import {TextsList} from "../../components/texts-list/TextsList.tsx";
-import {LoadingContainer} from "../../components/LoadingContainer.tsx";
+import {TextDescription} from "@/types/Text.ts";
+import {BunkoDispatch} from "@/store.ts";
+import {TextsList} from "@/components/texts-list/TextsList.tsx";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {IconEdit} from "@tabler/icons-react";
-import {URL} from "../../constants/Url.ts";
+import {URL} from "@/constants/Url.ts";
 
 const messages = defineMessages({
 	textPlural: {

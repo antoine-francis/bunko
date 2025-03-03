@@ -1,12 +1,12 @@
-import {TextsList} from "../../components/texts-list/TextsList.tsx";
+import {TextsList} from "@/components/texts-list/TextsList.tsx";
 import {useEffect} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {ErrorHandler} from "../../components/ErrorHandler.tsx";
-import {useBunkoDispatch, useBunkoSelector} from "../../hooks/redux-hooks.ts";
-import {paths} from "../../config/paths.ts";
-import {fetchTextsByTag} from "../../slices/TagSlice.ts";
-import {TagLoadingState} from "../../types/Genre.ts";
-import {LoadingContainer} from "../../components/LoadingContainer.tsx";
+import {ErrorHandler} from "@/components/ErrorHandler.tsx";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {paths} from "@/config/paths.ts";
+import {fetchTextsByTag} from "@/slices/TagSlice.ts";
+import {TagLoadingState} from "@/types/Genre.ts";
+import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 
 export const Tag = () => {
 	const {tag: tagParam} = useParams();

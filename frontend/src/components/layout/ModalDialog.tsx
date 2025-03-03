@@ -1,9 +1,9 @@
 import ReactModal from "react-modal";
 import {useCallback} from "react";
-import {C} from "../../constants/Constants.ts";
+import {C} from "@/constants/Constants.ts";
 import {defineMessages, useIntl} from "react-intl";
-import {useBunkoDispatch} from "../../hooks/redux-hooks.ts";
-import {closeModal} from "../../slices/ModalSlice.ts";
+import {useBunkoDispatch} from "@/hooks/redux-hooks.ts";
+import {closeModal} from "@/slices/ModalSlice.ts";
 
 const messages = defineMessages({
 	cancel: {
