@@ -1,4 +1,10 @@
 :root {
+    --menu-bar-height: 63px;
+    --sidebar-width: 250px;
+    --footer-height: 55px;
+
+
+
     --font-color: #1c1c1c;
     --background-color: #ffffff;
     --dark-background-color: #f5f5f3;
@@ -9,8 +15,10 @@
     --tag-color: #888888 !important;
     --golden-accent-color: #c29b00;
     --button-hover-color: #c29b00;
+    --button-hover-background: #dcdcdc;
     --button-text-color: #454545;
     --button-background-color: #faf9f9;
+    --sidebar-background: #353535;
     --input-text-color: #454545;
     --input-background-color: #faf9f9;
     --extra-fields-popup-background-color: #ebebeb;
@@ -25,8 +33,10 @@
     --background-hover-color: #474747;
     --menu-link-color: #c0c2c6;
     --tag-color: #b4b4b4 !important;
+    --button-hover-background: #1e1e1e;
     --button-text-color: #c0c2c6;
     --button-background-color: #1a1a1a;
+    --sidebar-background: #353535;
     --input-text-color: #faf9f9;
     --input-background-color: #454545;
     --extra-fields-popup-background-color: #3f3d3d;

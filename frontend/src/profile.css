@@ -139,6 +139,11 @@
     border: 1px solid #888888;
     overflow: hidden;
     background-color: #fff;
+    margin: 0 auto;
+}
+
+.title-badge {
+    margin: 0 auto;
 }
 
 .content-preview {

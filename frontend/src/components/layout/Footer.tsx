@@ -1,7 +1,7 @@
 export const Footer = () => {
 	return (
 		<footer>
-			Privacy - Terms - Cookies © {new Date().getFullYear()} Antoine Francis
+			Privacy - Terms - Cookies <span style={{whiteSpace: "nowrap"}}>© {new Date().getFullYear()} Antoine Francis</span>
 		</footer>
 	)
 }

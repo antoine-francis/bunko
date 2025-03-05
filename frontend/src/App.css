@@ -6,14 +6,26 @@
 #main-container {
   display: flex;
   flex-wrap: nowrap;
-  min-height: calc(100% - 63px);
-  overflow-x: hidden;
+  min-height: calc(100% - var(--menu-bar-height));
+
+  footer {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 12px;
+    border-top: 1px solid var(--golden-accent-color);
+    font-size: 10px;
+    height: var(--footer-height);
+  }
 }
 
 .menu-bar {
   display: flex;
   border-bottom: 1px solid var(--golden-accent-color);
   background-color: #242424;
+  width: 100%;
+  position: fixed;
+  z-index: 10;
 }
 
 input[type=text], textarea {
@@ -25,6 +37,7 @@ input[type=text], textarea {
   width: 48px;
   display: flex;
   justify-content: center;
+  padding: 0 16px;
 
   .mini-profile-pic {
     display: block;
@@ -100,7 +113,7 @@ input[type=text], textarea {
 }
 
 .result:hover {
-  background-color: #353535;
+  background-color: var(--sidebar-background);
 }
 
 #search-bar:focus {
@@ -141,12 +154,24 @@ input[type=text], textarea {
 #vertical-options-bar {
   width: 250px;
   flex: 0 0 auto;
-  background-color: #353535;
+  background-color: var(--sidebar-background);
   transition: 0.2s;
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
   align-content: space-between;
+  position: fixed;
+  top: var(--menu-bar-height);
+  height: calc(100vh - var(--menu-bar-height));
+  z-index: 10;
+}
+
+#vertical-bar-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  height: calc(100% - var(--footer-height));
+  width: 100%;
 }
 
 #vertical-options-bar ul {
@@ -154,12 +179,12 @@ input[type=text], textarea {
   padding: 0;
   margin: 0;
   white-space: nowrap;
+  width: 100%;
 }
 
 #vertical-options-bar ul li {
   padding: 24px;
   display: flex;
-  width: 100%;
 }
 
 #vertical-options-bar ul li img {
@@ -174,11 +199,27 @@ input[type=text], textarea {
 }
 
 #vertical-options-bar ul li:hover {
-  background-color: #474747;
+  background-color: var(--button-hover-background);
 }
 
-#toggle-dark-mode {
-  padding: 24px;
+.more-options {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  width: 100%;
+  margin: 6px;
+
+  button {
+    padding: 12px;
+    position: sticky;
+    bottom: 0;
+    background-color: var(--sidebar-background);
+  }
+
+  button:hover {
+    background-color: var(--button-hover-background);
+    border-radius: 8px;
+  }
 }
 
 .yellow {
@@ -193,11 +234,29 @@ h2 {
   text-align: center;
 }
 
-#dashboard, #user-profile, #genre-container, #collective-container, #series-info-container, #bookmarks-container, #text-container, #browse-by-tags-container, #error-container, #followers-container {
-  padding: 16px;
-  width: 80%;
-  margin: 0 auto;
+#main-content {
+  margin: var(--menu-bar-height) 0 0;
+  transition: 0.2s;
+  width: 100%;
   flex: 1 1 auto;
+  margin-left: 250px;
+
+  & > div {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  #user-profile {
+    max-width: 1079px;
+  }footer {
+     width: 100%;
+     margin: 0 auto;
+     text-align: center;
+     padding: 12px;
+     border-top: 1px solid var(--golden-accent-color);
+     font-size: 10px;
+     height: var(--footer-height);
+   }
 }
 
 #text-container {
@@ -520,7 +579,7 @@ textarea:focus {
 }
 
 .like:hover, .bookmark:hover, .comment:hover, .options:hover {
-  background-color: var(--background-hover-color);
+  background-color: var(--button-hover-background);
   color: #c29b00;
 }
 
@@ -582,6 +641,17 @@ textarea:focus {
   display: flex;
   justify-content: space-between;
   padding-bottom: 16px;
+
+  .more {
+    display: flex;
+    align-content: center;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .more:hover {
+    background-color: var(--button-hover-background);
+  }
 }
 
 .publish-date {
@@ -725,12 +795,4 @@ textarea:focus {
 
 .read-the-docs {
   color: #888;
-}
-
-footer {
-  width: 60%;
-  margin: 0 auto;
-  text-align: center;
-  padding: 32px;
-  border-top: 1px solid var(--golden-accent-color);
 }

@@ -3,6 +3,7 @@ import {paths} from "@/config/paths.ts";
 import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
 import {
+	IconDots,
 	IconHash,
 	IconLayoutGrid,
 	IconLogout,
@@ -12,7 +13,8 @@ import {
 	IconUsersGroup
 } from "@tabler/icons-react";
 import {toggleDarkMode, toggleVerticalBar} from "@/slices/UiStateSlice.ts";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
+import {Footer} from "@/components/layout/Footer.tsx";
 
 const messages = defineMessages({
 	browseTags: {
@@ -49,6 +51,15 @@ export const VerticalOptionsBar = () => {
 	const {showVerticalOptionsBar, isDarkMode} = useBunkoSelector(state => state.uiState)
 	const {user} = useBunkoSelector(state => state.currentUser);
 
+	useEffect(() => {
+		window.addEventListener("click", (event : MouseEvent) => {
+			const isMobileScreen = window.innerWidth <= 700;
+			if (isMobileScreen && event.target && event.target instanceof Element && event.target.classList.contains("nav-btn")) {
+				dispatch(toggleVerticalBar(false));
+			}
+		})
+	}, []);
+
 	const handleDarkModeToggle = useCallback(() => {
 		const newMode : string = isDarkMode ? "light" : "dark";
 		dispatch(toggleDarkMode());
@@ -60,53 +71,62 @@ export const VerticalOptionsBar = () => {
 		return (
 			<>
 				<div className="close-bar-veil" style={!showVerticalOptionsBar ? {display: "none"} : {display: "block"}}
-					 onClick={() => dispatch(toggleVerticalBar())}/>
-				<div id="vertical-options-bar" style={showVerticalOptionsBar ? {width: "250px"} : {width: "0"}}>
-					<ul>
-						<li>
-							<IconUsersGroup/>
-							<Link to={{pathname: paths.tags.getHref()}}>
-								<div id="browse-tags" className="menu-bar-btn">
-									{formatMessage(messages.browseWriters)}
-								</div>
-							</Link>
-						</li>
-						<li>
-							<IconHash/>
-							<Link to={{pathname: paths.tags.getHref()}}>
-								<div id="browse-tags" className="menu-bar-btn">
-									{formatMessage(messages.browseTags)}
-								</div>
-							</Link>
-						</li>
-						<li>
-							<IconLayoutGrid/>
-							<Link to={{pathname: paths.tags.getHref()}}>
-								<div id="browse-tags" className="menu-bar-btn">
-									{formatMessage(messages.browseSeries)}
-								</div>
-							</Link>
-						</li>
-						<li>
-							<IconSettings/>
-							<Link to={{pathname: paths.profile.getHref() + user.username}}>
-								<div className="menu-bar-btn">
-									{formatMessage(messages.settings)}
-								</div>
-							</Link>
-						</li>
-						<li>
-							<IconLogout/>
-							<Link to={paths.auth.logout.getHref()}>
-								<div className="menu-bar-btn">
-									{formatMessage(messages.logout)}
-								</div>
-							</Link>
-						</li>
-					</ul>
-					<button id="toggle-dark-mode" onClick={handleDarkModeToggle}>{isDarkMode ? <IconSun/> :
-						<IconMoon/>}</button>
+					 onClick={() => dispatch(toggleVerticalBar(false))}/>
+				<div id="vertical-options-bar" style={showVerticalOptionsBar ? {left: "0px"} : {left: "-250px"}}>
+					<div id="vertical-bar-content">
+						<ul>
+							<li>
+								<IconUsersGroup/>
+								<Link to={{pathname: paths.tags.getHref()}}>
+									<div id="browse-tags" className="nav-btn">
+										{formatMessage(messages.browseWriters)}
+									</div>
+								</Link>
+							</li>
+							<li>
+								<IconHash/>
+								<Link to={{pathname: paths.tags.getHref()}}>
+									<div id="browse-tags" className="nav-btn">
+										{formatMessage(messages.browseTags)}
+									</div>
+								</Link>
+							</li>
+							<li>
+								<IconLayoutGrid/>
+								<Link to={{pathname: paths.tags.getHref()}}>
+									<div id="browse-tags" className="nav-btn">
+										{formatMessage(messages.browseSeries)}
+									</div>
+								</Link>
+							</li>
+							<hr/>
+							<li>
+								<IconSettings/>
+								<Link to={{pathname: paths.profile.getHref() + user.username}}>
+									<div className="nav-btn">
+										{formatMessage(messages.settings)}
+									</div>
+								</Link>
+							</li>
+							<li>
+								<IconLogout/>
+								<Link to={paths.auth.logout.getHref()}>
+									<div className="nav-btn">
+										{formatMessage(messages.logout)}
+									</div>
+								</Link>
+							</li>
+						</ul>
+						<div className="more-options">
+							<button id="toggle-dark-mode" onClick={handleDarkModeToggle}>{isDarkMode ? <IconSun/> :
+								<IconMoon/>}</button>
+
+							<button id="more-options-dropdown"><IconDots/></button>
+						</div>
+					</div>
+					<Footer/>
 				</div>
+
 			</>
 		)
 	}

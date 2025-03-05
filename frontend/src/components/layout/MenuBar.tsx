@@ -10,22 +10,34 @@ import {URL} from "@/constants/Url.ts";
 
 export const MenuBar = () => {
 	const {user} = useBunkoSelector((state) => state.currentUser);
+	const {showVerticalOptionsBar} = useBunkoSelector(state => state.uiState);
 	const dispatch = useBunkoDispatch();
 
 	const toggleOtherBar = useCallback(() => {
+		const mainContentDiv = document.getElementById("main-content");
+		if (mainContentDiv !== null) {
+			if (showVerticalOptionsBar) {
+				mainContentDiv.style.marginLeft = "0";
+			} else {
+				mainContentDiv.style.marginLeft = "250px";
+			}
+		}
 		dispatch(toggleVerticalBar());
-	}, [dispatch]);
+	}, [dispatch, showVerticalOptionsBar]);
 
 	if (user) {
 		return (
 			<>
 				<div className="menu-bar">
+					<div id="vertical-bar-toggle" onClick={toggleOtherBar}>
+						<IconMenu2/>
+					</div>
 					<Link to={paths.home.getHref()}>
 						<div className="home">
 							poqopo.co
 						</div>
 					</Link>
-					<Search />
+					<Search/>
 					<Link to={{pathname: paths.newText.getHref()}}>
 						<div id="create-text" className="menu-bar-btn">
 							<IconPlus/>
@@ -34,9 +46,6 @@ export const MenuBar = () => {
 					<Link id="profile-pic" to={{pathname: paths.profile.getHref() + user.username}}>
 						<img className="mini-profile-pic" src={`${URL.SERVER}${user.picture}`} alt={user.username}/>
 					</Link>
-					<div id="vertical-bar-toggle" onClick={toggleOtherBar}>
-						<IconMenu2/>
-					</div>
 				</div>
 			</>
 		)

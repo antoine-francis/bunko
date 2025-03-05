@@ -37,7 +37,8 @@ export const TextsList = ({texts, showDescription = true, showSeries = true}: Te
 						<Link to={paths.singleText.getHref() + text.hash}>
 							<div className="preview-container"><p
 								className="content-preview">{text.content?.substring(0, 900)}</p></div>
-							<div className="title">{text.title ? text.title : formatMessage(messages.untitledText)}</div>
+							{!showDescription && <div
+								className="title">{text.title ? text.title : formatMessage(messages.untitledText)}</div>}
 						</Link>
 						{text.isDraft &&
 							<div className="publ-date">

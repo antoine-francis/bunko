@@ -1,4 +1,3 @@
-// import '../variables.css';
 import '../App.css';
 import '../profile.css';
 import '../mobile.css';

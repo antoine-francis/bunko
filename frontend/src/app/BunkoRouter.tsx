@@ -5,17 +5,18 @@ import {MenuBar} from "../components/layout/MenuBar.tsx";
 import React from "react";
 import {ProtectedRoute} from "../components/ProtectedRoute.tsx";
 import {VerticalOptionsBar} from "../components/layout/VerticalOptionsBar.tsx";
-import {Footer} from "@/components/layout/Footer.tsx";
 
 const AppLayout: React.FC = () => {
 	return (<>
 		<ProtectedRoute>
 			<MenuBar />
 			<div id="main-container">
-				<Outlet />
 				<VerticalOptionsBar/>
+				<div id="main-content">
+					<Outlet />
+				</div>
 			</div>
-			<Footer/>
+			{/*<Footer/>*/}
 		</ProtectedRoute>
 	</>);
 }

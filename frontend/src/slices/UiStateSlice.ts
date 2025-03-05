@@ -1,11 +1,11 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {UiState} from "../types/StateManagement.ts";
 import {detectDarkMode} from "../utils/detect-color-scheme.ts";
 
 const isDarkMode : boolean = detectDarkMode();
 
 const initialState: UiState = {
-	showVerticalOptionsBar: false,
+	showVerticalOptionsBar: window.innerWidth > 700,
 	isDarkMode
 };
 
@@ -13,8 +13,12 @@ const uiStateSlice = createSlice({
 	name: 'uiState',
 	initialState,
 	reducers: {
-		toggleVerticalBar: (state) => {
-			state.showVerticalOptionsBar = !state.showVerticalOptionsBar;
+		toggleVerticalBar: (state, action : PayloadAction<boolean | undefined >) => {
+			if (action.payload !== undefined) {
+				state.showVerticalOptionsBar = action.payload;
+			} else {
+				state.showVerticalOptionsBar = !state.showVerticalOptionsBar;
+			}
 		},
 		toggleDarkMode: (state) => {
 			state.isDarkMode = !state.isDarkMode;
