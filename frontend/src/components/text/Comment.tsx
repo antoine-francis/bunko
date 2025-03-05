@@ -11,7 +11,7 @@ import {URL} from "@/constants/Url.ts";
 interface CommentProps {
 	comment: BunkoComment;
 	text: BunkoText;
-	parentId: number | undefined;
+	parentId?: number;
 }
 
 export function Comment({comment, text, parentId = undefined}: CommentProps) {
