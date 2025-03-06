@@ -21,10 +21,12 @@
     --sidebar-background: #353535;
     --input-text-color: #454545;
     --input-background-color: #faf9f9;
+    --dropdown-border-color: #dcdcdc;
     --extra-fields-popup-background-color: #ebebeb;
 }
 
 [data-theme="dark"] {
+    --font-color: #d3d3d3;
     --font-color: #d3d3d3;
     --background-color: #242424;
     --dark-background-color: #181818;
@@ -39,5 +41,6 @@
     --sidebar-background: #353535;
     --input-text-color: #faf9f9;
     --input-background-color: #454545;
+    --dropdown-border-color: #454545;
     --extra-fields-popup-background-color: #3f3d3d;
 }

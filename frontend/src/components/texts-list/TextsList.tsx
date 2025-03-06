@@ -38,7 +38,7 @@ export const TextsList = ({texts, showDescription = true, showSeries = true}: Te
 							<div className="preview-container"><p
 								className="content-preview">{text.content?.substring(0, 900)}</p></div>
 							{!showDescription && <div
-								className="title">{text.title ? text.title : formatMessage(messages.untitledText)}</div>}
+								className="title-overlap">{text.title ? text.title : formatMessage(messages.untitledText)}</div>}
 						</Link>
 						{text.isDraft &&
 							<div className="publ-date">

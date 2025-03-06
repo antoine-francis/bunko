@@ -15,8 +15,9 @@ import {EmptyListContainer} from "@/components/EmptyListContainer.tsx";
 import {LikeButton} from "@/components/text/LikeButton.tsx";
 import {BookmarkButton} from "@/components/text/BookmarkButton.tsx";
 import {CommentButton} from "@/components/text/CommentButton.tsx";
-import {IconDots} from "@tabler/icons-react";
+import {IconAlertTriangle} from "@tabler/icons-react";
 import {Truncate} from "@re-dev/react-truncate";
+import {Dropdown} from "@/components/util/Dropdown.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -33,6 +34,11 @@ const messages = defineMessages({
 		id: "minutesToRead",
 		description: "text length in minutes",
 		defaultMessage: "{1} minutes read",
+	},
+	report: {
+		id: "report",
+		description: "report button",
+		defaultMessage: "Report",
 	}
 });
 
@@ -50,6 +56,19 @@ export const Dashboard = () => {
 			dispatch(fetchTexts());
 		}
 	}, [dispatch, userLoading, userError, loading]);
+
+	const getDropdownContent = useCallback(() => {
+		const items = [];
+		items.push(
+			<>
+				<IconAlertTriangle />
+				<div className="nav-btn" onClick={() => {}}>
+					{formatMessage(messages.report)}
+				</div>
+			</>
+		);
+		return items;
+	}, [])
 
 	const moreThanAWeek = useCallback((text : BunkoText) => {
 		return (new Date().getTime() - new Date(text.creationDate).getTime()) / 1000 > 604800;
@@ -77,26 +96,28 @@ export const Dashboard = () => {
 						<TimeAgo datetime={text.creationDate} locale={locale}/>;
 					return (
 						<div className="dashboard-item" key={`${text}-${index}`}>
-							<img className="mini-profile-pic" src={URL.SERVER + text.author.picture}
-								 alt={text.author.username}/>
 							<div className="text-info">
 								<div className="text-preview">
 									<div className="item-header">
+										<img className="mini-profile-pic" src={URL.SERVER + text.author.picture}
+											 alt={text.author.username}/>
 										<div>
 											<Link to={{pathname: `${paths.singleText.getHref()}${text.hash}`}}>
 												<div>{text.title}</div>
 											</Link>
 											<div className="author-date">
-												<Link to={{pathname: `${paths.profile.getHref()}${text.author.username}`}}>
+												<Link
+													to={{pathname: `${paths.profile.getHref()}${text.author.username}`}}>
 							<span className="author">{formatMessage(messages.author, {
 								0: text.author.firstName !== "" ? `${text.author.firstName} ${text.author.lastName}` :
-									text.author.username})}</span>
+									text.author.username
+							})}</span>
 												</Link>
 												<span className="publish-date">{date}</span>
 											</div>
 										</div>
 										<div className="more">
-											<IconDots/>
+											<Dropdown items={getDropdownContent()}/>
 										</div>
 									</div>
 

@@ -1,9 +1,8 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {paths} from "@/config/paths.ts";
 import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
 import {
-	IconDots,
 	IconHash,
 	IconLayoutGrid,
 	IconLogout,
@@ -15,6 +14,8 @@ import {
 import {toggleDarkMode, toggleVerticalBar} from "@/slices/UiStateSlice.ts";
 import {useCallback, useEffect} from "react";
 import {Footer} from "@/components/layout/Footer.tsx";
+import {Dropdown} from "@/components/util/Dropdown.tsx";
+import {UserBadge} from "@/types/UserProfile.ts";
 
 const messages = defineMessages({
 	browseTags: {
@@ -50,6 +51,7 @@ export const VerticalOptionsBar = () => {
 	const dispatch = useBunkoDispatch();
 	const {showVerticalOptionsBar, isDarkMode} = useBunkoSelector(state => state.uiState)
 	const {user} = useBunkoSelector(state => state.currentUser);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		window.addEventListener("click", (event : MouseEvent) => {
@@ -59,6 +61,27 @@ export const VerticalOptionsBar = () => {
 			}
 		})
 	}, []);
+
+	const getDropdownContent = useCallback((user : UserBadge) => {
+		const items = [];
+		items.push(
+			<>
+				<IconSettings/>
+				<div className="nav-btn" onClick={() => navigate(paths.profile.getHref() + user.username)}>
+					{formatMessage(messages.settings)}
+				</div>
+			</>
+		);
+		items.push(
+			<>
+				<IconLogout/>
+				<div className="nav-btn" onClick={() => navigate(paths.auth.logout.getHref())}>
+					{formatMessage(messages.logout)}
+				</div>
+			</>
+		);
+		return items;
+	}, [formatMessage, navigate])
 
 	const handleDarkModeToggle = useCallback(() => {
 		const newMode : string = isDarkMode ? "light" : "dark";
@@ -100,28 +123,13 @@ export const VerticalOptionsBar = () => {
 								</Link>
 							</li>
 							<hr/>
-							<li>
-								<IconSettings/>
-								<Link to={{pathname: paths.profile.getHref() + user.username}}>
-									<div className="nav-btn">
-										{formatMessage(messages.settings)}
-									</div>
-								</Link>
-							</li>
-							<li>
-								<IconLogout/>
-								<Link to={paths.auth.logout.getHref()}>
-									<div className="nav-btn">
-										{formatMessage(messages.logout)}
-									</div>
-								</Link>
-							</li>
 						</ul>
 						<div className="more-options">
 							<button id="toggle-dark-mode" onClick={handleDarkModeToggle}>{isDarkMode ? <IconSun/> :
 								<IconMoon/>}</button>
 
-							<button id="more-options-dropdown"><IconDots/></button>
+
+							<Dropdown items={getDropdownContent(user)} />
 						</div>
 					</div>
 					<Footer/>

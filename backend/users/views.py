@@ -86,7 +86,6 @@ def get_profile(request, username):
 @api_view(['PATCH'])
 def update_profile(request):
 	logger.info(f"START update_profile() for user {request.user.id}")
-
 	try:
 		user = User.objects.get(id=request.user.id)
 		serializer = UserSerializer(instance=user, data=request.data, context={'request': request})

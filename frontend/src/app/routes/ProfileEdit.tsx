@@ -9,6 +9,7 @@ import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {isValidName} from "@/utils/validation-functions.ts";
 import Resizer from "react-image-file-resizer";
 import {HttpStatus} from "@/constants/Http.ts";
+import {URL as BunkoURL} from "@/constants/Url.ts";
 
 const messages = defineMessages({
 	bioPlaceholder: {
@@ -61,7 +62,7 @@ export const ProfileEdit = () => {
 	const {loading} = useBunkoSelector(state => state.currentUser);
 	const profile : UserProfile | undefined = useBunkoSelector(state =>
 		currentUser ? state.userProfiles[currentUser.username] : undefined);
-	const [imgUrl, setImgUrl] = useState<string>(profile !== undefined ? profile.picture : "");
+	const [imgUrl, setImgUrl] = useState<string | undefined>(profile !== undefined ? profile.picture : undefined);
 	const [imgFile, setImgFile] = useState<File | null>(null);
 	const [firstName, setFirstName] = useState<string>(profile !== undefined ? profile.firstName : "");
 	const [lastName, setLastName] = useState<string>(profile !== undefined ? profile.lastName : "");
@@ -93,7 +94,6 @@ export const ProfileEdit = () => {
 					setFirstName(profile.firstName);
 					setLastName(profile.lastName);
 					setUsername(profile.username);
-					setImgUrl(profile.picture);
 				}
 			}
 
@@ -155,9 +155,11 @@ export const ProfileEdit = () => {
 				"file"
 			);
 			const newSrc : string = URL.createObjectURL(e.target.files[0]);
-			setImgUrl(newSrc);
+			const reader = new FileReader();
+			reader.readAsDataURL(e.target.files[0]);
+			setImgUrl(BunkoURL.SERVER + newSrc);
 		} else if (profile !== undefined) {
-			setImgUrl(profile.picture);
+			setImgUrl(undefined);
 		}
 	}, [profile]);
 
@@ -168,7 +170,7 @@ export const ProfileEdit = () => {
 			<div id="profile-edit-container" className="container">
 				<div id="profile-edit-form">
 					<div id="picture-edit">
-						<img src={imgUrl} alt={profile.username} className="profile-pic"/>
+						<img src={imgUrl !== undefined ? imgUrl : BunkoURL.SERVER + profile.picture} alt={profile.username} className="profile-pic"/>
 						<input type="file" className="file-upload" onChange={handlePictureChange}
 							   id="profile-pic-upload" accept="image/png, image/jpeg"/>
 					</div>
@@ -205,12 +207,12 @@ export const ProfileEdit = () => {
 							  defaultValue={bio} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
 						setBio(e.target.value)
 					}}/>
-					<footer className="button-wrapper" id="profile-edit-buttons">
+					<div className="button-wrapper" id="profile-edit-buttons">
 						<button id="cancel-changes" onClick={handleCancel}>{formatMessage(messages.cancelChanges)}
 						</button>
 						<button id="save-changes" onClick={handleSave}>{formatMessage(messages.saveChanges)}
 						</button>
-					</footer>
+					</div>
 				</div>
 			</div>
 		);
