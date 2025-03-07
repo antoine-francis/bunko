@@ -1,6 +1,6 @@
 cd /home/bunko
 git pull
-cd /backend
+cd backend
 source venv/bin/activate
 pip install -r requirements.txt
 python3 manage.py makemigrations
