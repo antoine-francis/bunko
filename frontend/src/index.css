@@ -20,8 +20,19 @@ a {
   color: var(--link-color);
   text-decoration: inherit;
 }
-a:hover {
+a:hover:not(.no-highlight) {
   color: var(--link-hover-color);
+}
+
+.no-highlight:hover {
+
+  .text-item {
+    outline: 1px solid var(--golden-accent-color);
+  }
+
+  .title {
+    color: var(--golden-accent-color);
+  }
 }
 
 body {

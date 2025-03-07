@@ -41,7 +41,7 @@ interface CommentProps {
 export function Comment({comment, text, parentId = undefined}: CommentProps) {
 	const {replyTo} = useBunkoSelector(state => state.comments)
 	const {user} = useBunkoSelector((state) => state.currentUser);
-	const {formatMessage} = useIntl();
+	const {formatMessage, formatDate} = useIntl();
 
 	const getDropdownContent = useCallback(() => {
 		const items : ReactNode[] = [];
@@ -90,8 +90,9 @@ export function Comment({comment, text, parentId = undefined}: CommentProps) {
 							<Link to={`${paths.profile.getHref()}${comment.author.username}`}>
 								<span className="comment-author">{comment.author.username} </span>
 							</Link>
-							<span className="comment-date"><TimeAgo className="comment-timestamp" live={false}
-																	datetime={comment.creationDate}/></span>
+							<span className="comment-date" title={formatDate(comment.creationDate)}>
+								<TimeAgo className="comment-timestamp" live={false} datetime={comment.creationDate}/>
+							</span>
 						</div>
 						<Dropdown items={getDropdownContent()} align={"end"}/>
 					</div>

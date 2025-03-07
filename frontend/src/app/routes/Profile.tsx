@@ -78,7 +78,7 @@ const messages = defineMessages({
 
 export const Profile = () => {
 	const {username} = useParams();
-	const {formatMessage} = useIntl();
+	const {formatMessage, formatDate} = useIntl();
 	const navigate : NavigateFunction = useNavigate();
 	const dispatch : BunkoDispatch = useBunkoDispatch();
 	const profile : UserProfile | undefined = useBunkoSelector(state => username ? state.userProfiles[username] : undefined);
@@ -160,6 +160,7 @@ export const Profile = () => {
 		} else if (profile.error) {
 			return <ErrorHandler statusCode={profile.error}/>;
 		} else {
+			console.log(new Date(profile.signupDate).getFullYear());
 			return (
 				<div id="user-profile">
 					<>
@@ -174,7 +175,9 @@ export const Profile = () => {
 								</div>}
 							</div>
 							<div className="username">@{profile.username}</div>
-							<div className="join-date">Member since <FormattedDate value={profile.signupDate}/></div>
+							<div className="join-date" title={formatDate(profile.signupDate)}>
+								Member since {new Date(profile.signupDate).getFullYear()}
+							</div>
 							{!isOwner && <div className="follow-button">
 								<button onClick={handleSubscribe}>{isFollowedByUser ? "Unfollow" : "Follow"}</button>
 							</div>}
