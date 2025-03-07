@@ -1,4 +1,5 @@
 import {Author} from "./Author.ts";
+import {UserBadge} from "@/types/UserProfile.ts";
 
 export interface BunkoComment {
 	id: number;
@@ -7,7 +8,15 @@ export interface BunkoComment {
 	modificationDate?: Date;
 	author: Author;
 	replies?: BunkoComment[];
+	parentId?: number;
+	likes: CommentLike[];
 	text: string; // text hash
+}
+
+export interface CommentLike {
+	comment: BunkoComment;
+	user: UserBadge;
+	likedDate: Date;
 }
 
 export interface CommentPost {

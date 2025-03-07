@@ -27,6 +27,27 @@ class Like(models.Model):
 		return f'{self.text} liked by {self.user}'
 
 
+class CommentLike(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment_author")
+	comment = models.ForeignKey('Comment', on_delete=models.CASCADE, related_name='liked_comment')
+	liked_date = models.DateTimeField(default=timezone.now)
+
+	def clean(self):
+		# Ensure that both user and text are set
+		if not self.user:
+			raise ValidationError('User must be provided')
+		if not self.comment:
+			raise ValidationError('Comment must be provided')
+
+	def save(self, *args, **kwargs):
+		# Call the clean method before saving to enforce the validation
+		self.clean()
+		super().save(*args, **kwargs)
+
+	def __str__(self):
+		return f'{self.comment} liked by {self.user}'
+
+
 class Genre(models.Model):
 	tag = models.CharField(max_length=60)
 
@@ -72,6 +93,7 @@ class Comment(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	content = models.TextField()
 	creation_date = models.DateTimeField(default=timezone.now)
+	likes = models.ManyToManyField(User, related_name="comment_likes", through='CommentLike')
 	modification_date = models.DateTimeField(auto_now=True)
 
 	def __str__(self):

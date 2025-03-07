@@ -101,6 +101,7 @@ input[type=text], textarea {
   background-color: var(--dark-background-color);
   z-index: 10000;
   max-height: 300px;
+  box-shadow: var(--box-shadow);
 }
 
 .list-results ul {
@@ -120,6 +121,11 @@ input[type=text], textarea {
 #search-bar:focus {
   outline: none;
   border: 1px solid #c29b00;
+  /*position: fixed;*/
+  /*width: inherit;*/
+  /*top: 12px;*/
+  /*height: 100px;*/
+  /*box-shadow: var(--box-shadow);*/
 }
 
 #vertical-bar-toggle {
@@ -165,6 +171,7 @@ input[type=text], textarea {
   top: var(--menu-bar-height);
   height: calc(100vh - var(--menu-bar-height));
   z-index: 1;
+  left: 0;
 }
 
 #vertical-bar-content {
@@ -221,6 +228,13 @@ input[type=text], textarea {
     background-color: var(--button-hover-background);
     border-radius: 8px;
   }
+
+  .dropdown-menu {
+    z-index: 2;
+    .item {
+      padding: 16px;
+    }
+  }
 }
 
 .yellow {
@@ -245,11 +259,14 @@ h2 {
   & > div {
     width: 90%;
     margin: 0 auto;
+    height: 100%;
   }
 
   #user-profile {
     max-width: 1079px;
-  }footer {
+  }
+
+  footer {
      width: 100%;
      margin: 0 auto;
      text-align: center;
@@ -304,7 +321,17 @@ h2 {
 }
 
 .text-count {
-  padding: 16px;
+  padding: 0 24px;
+  position: relative;
+  top: 24px;
+  background-color: var(--background-color);
+  text-align: center;
+  width: fit-content;
+  margin: 0 auto;
+  display: block;
+  font-weight: 800;
+  color: var(--golden-accent-color);
+  font-family: Young Serif;
 }
 
 .login-form, .signup-form {
@@ -412,7 +439,7 @@ input:not(.seamless-input):focus {
   padding: 24px;
   margin-top: 32px;
   max-width: 600px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: var(--box-shadow);
 }
 
 .text-info {
@@ -479,49 +506,29 @@ textarea {
   resize: none;
   width: calc(100%);
   margin: 8px auto;
-  min-height: 60px;
   padding: 8px;
   outline: 2px solid #c29b00;
   border: none;
   box-sizing: border-box;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  height: 36px;
+  border-radius: 18px;
 }
 
 textarea:focus {
   border: 1px solid #c29b00;
   outline: 2px solid #c29b00;
+  height: 60px;
+  border-radius: 8px;
 }
 
-#dropdown-menu {
-  display: none;
-  position: relative;
-}
-
-#dropdown-menu > ul {
-  border: 1px solid #c0c2c6;
-  position: absolute;
-  min-width: max-content;
-  border-radius: 5px;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  padding: 0;
-  right: 0;
-  background-color: #3f3d3d;
-}
-
-#dropdown-menu > ul > li {
-  list-style: none;
-  cursor: pointer;
-  padding: 10px 24px 10px 16px;
-  display: flex;
-  column-gap: 12px;
+.dropdown-btn {
+  border: none;
 }
 
 .destructive-action {
   color: #fa4b4b;
-}
-
-#dropdown-menu > ul > li:hover {
-  background-color: #1a1a1a;
-  border-radius: 5px;
 }
 
 .text-title {
@@ -558,6 +565,8 @@ textarea:focus {
   border-radius: 5px;
   cursor: pointer;
   width: min-content;
+  font-size: 18px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular", sans-serif;
 }
 
 .comment-item {
@@ -575,12 +584,30 @@ textarea:focus {
   width: 100%;
 }
 
+.comment-header {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+
+  .dropdown-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0.3em;
+    background-color: unset;
+  }
+}
+
+.comment-meta {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
 .comment-timestamp {
   font-size: 12px;
   margin-left: 8px;
 }
 
-.like:hover, .bookmark:hover, .comment:hover, .options:hover {
+.like:hover, .bookmark:hover, .comment:hover {
   background-color: var(--button-hover-background);
   color: #c29b00;
 }
@@ -600,18 +627,11 @@ textarea:focus {
 }
 
 .options {
-  font-weight: 800;
   text-align: center;
   margin-left: auto;
   cursor: pointer;
-  padding: 8px 0;
-  border-radius: 5px;
+  border-radius: 8px;
   width: 40px;
-}
-
-.author {
-  font-size: 14px;
-  padding-right: 8px;
 }
 
 .text-content {
@@ -672,6 +692,7 @@ textarea:focus {
 
 .publish-date {
   font-size: 12px;
+  margin-left: 16px;
 }
 
 .genres {
@@ -756,6 +777,10 @@ textarea:focus {
   margin: 10px auto 5px;
 }
 
+.dropdown-btn:focus-visible {
+  outline: none;
+}
+
 .dropdown-menu {
   background-color: var(--background-color);
   padding: 8px;
@@ -763,7 +788,7 @@ textarea:focus {
   border: 1px solid var(--dropdown-border-color);
 
   .item {
-    padding: 16px;
+    padding: 8px;
     display: flex;
     flex-wrap: nowrap;
     gap: 12px;

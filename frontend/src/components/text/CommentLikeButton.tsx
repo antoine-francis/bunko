@@ -1,33 +1,33 @@
-import {BunkoText} from "@/types/Text.ts";
 import {IconHeart, IconHeartFilled} from "@tabler/icons-react";
 import {useCallback} from "react";
-import {likeText, unlikeText} from "@/slices/TextSlice.ts";
+import {likeComment, unlikeComment} from "@/slices/TextSlice.ts";
 import {useBunkoDispatch} from "@/hooks/redux-hooks.ts";
+import {BunkoComment} from "@/types/Comment.ts";
 
-interface LikeButtonProps {
-	text: BunkoText;
+interface CommentLikeButtonProps {
+	comment: BunkoComment;
 	liked: boolean;
 }
 
-export function LikeButton({liked, text} : LikeButtonProps) {
+export function CommentLikeButton({liked, comment} : CommentLikeButtonProps) {
 	const dispatch = useBunkoDispatch();
 
 	const handleLike = useCallback(() => {
-		if (text !== undefined) {
+		if (comment !== undefined) {
 			if (!liked) {
-				dispatch(likeText(text));
+				dispatch(likeComment(comment));
 			} else {
-				dispatch(unlikeText(text));
+				dispatch(unlikeComment(comment));
 			}
 		}
-	}, [text, dispatch, liked])
+	}, [comment, dispatch, liked])
 
 	return (
 		<span className="like reactions" onClick={handleLike}>
 			<span className="like-btn btn">
 				{liked ? <IconHeartFilled/> : <IconHeart/>}
 			</span>
-			{text.likes && text.likes.length > 0 && text.likes.length}
+			{comment.likes && comment.likes.length > 0 && comment.likes.length}
 		</span>
 	)
 }

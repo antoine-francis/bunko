@@ -8,10 +8,11 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 
 from users.models import Subscription
-from .models import Text, Series, Like, Bookmark, Genre
+from .models import Text, Series, Like, Bookmark, Genre, Comment, CommentLike
 from .serializers import TextSerializer, CommentSerializer, SeriesSerializer, LikeSerializer, \
 	UserBookmarkSerializer, \
-	NewCommentSerializer, NewTextSerializer, TextEditSerializer, TextDescriptionSerializer, TextsByTagSerializer
+	NewCommentSerializer, NewTextSerializer, TextEditSerializer, TextDescriptionSerializer, TextsByTagSerializer, \
+	CommentLikeSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -293,6 +294,41 @@ def unlike_text(request, pk):
 	except IntegrityError:
 		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
 	logger.info(f"END POST unlike_text() for user {request.user.id}")
+	return response
+
+
+@api_view(['POST'])
+def like_comment(request, pk):
+	logger.info(f"START POST like_comment() for user {request.user.id}")
+	try:
+		liked_comment = Comment.objects.filter(id=pk).first()
+		like = CommentLike.objects.filter(user=request.user, comment=liked_comment)
+		if like:
+			response = Response({"error": "This comment has already been liked"}, status=status.HTTP_417_EXPECTATION_FAILED)
+		else:
+			new_like = CommentLike.objects.create(user=request.user, comment=liked_comment)
+			response = Response(status=status.HTTP_200_OK, data=CommentLikeSerializer(new_like).data)
+	except IntegrityError:
+		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+	logger.info(f"END POST like_comment() for user {request.user.id}")
+	return response
+
+
+@api_view(['POST'])
+def unlike_comment(request, pk):
+	logger.info(f"START POST unlike_comment() for user {request.user.id}")
+	try:
+		unliked_comment = Comment.objects.filter(id=pk).first()
+		like = CommentLike.objects.get(user=request.user, comment=unliked_comment)
+		if not like:
+			response = Response({"error": "No like from user " + request.user.id + "for comment " + comment.id},
+							status=status.HTTP_404_NOT_FOUND)
+		else:
+			like.delete()
+			response = Response(status=status.HTTP_200_OK, data=request.user.username)
+	except IntegrityError:
+		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
+	logger.info(f"END POST unlike_comment() for user {request.user.id}")
 	return response
 
 

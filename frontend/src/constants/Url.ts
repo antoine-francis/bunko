@@ -12,6 +12,8 @@ export const URL = {
 	COLLECTIVE: "/collective/",
 	LIKE: "/like/",
 	UNLIKE: "/unlike/",
+	LIKE_COMMENT: "/like_comment/",
+	UNLIKE_COMMENT: "/unlike_comment/",
 	BOOKMARK: "/bookmark/",
 	UNBOOKMARK: "/unbookmark/",
 	SUBSCRIBE: "/subscribe/",

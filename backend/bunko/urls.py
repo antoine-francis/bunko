@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (comment, get_texts, get_series, get_series_by_user, like_text,
-					unlike_text, unbookmark_text, bookmark_text, create_text, text, get_texts_by_tag, get_tags,
+					unlike_text, like_comment, unlike_comment, unbookmark_text, bookmark_text, create_text, text, get_texts_by_tag, get_tags,
 					search_tags)
 
 urlpatterns = [
@@ -19,6 +19,8 @@ urlpatterns = [
 	# text action
 	path('like/<int:pk>', like_text),
 	path('unlike/<int:pk>', unlike_text),
+	path('like_comment/<int:pk>', like_comment),
+	path('unlike_comment/<int:pk>', unlike_comment),
 	path('bookmark/<int:pk>', bookmark_text),
 	path('unbookmark/<int:pk>', unbookmark_text),
 

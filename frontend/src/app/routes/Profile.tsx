@@ -12,7 +12,6 @@ import {BunkoDispatch} from "@/store.ts";
 import {TextsList} from "@/components/texts-list/TextsList.tsx";
 import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {IconEdit} from "@tabler/icons-react";
-import {URL} from "@/constants/Url.ts";
 
 const messages = defineMessages({
 	textPlural: {
@@ -165,7 +164,7 @@ export const Profile = () => {
 				<div id="user-profile">
 					<>
 						<div className="user-info">
-							<img className="profile-pic" src={`${URL.SERVER}${profile.picture}`} alt=""/>
+							<img className="profile-pic" src={profile.picture} alt=""/>
 							<div className="name-edit">
 								<div className="full-name">{profile.firstName} {profile.lastName}</div>
 								{isOwner && <div id="profile-edit">

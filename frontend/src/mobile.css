@@ -125,10 +125,6 @@
         text-align: center;
     }
 
-    .text-count {
-        padding: 16px;
-    }
-
     .signup-container, .login-container {
         display: flex;
         flex-wrap: nowrap;
@@ -231,35 +227,8 @@
         min-height: 32px;
     }
 
-    #dropdown-menu {
-        display: none;
-        position: relative;
-    }
-
-    #dropdown-menu > ul {
-        border: 1px solid #c0c2c6;
-        position: absolute;
-        min-width: max-content;
-        border-radius: 5px;
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-        padding: 0;
-        right: 0;
-        background-color: #3f3d3d;
-    }
-
-    #dropdown-menu > ul > li {
-        list-style: none;
-        cursor: pointer;
-        padding: 10px 16px;
-    }
-
     .destructive-action {
         color: #fa4b4b;
-    }
-
-    #dropdown-menu > ul > li:hover {
-        background-color: #1a1a1a;
-        border-radius: 5px;
     }
 
     .text-title {
@@ -284,11 +253,6 @@
         text-align: center;
     }
 
-    .like:hover, .bookmark:hover, .options:hover {
-        background-color: #474747;
-        color: #c29b00;
-    }
-
     .read-only-banner {
         text-align: center;
         background-color: #fafade;
@@ -301,16 +265,6 @@
         width: 100%;
         align-items: center;
         flex-wrap: nowrap;
-    }
-
-    .options {
-        font-weight: 800;
-        text-align: center;
-        margin-left: auto;
-        cursor: pointer;
-        padding: 8px 0;
-        border-radius: 5px;
-        width: 40px;
     }
 
     .author {
@@ -432,5 +386,10 @@
     .text-item {
         margin: 16px auto 40px;
         min-width: 150px;
+        flex-wrap: wrap;
+
+        .title-badge {
+            /*display: none;*/
+        }
     }
 }

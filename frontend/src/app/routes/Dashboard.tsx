@@ -117,7 +117,7 @@ export const Dashboard = () => {
 											</div>
 										</div>
 										<div className="more">
-											<Dropdown items={getDropdownContent()}/>
+											<Dropdown items={getDropdownContent()} align="end"/>
 										</div>
 									</div>
 

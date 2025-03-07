@@ -33,7 +33,7 @@
 
 #profile-edit-form > * {
     width: 100%;
-    margin: 16px;
+    margin: 16px 0;
 }
 
 #profile-edit-form input[type="text"] {
@@ -120,6 +120,7 @@
 .full-name {
     font-weight: 700;
     color: #c29b00;
+    font-family: Young Serif, serif;
 }
 
 .follows {
@@ -136,7 +137,7 @@
 .preview-container {
     height: 200px;
     width: 150px;
-    /*box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;*/
+    /*box-shadow: var(--box-shadow);*/
     overflow: hidden;
     background-color: var(--button-background-color);
     margin: 0 auto;
@@ -163,6 +164,8 @@
 .text-list-container {
     display: flex;
     margin-top: 12px;
+    border-top: 1px solid var(--golden-accent-color);
+    padding-top: 32px;
 }
 
 .text-list-container > a {
@@ -177,7 +180,7 @@
     background-color: var(--button-background-color);
     padding: 16px;
     border-radius: 8px;
-    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    box-shadow: var(--box-shadow)
 }
 
 .text-item .synopsis {
