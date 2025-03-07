@@ -3,7 +3,7 @@ import {paths} from "@/config/paths.ts";
 import {fetchProfile, subscribe, unsubscribe} from "@/slices/ProfilesSlice.ts";
 import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {ErrorHandler} from "@/components/ErrorHandler.tsx";
-import {defineMessages, FormattedDate, useIntl} from "react-intl";
+import {defineMessages, useIntl} from "react-intl";
 import {useIsFollowedByUser, useIsOwner} from "@/hooks/users-relationships-hooks.ts";
 import {UserBadge, UserProfile} from "@/types/UserProfile.ts";
 import {useCallback, useEffect} from "react";
@@ -160,7 +160,6 @@ export const Profile = () => {
 		} else if (profile.error) {
 			return <ErrorHandler statusCode={profile.error}/>;
 		} else {
-			console.log(new Date(profile.signupDate).getFullYear());
 			return (
 				<div id="user-profile">
 					<>
