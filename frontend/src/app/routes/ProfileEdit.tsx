@@ -9,7 +9,6 @@ import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {isValidName} from "@/utils/validation-functions.ts";
 import Resizer from "react-image-file-resizer";
 import {HttpStatus} from "@/constants/Http.ts";
-import {URL as BunkoURL} from "@/constants/Url.ts";
 
 const messages = defineMessages({
 	bioPlaceholder: {
@@ -157,7 +156,7 @@ export const ProfileEdit = () => {
 			const newSrc : string = URL.createObjectURL(e.target.files[0]);
 			const reader = new FileReader();
 			reader.readAsDataURL(e.target.files[0]);
-			setImgUrl(BunkoURL.SERVER + newSrc);
+			setImgUrl(newSrc);
 		} else if (profile !== undefined) {
 			setImgUrl(undefined);
 		}
@@ -167,10 +166,10 @@ export const ProfileEdit = () => {
 		return <LoadingContainer />
 	} else if (profile !== undefined) {
 		return (
-			<div id="profile-edit-container" className="container">
+			<div id="profile-edit-container">
 				<div id="profile-edit-form">
 					<div id="picture-edit">
-						<img src={imgUrl !== undefined ? imgUrl : BunkoURL.SERVER + profile.picture} alt={profile.username} className="profile-pic"/>
+						<img src={imgUrl !== undefined ? imgUrl : profile.picture} alt={profile.username} className="profile-pic"/>
 						<input type="file" className="file-upload" onChange={handlePictureChange}
 							   id="profile-pic-upload" accept="image/png, image/jpeg"/>
 					</div>

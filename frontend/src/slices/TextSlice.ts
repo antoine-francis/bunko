@@ -3,17 +3,17 @@ import {LoadingState} from "../types/StateManagement.ts";
 import {
 	bookmark,
 	deleteSingleText,
-	like,
+	like, likeCommentReq,
 	loadText,
 	postComment,
 	unbookmark,
-	unlike,
+	unlike, unlikeCommentReq,
 	updateExistingText
 } from "../features/text/api/single-text.ts";
 import {BunkoText, TextState} from "../types/Text.ts";
 import {Like} from "../types/Like.ts";
 import {Bookmark} from "../types/Bookmark.ts";
-import {BunkoComment, CommentPost} from "../types/Comment.ts";
+import {BunkoComment, CommentLike, CommentPost} from "../types/Comment.ts";
 
 export const fetchText = createAsyncThunk<BunkoText | undefined, string>(
 	'text_fetchText',
@@ -47,6 +47,20 @@ export const unlikeText = createAsyncThunk(
 	'text_unlike',
 	async (text : BunkoText) => {
 		return await unlike(text);
+	}
+)
+
+export const likeComment = createAsyncThunk(
+	'comment_like',
+	async (comment : BunkoComment) => {
+		return await likeCommentReq(comment);
+	}
+)
+
+export const unlikeComment = createAsyncThunk(
+	'comment_unlike',
+	async (comment : BunkoComment) => {
+		return await unlikeCommentReq(comment);
 	}
 )
 
@@ -120,6 +134,77 @@ const textSlice = createSlice({
 				}
 			})
 			.addCase(unlikeText.rejected, (state, action) => {
+				const hash = (action as any).meta.arg;
+				state[hash].loading = false;
+				state[hash].error = (action as any).error.message;
+			})
+			.addCase(likeComment.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
+				const textHash = (action as any).meta.arg;
+				(state[textHash] as LoadingState) = {loading: true, error: undefined};
+			})
+			.addCase(likeComment.fulfilled, (state, action : PayloadAction<CommentLike>) => {
+				if (action.payload !== undefined) {
+					const {text, id, parent} = (action as any).meta.arg;
+					const textComments = state[text].comments;
+					const currentState = current(state)[text].comments;
+					if (parent !== undefined && parent !== null) {
+						const parentIndex : number = currentState.map(function(c) {
+							return c.id;
+						}).indexOf(parent);
+						if (parentIndex !== -1 && currentState[parentIndex].replies !== undefined) {
+							const index : number = currentState[parentIndex].replies.map(function(c) {
+								return c.id;
+							}).indexOf(id);
+							if (index !== undefined && textComments !== undefined && textComments[parentIndex].replies !== undefined) {
+								textComments[parentIndex].replies[index].likes = textComments[parentIndex].replies[index].likes.concat(action.payload);
+							}
+						}
+					} else {
+						const index : number = currentState.map(function(c) {
+							return c.id;
+						}).indexOf(id);
+						state[text].comments[index].likes = state[text].comments[index].likes.concat(action.payload);
+					}
+				}
+			})
+			.addCase(likeComment.rejected, (state, action) => {
+				const hash = (action as any).meta.arg;
+				state[hash].loading = false;
+				state[hash].error = (action as any).error.message;
+			})
+			.addCase(unlikeComment.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
+				const textHash = (action as any).meta.arg;
+				(state[textHash] as LoadingState) = {loading: true, error: undefined};
+			})
+			.addCase(unlikeComment.fulfilled, (state, action : PayloadAction<string>) => {
+				if (action.payload !== undefined) {
+					const currentUser = action.payload;
+					const {text, id, parent} = (action as any).meta.arg;
+					const textComments = state[text].comments;
+					const currentState = current(state)[text].comments;
+					if (parent !== undefined && parent !== null) {
+						const parentIndex : number = currentState.map(function(c) {
+							return c.id;
+						}).indexOf(parent);
+						if (parentIndex !== -1 && currentState[parentIndex].replies !== undefined) {
+							const index : number = currentState[parentIndex].replies.map(function(c) {
+								return c.id;
+							}).indexOf(id);
+							if (index !== undefined && textComments !== undefined && textComments[parentIndex].replies !== undefined) {
+								textComments[parentIndex].replies[index].likes = textComments[parentIndex].replies[index].likes.filter(like => {
+									return like.user.username !== currentUser
+								});
+							}
+						}
+					} else {
+						const index : number = currentState.map(function(c) {
+							return c.id;
+						}).indexOf(id);
+						state[text].comments[index].likes = state[text].comments[index].likes.filter(like => {return like.user.username !== currentUser});
+					}
+				}
+			})
+			.addCase(unlikeComment.rejected, (state, action) => {
 				const hash = (action as any).meta.arg;
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;

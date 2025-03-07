@@ -14,7 +14,7 @@ import {UserBadge} from "@/types/UserProfile.ts";
 import {LikeButton} from "@/components/text/LikeButton.tsx";
 import {BookmarkButton} from "@/components/text/BookmarkButton.tsx";
 import {CommentSection} from "@/components/text/CommentSection.tsx";
-import {defineMessages, FormattedMessage, useIntl} from "react-intl";
+import {defineMessages, useIntl} from "react-intl";
 import Markdown from "marked-react";
 import {ClickableTag} from "@/components/text/ClickableTag.tsx";
 import {useIsOwner} from "@/hooks/users-relationships-hooks.ts";
@@ -23,9 +23,10 @@ import {C} from "@/constants/Constants.ts";
 import {confirmDelete, confirmPublication} from "@/slices/ModalSlice.ts";
 import {BunkoText} from "@/types/Text.ts";
 import {toRoman} from "@/utils/roman-numerals.ts";
-import {IconDots, IconShare3} from "@tabler/icons-react";
+import {IconAlertTriangle, IconEdit, IconShare3, IconTrash} from "@tabler/icons-react";
 import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {CommentButton} from "@/components/text/CommentButton.tsx";
+import {Dropdown} from "@/components/util/Dropdown.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -63,6 +64,26 @@ const messages = defineMessages({
 		description: "alert message",
 		defaultMessage: "The link has been copied to your clipboard",
 	},
+	editText: {
+		id: "text.editText",
+		description: "dropdown button",
+		defaultMessage: "Edit text"
+	},
+	deleteText: {
+		id: "text.deleteText",
+		description: "dropdown button",
+		defaultMessage: "Delete text",
+	},
+	shareText: {
+		id: "text.shareText",
+		description: "dropdown button",
+		defaultMessage: "Share text"
+	},
+	report: {
+		id: "text.shareText",
+		description: "dropdown button",
+		defaultMessage: "Report"
+	}
 })
 
 
@@ -113,20 +134,49 @@ export const SingleText = () => {
 		}
 	}
 
-	const toggleDropdown = useCallback(() => {
-		const dropdownMenu : HTMLElement | null = document.getElementById("dropdown-menu");
-		if (dropdownMenu) {
-			if (dropdownMenu.style.display !== "block") {
-				dropdownMenu.style.display = "block";
-			} else {
-				dropdownMenu.style.display = "none";
-			}
+	const getDropdownContent = useCallback(() => {
+		const items = [];
+		if (isOwner) {
+			items.push(
+				<>
+					<IconEdit/>
+					<div className="nav-btn" onClick={handleEditText}>
+						{formatMessage(messages.editText)}
+					</div>
+				</>
+			);
+			items.push(
+				<>
+					<IconTrash/>
+					<div className="nav-btn" onClick={showDeletePrompt}>
+						{formatMessage(messages.deleteText)}
+					</div>
+				</>
+			);
+		} else {
+			items.push(
+				<>
+					<IconShare3/>
+					<div className="nav-btn" onClick={handleShareText}>
+						{formatMessage(messages.shareText)}
+					</div>
+				</>
+			);
+			items.push(
+				<>
+					<IconAlertTriangle/>
+					<div className="nav-btn" onClick={handleReport}>
+						{formatMessage(messages.report)}
+					</div>
+				</>
+			);
 		}
-	}, []);
+		return items;
+	}, [formatMessage, isOwner]);
 
 	const handleEditText = useCallback(() => {
 		if (text !== undefined) {
-			navigate(paths.editText.getHref()+text.hash)
+			navigate(paths.editText.getHref() + text.hash)
 		}
 	}, [text, navigate]);
 
@@ -207,41 +257,9 @@ export const SingleText = () => {
 								<CommentButton text={text}/>
 								<BookmarkButton bookmarked={isBookmarked} text={text}/>
 							</div>
-							{isOwner ? <>
-									<div className="options btn" onClick={toggleDropdown}><IconDots/></div>
-									<div id="dropdown-menu">
-										<ul>
-											<li onClick={handleEditText}>
-												<FormattedMessage id="text.editText"
-																  description="dropdown button"
-																  defaultMessage="Edit text"/>
-											</li>
-											<li className="destructive-action" onClick={showDeletePrompt}><FormattedMessage
-												id="text.deleteText"
-												description="dropdown button"
-												defaultMessage="Delete text"/>
-											</li>
-										</ul>
-									</div>
-								</> :
-								<>
-									<div className="options" onClick={toggleDropdown}><IconShare3/></div>
-									<div id="dropdown-menu">
-										<ul>
-											<li onClick={handleShareText}>
-												<FormattedMessage id="text.shareText"
-																  description="dropdown button"
-																  defaultMessage="Share text"/>
-											</li>
-											<li onClick={handleReport}>
-												<FormattedMessage id="text.reportText"
-																  description="dropdown button"
-																  defaultMessage="Report"/>
-											</li>
-										</ul>
-									</div>
-								</>
-							}
+							<div className="options">
+								<Dropdown items={getDropdownContent()} align="end"/>
+							</div>
 						</div>
 						<CommentSection text={text} comments={text.comments}/>
 					</>

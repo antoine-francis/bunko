@@ -2,7 +2,7 @@ import {BunkoText, EditorContent} from "@/types/Text.ts";
 import {URL} from "@/constants/Url.ts";
 import {Like} from "@/types/Like.ts";
 import {getCookie} from "@/utils/get-cookie.ts";
-import {BunkoComment} from "@/types/Comment.ts";
+import {BunkoComment, CommentLike} from "@/types/Comment.ts";
 import {Bookmark} from "@/types/Bookmark.ts";
 
 export const loadText : (id : string) => Promise<BunkoText | undefined> = async (hash) => {
@@ -54,6 +54,38 @@ export const like = async (text : BunkoText) : Promise<Like> => {
 
 export const unlike = async (text : BunkoText) : Promise<string> => {
 	const response = await fetch(URL.SERVER + URL.UNLIKE + text.id, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken"),
+		}
+	});
+	if (!response.ok) {
+		throw new Error(response.status.toString());
+	}
+	return response.json();
+}
+
+export const likeCommentReq = async (comment : BunkoComment) : Promise<CommentLike> => {
+	const response = await fetch(URL.SERVER + URL.LIKE_COMMENT + comment.id, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken"),
+		}
+	});
+
+	if (response.ok) {
+		return await response.json();
+	} else {
+		throw new Error(response.status.toString());
+	}
+}
+
+export const unlikeCommentReq = async (comment : BunkoComment) : Promise<string> => {
+	const response = await fetch(URL.SERVER + URL.UNLIKE_COMMENT + comment.id, {
 		method: "POST",
 		credentials: "include",
 		headers: {

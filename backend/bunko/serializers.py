@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from users.models import Profile
-from .models import Text, Comment, Like, Genre, Bookmark, Series, Favorite
+from .models import Text, Comment, Like, Genre, Bookmark, Series, Favorite, CommentLike
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -19,25 +19,38 @@ class AuthorSerializer(serializers.ModelSerializer):
 		except Profile.DoesNotExist:
 			return None
 
+
 class ReplySerializer(serializers.ModelSerializer):
 	author = AuthorSerializer()
 
 	class Meta:
 		model = Comment
-		fields = ['id', 'content', 'creation_date', 'modification_date', 'author']
+		fields = ['id', 'content', 'creation_date', 'modification_date', 'author', 'parent']
+
+
+class CommentLikeSerializer(serializers.ModelSerializer):
+	user = AuthorSerializer()
+
+	class Meta:
+		model = CommentLike
+		fields = ['user', 'liked_date']
 
 
 class CommentSerializer(serializers.ModelSerializer):
 	author = AuthorSerializer()
 	replies = serializers.SerializerMethodField()
 	text = serializers.SerializerMethodField()
+	likes = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Comment
-		fields = ['id', 'content', 'creation_date', 'replies', 'modification_date', 'text', 'author']
+		fields = ['id', 'content', 'creation_date', 'replies', 'modification_date', 'parent', 'likes', 'text', 'author']
 
 	def get_replies(self, obj):
 		return CommentSerializer(Comment.objects.filter(parent=obj), many=True).data
+
+	def get_likes(self, obj):
+		return CommentLikeSerializer(CommentLike.objects.filter(comment=obj), many=True).data
 
 	def get_text(self, obj):
 		return obj.text.hash
