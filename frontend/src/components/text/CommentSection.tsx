@@ -21,7 +21,7 @@ export function CommentSection({comments, text} : CommentSectionProps ) {
 				}).length > 0 : false;
 				return (
 					<React.Fragment key={comment.id}>
-							<Comment comment={comment} text={text} isLiked={isLiked}/>
+							<Comment comment={comment} text={text}/>
 					</React.Fragment>
 			);
 			})}
