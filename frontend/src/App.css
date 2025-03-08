@@ -170,7 +170,6 @@ input[type=text], textarea {
   position: fixed;
   top: var(--menu-bar-height);
   height: calc(100vh - var(--menu-bar-height));
-  z-index: 1;
   left: 0;
 }
 
@@ -203,7 +202,6 @@ input[type=text], textarea {
 
 #vertical-options-bar ul li a {
   align-self: center;
-  padding-left: 32px;
 }
 
 #vertical-options-bar ul li:hover {
@@ -230,10 +228,10 @@ input[type=text], textarea {
   }
 
   .dropdown-menu {
-    z-index: 2;
     .item {
       padding: 16px;
     }
+
   }
 }
 
@@ -781,18 +779,18 @@ textarea:focus {
   outline: none;
 }
 
+.nav-btn {
+  padding: 8px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+
 .dropdown-menu {
   background-color: var(--background-color);
   padding: 8px;
   border-radius: 8px;
   border: 1px solid var(--dropdown-border-color);
-
-  .item {
-    padding: 8px;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 12px;
-  }
 
   .item:hover {
     background-color: var(--button-hover-background);

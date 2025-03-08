@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (comment, get_texts, get_series, get_series_by_user, like_text,
-					unlike_text, like_comment, unlike_comment, unbookmark_text, bookmark_text, create_text, text, get_texts_by_tag, get_tags,
-					search_tags)
+					unlike_text, like_comment, unlike_comment, unbookmark_text, bookmark_text, create_text, text,
+					get_texts_by_tag, get_tags,
+					search_tags, delete_comment)
 
 urlpatterns = [
 	# api views
@@ -29,5 +30,6 @@ urlpatterns = [
 	path('series_id/<int:pk>', get_series),
 
 	# comments
-	path('comment/', comment, name="comment"),
+	path('comment', comment, name="comment"),
+	path('delete_comment', delete_comment)
 ]

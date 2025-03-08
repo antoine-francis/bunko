@@ -32,7 +32,7 @@ export const TextsList = ({texts, showDescription = true, showSeries = true}: Te
 	return (<div className={showDescription ? "text-list" : "text-list-cards"}>
 		{texts !== undefined && texts.length > 0 ?
 			texts.map((text : TextDescription, index : number) => (
-				<Link className="no-highlight" to={paths.singleText.getHref() + text.hash}>
+				<Link key={text.hash} className="no-highlight" to={paths.singleText.getHref() + text.hash}>
 				<div className="text-item" key={"text-"+index}>
 					<div className="title-badge">
 						<Link to={paths.singleText.getHref() + text.hash}>

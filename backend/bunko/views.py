@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404
@@ -15,6 +14,7 @@ from .serializers import TextSerializer, CommentSerializer, SeriesSerializer, Li
 	CommentLikeSerializer
 
 logger = logging.getLogger(__name__)
+
 
 def home(request):
 	context = {
@@ -46,7 +46,10 @@ def text(request, text_hash):
 			serializer = TextSerializer(data)
 			response = Response(serializer.data, status=status.HTTP_200_OK)
 		except Text.DoesNotExist:
-			response = Response({"detail": f'No text with an id of {text_hash} was found.'}, status=status.HTTP_404_NOT_FOUND)
+			response = Response(
+				{"detail": f'No text with an id of {text_hash} was found.'},
+				status=status.HTTP_404_NOT_FOUND
+			)
 		logger.info(f"END GET text() for user {request.user.id}")
 		return response
 	elif request.method == 'PUT':
@@ -68,7 +71,8 @@ def text(request, text_hash):
 						new_series = Series.objects.create(title=series_title, synopsis=series_synopsis)
 						data['series'] = new_series.id
 					else:
-						logger.info(f"Assigning '{data.get('title')}' to series '{series_title}' for user {request.user.id}")
+						logger.info(
+							f"Assigning '{data.get('title')}' to series '{series_title}' for user {request.user.id}")
 						data['series'] = series_id
 						Series.objects.filter(pk=series_id).update(synopsis=series_synopsis)
 				else:
@@ -80,13 +84,16 @@ def text(request, text_hash):
 					text_data = TextSerializer(updated_text).data
 					response = Response(data=text_data, status=status.HTTP_200_OK)
 				else:
-					logger.error("error in PUT text() for user " + request.user.username + " : " + str(serializer.errors))
+					logger.error(
+						"error in PUT text() for user " + request.user.username + " : " + str(serializer.errors))
 					response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		except IntegrityError as e:
 			message = "error in PUT text() for user " + request.user.id + " : " + str(e)
 			logger.error(message)
-			response = Response({"error": f'Something went wrong : {message}'},
-							status=status.HTTP_417_EXPECTATION_FAILED)
+			response = Response(
+				{"error": f'Something went wrong : {message}'},
+				status=status.HTTP_417_EXPECTATION_FAILED
+			)
 		logger.info(f"END PUT text() for user {request.user.id}")
 		return response
 	elif request.method == 'DELETE':
@@ -96,8 +103,7 @@ def text(request, text_hash):
 			author_data = data.get('author')
 			if request.user.username != author_data.get('username'):
 				message = f'User {request.user.id} is not allowed to modify text {data.id}'
-				response = Response({"error": message},
-								status=status.HTTP_403_FORBIDDEN)
+				response = Response({"error": message}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				text_hash = data.get('hash')
 				Text.objects.get(hash=text_hash).delete()
@@ -110,7 +116,6 @@ def text(request, text_hash):
 				status=status.HTTP_417_EXPECTATION_FAILED)
 		logger.info(f"END DELETE text() for user {request.user.id}")
 		return response
-
 
 
 @api_view(['POST'])
@@ -152,8 +157,10 @@ def create_text(request):
 			logger.error(serializer.errors)
 			response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	except IntegrityError:
-		response = Response({"error": f'Something went wrong while saving text for user {request.user.id}.'},
-						status=status.HTTP_417_EXPECTATION_FAILED)
+		response = Response(
+			{"error": f'Something went wrong while saving text for user {request.user.id}.'},
+			status=status.HTTP_417_EXPECTATION_FAILED
+		)
 	logger.info(f"END POST create_text() for user {request.user.id}")
 	return response
 
@@ -188,7 +195,11 @@ def search_tags(request):
 	if request.method == 'GET':
 		logger.info(f"START GET search_tags() for user {request.user.id}")
 		query = request.GET.get('tag_query')
-		data = Genre.objects.filter(tag__contains=query, text_genres__isnull=False, text_genres__is_draft=False).distinct()
+		data = Genre.objects.filter(
+			tag__contains=query,
+			text_genres__isnull=False,
+			text_genres__is_draft=False
+		).distinct()
 		serializer = TextsByTagSerializer(data, context={'request': request}, many=True)
 		logger.info(f"END GET get_tags() for user {request.user.id}")
 		return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -216,22 +227,28 @@ def comment(request):
 			logger.error(serializer.errors)
 			response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		logger.info(f"END POST comment() for user {request.user.id}")
-		return response;
+		return response
 
 
 @api_view(['DELETE'])
 def delete_comment(request):
 	if request.method == 'DELETE':
-		logger.info(f"START DELETE comment() for user {request.user.id}")
 		data = request.data
-		data['author'] = request.user.id
-		serializer = CommentSerializer(data=data, context={'request': request})
-		if serializer.is_valid():
-			serializer.save()
-			response = Response(status=status.HTTP_201_CREATED)
-		else:
-			response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-		logger.info(f"END DELETE comment() for user {request.user.id}")
+		comment_id = data.get('id')
+		logger.info(f"START delete_comment({comment_id}) for user {request.user.id}")
+		try:
+			if request.user.username != data.get('username'):
+				message = f'User {request.user.username} is not allowed to delete comment {comment_id}'
+				response = Response({"error": message}, status=status.HTTP_403_FORBIDDEN)
+			else:
+				Comment.objects.get(id=comment_id).delete()
+				response = Response(status=status.HTTP_200_OK, data=request.user.username)
+		except IntegrityError:
+			response = Response(
+				{"error": "Something happened, try again later"},
+				status=status.HTTP_417_EXPECTATION_FAILED
+			)
+		logger.info(f"END DELETE delete_comment({comment_id}) for user {request.user.id}")
 		return response
 
 
@@ -257,7 +274,10 @@ def get_series(request, pk):
 			response = Response(serializer.data, status=status.HTTP_200_OK)
 
 		except Series.DoesNotExist:
-			response = Response({"detail": f'No series with an id of {pk} was found.'}, status=status.HTTP_404_NOT_FOUND)
+			response = Response(
+				{"detail": f'No series with an id of {pk} was found.'},
+				status=status.HTTP_404_NOT_FOUND
+			)
 		logger.info(f"END GET get_series() for user {request.user.id}")
 		return response
 
@@ -269,7 +289,10 @@ def like_text(request, pk):
 		liked_text = Text.objects.filter(id=pk).first()
 		like = Like.objects.filter(user=request.user, text=liked_text)
 		if like:
-			response = Response({"error": "This text has already been liked"}, status=status.HTTP_417_EXPECTATION_FAILED)
+			response = Response(
+				{"error": "This text has already been liked"},
+				status=status.HTTP_417_EXPECTATION_FAILED
+			)
 		else:
 			new_like = Like.objects.create(user=request.user, text=liked_text)
 			response = Response(status=status.HTTP_200_OK, data=LikeSerializer(new_like).data)
@@ -286,8 +309,10 @@ def unlike_text(request, pk):
 		unliked_text = Text.objects.filter(id=pk).first()
 		like = Like.objects.get(user=request.user, text=unliked_text)
 		if not like:
-			response = Response({"error": "No like from user " + request.user.id + "for text " + text.id},
-							status=status.HTTP_404_NOT_FOUND)
+			response = Response(
+				{"error": "No like from user " + request.user.id + "for text " + text.id},
+				status=status.HTTP_404_NOT_FOUND
+			)
 		else:
 			like.delete()
 			response = Response(status=status.HTTP_200_OK, data=request.user.username)
@@ -304,7 +329,10 @@ def like_comment(request, pk):
 		liked_comment = Comment.objects.filter(id=pk).first()
 		like = CommentLike.objects.filter(user=request.user, comment=liked_comment)
 		if like:
-			response = Response({"error": "This comment has already been liked"}, status=status.HTTP_417_EXPECTATION_FAILED)
+			response = Response(
+				{"error": "This comment has already been liked"},
+				status=status.HTTP_417_EXPECTATION_FAILED
+			)
 		else:
 			new_like = CommentLike.objects.create(user=request.user, comment=liked_comment)
 			response = Response(status=status.HTTP_200_OK, data=CommentLikeSerializer(new_like).data)
@@ -321,8 +349,10 @@ def unlike_comment(request, pk):
 		unliked_comment = Comment.objects.filter(id=pk).first()
 		like = CommentLike.objects.get(user=request.user, comment=unliked_comment)
 		if not like:
-			response = Response({"error": "No like from user " + request.user.id + "for comment " + comment.id},
-							status=status.HTTP_404_NOT_FOUND)
+			response = Response(
+				{"error": "No like from user " + request.user.id + "for comment " + comment.id},
+				status=status.HTTP_404_NOT_FOUND
+			)
 		else:
 			like.delete()
 			response = Response(status=status.HTTP_200_OK, data=request.user.username)
@@ -336,13 +366,15 @@ def unlike_comment(request, pk):
 def bookmark_text(request, pk):
 	logger.info(f"START POST bookmark_text() for user {request.user.id}")
 	try:
-		text = Text.objects.filter(id=pk).first()
-		bookmark = Bookmark.objects.filter(user=request.user, text=text)
+		bkmk_text = Text.objects.filter(id=pk).first()
+		bookmark = Bookmark.objects.filter(user=request.user, text=bkmk_text)
 		if bookmark:
-			response = Response({"error": "This text has already been bookmarked"},
-							status=status.HTTP_417_EXPECTATION_FAILED)
+			response = Response(
+				{"error": "This text has already been bookmarked"},
+				status=status.HTTP_417_EXPECTATION_FAILED
+			)
 		else:
-			new_bookmark = Bookmark.objects.create(user=request.user, text=text)
+			new_bookmark = Bookmark.objects.create(user=request.user, text=bkmk_text)
 			response = Response(status=status.HTTP_200_OK, data=UserBookmarkSerializer(new_bookmark).data)
 	except IntegrityError:
 		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
@@ -357,8 +389,9 @@ def unbookmark_text(request, pk):
 		bookmarked_text = Text.objects.filter(id=pk).first()
 		bookmark = Bookmark.objects.get(user=request.user, text=bookmarked_text)
 		if not bookmark:
-			response = Response({"error": "No bookmark from user " + request.user.id + "for text " + bookmarked_text.id},
-							status=status.HTTP_404_NOT_FOUND)
+			response = Response(
+				{"error": "No bookmark from user " + request.user.id + "for text " + bookmarked_text.id},
+				status=status.HTTP_404_NOT_FOUND)
 		else:
 			bookmark.delete()
 			response = Response(status=status.HTTP_200_OK, data=request.user.username)

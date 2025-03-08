@@ -61,8 +61,8 @@ export const Dashboard = () => {
 		const items = [];
 		items.push(
 			<>
-				<IconAlertTriangle />
 				<div className="nav-btn" onClick={() => {}}>
+					<IconAlertTriangle />
 					{formatMessage(messages.report)}
 				</div>
 			</>

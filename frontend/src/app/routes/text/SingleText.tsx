@@ -6,6 +6,7 @@ import {Genre} from "@/types/Genre.ts";
 import {ErrorHandler} from "@/components/ErrorHandler.tsx";
 import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {
+	deleteComment,
 	deleteText,
 	fetchText,
 	updateText
@@ -93,7 +94,7 @@ export const SingleText = () => {
 	const navigate = useNavigate();
 	const dispatch = useBunkoDispatch();
 	const {formatMessage} = useIntl();
-	const {showAlert, alertType} = useBunkoSelector(state => state.modal);
+	const {showAlert, alertType, commentDeleteData} = useBunkoSelector(state => state.modal);
 	const text = useBunkoSelector(state => hash ? state.texts[hash] : undefined);
 	const currentUser : string | undefined = useBunkoSelector(state => {
 		const user : UserBadge | undefined = state.currentUser.user;
@@ -138,37 +139,29 @@ export const SingleText = () => {
 		const items = [];
 		if (isOwner) {
 			items.push(
-				<>
+				<div className="nav-btn" onClick={handleEditText}>
 					<IconEdit/>
-					<div className="nav-btn" onClick={handleEditText}>
-						{formatMessage(messages.editText)}
-					</div>
-				</>
+					{formatMessage(messages.editText)}
+				</div>
 			);
 			items.push(
-				<>
+				<div className="nav-btn" onClick={showDeletePrompt}>
 					<IconTrash/>
-					<div className="nav-btn" onClick={showDeletePrompt}>
-						{formatMessage(messages.deleteText)}
-					</div>
-				</>
+					{formatMessage(messages.deleteText)}
+				</div>
 			);
 		} else {
 			items.push(
-				<>
+				<div className="nav-btn" onClick={handleShareText}>
 					<IconShare3/>
-					<div className="nav-btn" onClick={handleShareText}>
-						{formatMessage(messages.shareText)}
-					</div>
-				</>
+					{formatMessage(messages.shareText)}
+				</div>
 			);
 			items.push(
-				<>
+				<div className="nav-btn" onClick={handleReport}>
 					<IconAlertTriangle/>
-					<div className="nav-btn" onClick={handleReport}>
-						{formatMessage(messages.report)}
-					</div>
-				</>
+					{formatMessage(messages.report)}
+				</div>
 			);
 		}
 		return items;
@@ -220,6 +213,12 @@ export const SingleText = () => {
 				}
 				navigate(paths.profile.getHref() + currentUser);
 				break;
+			case C.DELETE_COMMENT : {
+				if (commentDeleteData !== undefined) {
+					dispatch(deleteComment(commentDeleteData));
+				}
+				break;
+			}
 		}
 	}, [hash, text, navigate, dispatch, currentUser, alertType]);
 

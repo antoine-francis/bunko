@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice, current, PayloadAction} from '@reduxjs/toolkit';
 import {LoadingState} from "../types/StateManagement.ts";
 import {
-	bookmark,
+	bookmark, deleteCommentReq,
 	deleteSingleText,
 	like, likeCommentReq,
 	loadText,
@@ -13,7 +13,7 @@ import {
 import {BunkoText, TextState} from "../types/Text.ts";
 import {Like} from "../types/Like.ts";
 import {Bookmark} from "../types/Bookmark.ts";
-import {BunkoComment, CommentLike, CommentPost} from "../types/Comment.ts";
+import {BunkoComment, CommentLike, CommentPost, DeleteComment} from "../types/Comment.ts";
 
 export const fetchText = createAsyncThunk<BunkoText | undefined, string>(
 	'text_fetchText',
@@ -82,6 +82,13 @@ export const comment = createAsyncThunk<BunkoComment | undefined, CommentPost>(
 	'text_postComment',
 	async ({content, textId, parent} : CommentPost) => {
 		return await postComment(content, textId, parent);
+	}
+)
+
+export const deleteComment = createAsyncThunk<void, DeleteComment>(
+	'text_deleteComment',
+	async ({id, parent, text, username} : DeleteComment) => {
+		return await deleteCommentReq(id, text, username, parent);
 	}
 )
 
@@ -261,6 +268,30 @@ const textSlice = createSlice({
 				}
 			})
 			.addCase(comment.rejected, (state, action) => {
+				const hash = (action as any).meta.arg;
+				state[hash].loading = false;
+				state[hash].error = (action as any).error.message;
+			})
+			.addCase(deleteComment.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
+				const textHash = (action as any).meta.arg;
+				(state[textHash] as LoadingState) = {loading: true, error: undefined};
+			})
+			.addCase(deleteComment.fulfilled, (state, action : PayloadAction<void | DeleteComment>) => {
+				if (action.payload !== undefined) {
+					const {parent, text, id} = (action as any).meta.arg;
+					if (parent !== undefined) {
+						const index = current(state)[text].comments.map(function(c) {
+							return c.id;
+						}).indexOf(parent);
+						if (index !== undefined && state[text].comments[index].replies !== undefined) {
+							state[text].comments[index].replies = state[text].comments[index].replies.filter(comment => {return comment.id !== id});
+						}
+					} else {
+						state[text].comments = state[text].comments.filter(comment => {return comment.id !== id});
+					}
+				}
+			})
+			.addCase(deleteComment.rejected, (state, action) => {
 				const hash = (action as any).meta.arg;
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;

@@ -65,20 +65,16 @@ export const VerticalOptionsBar = () => {
 	const getDropdownContent = useCallback((user : UserBadge) => {
 		const items = [];
 		items.push(
-			<>
+			<div className="nav-btn" onClick={() => navigate(paths.profile.getHref() + user.username)}>
 				<IconSettings/>
-				<div className="nav-btn" onClick={() => navigate(paths.profile.getHref() + user.username)}>
-					{formatMessage(messages.settings)}
-				</div>
-			</>
+				{formatMessage(messages.settings)}
+			</div>
 		);
 		items.push(
-			<>
+			<div className="nav-btn" onClick={() => navigate(paths.auth.logout.getHref())}>
 				<IconLogout/>
-				<div className="nav-btn" onClick={() => navigate(paths.auth.logout.getHref())}>
-					{formatMessage(messages.logout)}
-				</div>
-			</>
+				{formatMessage(messages.logout)}
+			</div>
 		);
 		return items;
 	}, [formatMessage, navigate])
@@ -99,25 +95,25 @@ export const VerticalOptionsBar = () => {
 					<div id="vertical-bar-content">
 						<ul>
 							<li>
-								<IconUsersGroup/>
 								<Link to={{pathname: paths.tags.getHref()}}>
 									<div id="browse-tags" className="nav-btn">
+										<IconUsersGroup/>
 										{formatMessage(messages.browseWriters)}
 									</div>
 								</Link>
 							</li>
 							<li>
-								<IconHash/>
 								<Link to={{pathname: paths.tags.getHref()}}>
 									<div id="browse-tags" className="nav-btn">
+										<IconHash/>
 										{formatMessage(messages.browseTags)}
 									</div>
 								</Link>
 							</li>
 							<li>
-								<IconLayoutGrid/>
 								<Link to={{pathname: paths.tags.getHref()}}>
 									<div id="browse-tags" className="nav-btn">
+										<IconLayoutGrid/>
 										{formatMessage(messages.browseSeries)}
 									</div>
 								</Link>

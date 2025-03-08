@@ -14,6 +14,7 @@ export const URL = {
 	UNLIKE: "/unlike/",
 	LIKE_COMMENT: "/like_comment/",
 	UNLIKE_COMMENT: "/unlike_comment/",
+	DELETE_COMMENT: "/delete_comment",
 	BOOKMARK: "/bookmark/",
 	UNBOOKMARK: "/unbookmark/",
 	SUBSCRIBE: "/subscribe/",
