@@ -1,10 +1,10 @@
-import {BunkoComment, CommentLike} from "@/types/Comment.ts";
+import {BunkoComment, CommentLike, DeleteComment} from "@/types/Comment.ts";
 import {paths} from "@/config/paths.ts";
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
 import {CommentButton} from "./CommentButton.tsx";
 import {BunkoText} from "@/types/Text.ts";
-import {useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {CommentTextBox} from "./CommentTextBox.tsx";
 import {URL} from "@/constants/Url.ts";
 import {Dropdown} from "@/components/util/Dropdown.tsx";
@@ -13,6 +13,7 @@ import {IconAlertTriangle, IconForbid2, IconTrash} from "@tabler/icons-react";
 import {defineMessages, useIntl} from "react-intl";
 import React from "react";
 import {CommentLikeButton} from "@/components/text/CommentLikeButton.tsx";
+import {confirmDeleteComment} from "@/slices/ModalSlice.ts";
 
 const messages = defineMessages({
 	delete: {
@@ -42,14 +43,21 @@ export function Comment({comment, text, parentId = undefined}: CommentProps) {
 	const {replyTo} = useBunkoSelector(state => state.comments)
 	const {user} = useBunkoSelector((state) => state.currentUser);
 	const {formatMessage, formatDate} = useIntl();
+	const dispatch = useBunkoDispatch();
+
+	const showDeletePrompt = useCallback(() => {
+		const commentToDelete : DeleteComment = {id: comment.id, text: text.hash, parent: parentId, username: comment.author.username}
+		dispatch(confirmDeleteComment(commentToDelete));
+	}, [dispatch]);
 
 	const getDropdownContent = useCallback(() => {
 		const items : ReactNode[] = [];
 		if (user !== undefined && comment.author.username === user.username) {
 			items.push(
 				<React.Fragment key={"action-1" + comment.id}>
-					<IconTrash/>
-					<div className="nav-btn" onClick={() => {}}>
+					<div className="nav-btn" data-comment-id={comment.id} data-parent={comment.parentId}
+						 data-username={comment.author.username} onClick={showDeletePrompt}>
+						<IconTrash/>
 						{formatMessage(messages.delete)}
 					</div>
 				</React.Fragment>
@@ -57,16 +65,16 @@ export function Comment({comment, text, parentId = undefined}: CommentProps) {
 		} else {
 			items.push(
 				<React.Fragment key={"action-0" + comment.id}>
-					<IconAlertTriangle />
 					<div className="nav-btn" onClick={() => {}}>
+						<IconAlertTriangle />
 						{formatMessage(messages.report)}
 					</div>
 				</React.Fragment>
 			);
 			items.push(
 				<React.Fragment key={"action-1" + comment.id}>
-					<IconForbid2 style={{rotate: "45deg"}}/>
 					<div className="nav-btn" onClick={() => {}}>
+						<IconForbid2 style={{rotate: "45deg"}}/>
 						{formatMessage(messages.block, {1: comment.author.username})}
 					</div>
 				</React.Fragment>

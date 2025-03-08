@@ -31,6 +31,11 @@ const messages = defineMessages({
 		defaultMessage: "Are you sure you want to delete your text?",
 		description: "Prompt description",
 	},
+	deleteCommentPrompt: {
+		id: "modal.deleteCommentPrompt",
+		defaultMessage: "Are you sure you want to delete your comment?",
+		description: "Prompt description",
+	},
 	cantBeUndone: {
 		id: "modal.cantBeUndone",
 		defaultMessage: "This action cannot be undone.",
@@ -111,6 +116,19 @@ export const ModalDialog = ({isOpen, type, confirmFunction}: ModalDialogProps) =
 					<>
 						<h3>Wait !</h3>
 						<h4 className="modal-content">{formatMessage(messages.deletePrompt)}</h4>
+						<p className="modal-content">{formatMessage(messages.cantBeUndone)}</p>
+						<div className="modal-buttons">
+							<button onClick={closeDialog}>{formatMessage(messages.cancel)}</button>
+							<button onClick={confirmAndClose}>{formatMessage(messages.confirm)}</button>
+						</div>
+					</>
+				)
+			}
+			case C.DELETE_COMMENT: {
+				return (
+					<>
+						<h3>Wait !</h3>
+						<h4 className="modal-content">{formatMessage(messages.deleteCommentPrompt)}</h4>
 						<p className="modal-content">{formatMessage(messages.cantBeUndone)}</p>
 						<div className="modal-buttons">
 							<button onClick={closeDialog}>{formatMessage(messages.cancel)}</button>

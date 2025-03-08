@@ -1,4 +1,5 @@
 import {HttpStatus} from "../constants/Http.ts";
+import {DeleteComment} from "@/types/Comment.ts";
 
 export interface LoadingState {
 	loading: boolean;
@@ -8,6 +9,7 @@ export interface LoadingState {
 export interface ModalState {
 	alertType: string | undefined;
 	showAlert: boolean;
+	commentDeleteData: DeleteComment | undefined;
 }
 
 export interface UiState {

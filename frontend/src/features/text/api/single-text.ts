@@ -147,6 +147,22 @@ export const postComment = async (content : string, textId: number, parent: numb
 	return response.json();
 }
 
+export const deleteCommentReq = async (id : number, text: string, username : string, parent : number | undefined) : Promise<void> => {
+	const response = await fetch(URL.SERVER + URL.DELETE_COMMENT, {
+		body: JSON.stringify({id, text, username, parent}),
+		method: "DELETE",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken"),
+		}
+	});
+	if (!response.ok) {
+		throw new Error(response.status.toString());
+	}
+	return response.json();
+}
+
 export const createNewText = async (editorContent: EditorContent) : Promise<BunkoText> => {
 	const response = await fetch(URL.SERVER + URL.NEW_TEXT, {
 		body: JSON.stringify(editorContent),

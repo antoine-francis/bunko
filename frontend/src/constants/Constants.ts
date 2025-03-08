@@ -4,6 +4,8 @@ export const C = {
 	DELETE_TEXT: "DELETE_TEXT",
 	PUBLISH_TEXT: "PUBLISH_TEXT",
 
+	DELETE_COMMENT: "DELETE_COMMENT",
+
 	// Search parameters
 	TAGS: "TAGS",
 	USERS: "USERS",

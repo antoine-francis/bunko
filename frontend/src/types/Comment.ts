@@ -25,6 +25,13 @@ export interface CommentPost {
 	parent: number | undefined;
 }
 
+export interface DeleteComment {
+	id: number;
+	username: string;
+	text: string;
+	parent: number | undefined;
+}
+
 export interface CommentState {
 	replyTo: BunkoComment | undefined;
 }
