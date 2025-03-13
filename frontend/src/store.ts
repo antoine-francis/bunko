@@ -12,6 +12,7 @@ import collectivesReducer from "./slices/CollectivesSlice.ts";
 import modalReducer from "./slices/ModalSlice.ts";
 import uiStateReducer from "./slices/UiStateSlice.ts";
 import commentsReducer from "./slices/CommentsSlice.ts";
+import suggestionsReducer from "./slices/SuggestionsSlice.ts";
 
 export const store = configureStore({
 	reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
 		userProfiles: profilesReducer,
 		currentUser: userReducer,
 		series: seriesReducer,
+		suggestions: suggestionsReducer,
 		collectives: collectivesReducer,
 		tags: tagsReducer,
 		browseTags: browseTagsReducer,

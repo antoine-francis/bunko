@@ -18,6 +18,7 @@ import {CommentButton} from "@/components/text/CommentButton.tsx";
 import {IconAlertTriangle} from "@tabler/icons-react";
 import {Truncate} from "@re-dev/react-truncate";
 import {Dropdown} from "@/components/util/Dropdown.tsx";
+import {SuggestedUsers} from "@/components/users-list/SuggestedUsers.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -48,6 +49,7 @@ export const Dashboard = () => {
 	const {formatMessage, locale} = useIntl();
 	const {loading: userLoading, error: userError, user} = useBunkoSelector(state => state.currentUser);
 	const {texts, error, loading} = useBunkoSelector(state => state.dashboard)
+	const {suggestedUsers} = useBunkoSelector(state => state.suggestions);
 
 	useEffect(() => {
 		if (loading && !userLoading && !userError) {
@@ -82,66 +84,69 @@ export const Dashboard = () => {
 		return <EmptyListContainer/>;
 	} else {
 		return (
-			<div id="dashboard">
-				{texts.map((text: BunkoText, index: number) => {
-					const isLiked : boolean = user !== undefined ? text.likes.filter((like) => {
-						return like.user.username === user.username
-					}).length > 0 : false;
-					const isBookmarked = user !== undefined ? text.bookmarkedBy.filter((bookmark) => {
-						return bookmark.user.username === user.username;
-					}).length > 0 : false;
+			<>
+				<SuggestedUsers users={suggestedUsers} />
+				<div id="dashboard">
+					{texts.map((text: BunkoText, index: number) => {
+						const isLiked: boolean = user !== undefined ? text.likes.filter((like) => {
+							return like.user.username === user.username
+						}).length > 0 : false;
+						const isBookmarked = user !== undefined ? text.bookmarkedBy.filter((bookmark) => {
+							return bookmark.user.username === user.username;
+						}).length > 0 : false;
 
-					const date = moreThanAWeek(text) ?
-						<FormattedDate value={text.publicationDate} year={undefined}/> :
-						<TimeAgo datetime={text.creationDate} locale={locale}/>;
-					return (
-						<div className="dashboard-item" key={`${text}-${index}`}>
-							<div className="text-info">
-								<div className="text-preview">
-									<div className="item-header">
-										<img className="mini-profile-pic" src={URL.SERVER + text.author.picture}
-											 alt={text.author.username}/>
-										<div>
-											<Link to={{pathname: `${paths.singleText.getHref()}${text.hash}`}}>
-												<div>{text.title}</div>
-											</Link>
-											<div className="author-date">
-												<Link
-													to={{pathname: `${paths.profile.getHref()}${text.author.username}`}}>
-							<span className="author">{formatMessage(messages.author, {
-								0: text.author.firstName !== "" ? `${text.author.firstName} ${text.author.lastName}` :
-									text.author.username
-							})}</span>
+						const date = moreThanAWeek(text) ?
+							<FormattedDate value={text.publicationDate} year={undefined}/> :
+							<TimeAgo datetime={text.creationDate} locale={locale}/>;
+						return (
+							<div className="dashboard-item" key={`${text}-${index}`}>
+								<div className="text-info">
+									<div className="text-preview">
+										<div className="item-header">
+											<img className="mini-profile-pic" src={URL.SERVER + text.author.picture}
+												 alt={text.author.username}/>
+											<div>
+												<Link to={{pathname: `${paths.singleText.getHref()}${text.hash}`}}>
+													<div>{text.title}</div>
 												</Link>
-												<span className="publish-date">{date}</span>
+												<div className="author-date">
+													<Link
+														to={{pathname: `${paths.profile.getHref()}${text.author.username}`}}>
+								<span className="author">{formatMessage(messages.author, {
+									0: text.author.firstName !== "" ? `${text.author.firstName} ${text.author.lastName}` :
+										text.author.username
+								})}</span>
+													</Link>
+													<span className="publish-date">{date}</span>
+												</div>
+											</div>
+											<div className="more">
+												<Dropdown items={getDropdownContent()} align="end"/>
 											</div>
 										</div>
-										<div className="more">
-											<Dropdown items={getDropdownContent()} align="end"/>
-										</div>
-									</div>
 
-									<Link to={{pathname: `${paths.singleText.getHref()}${text.hash}`}}>
-										<div className="synopsis">{text.synopsis ? text.synopsis :
-											<Truncate lines={4} >{text.content}</Truncate>}</div>
-									</Link>
-									<TagList genres={text.genres}/>
-								</div>
-								<div className="likes-comments-saves">
-									<div className="read-by">
-										<span>{formatMessage(messages.peopleReading, {1: (Math.random() * 100).toFixed(0)})}</span>
-										<span>{formatMessage(messages.minutesToRead, {
-											1: Math.round(text.content.split(" ").length / 200) // avg wpm
-										})}</span>
+										<Link to={{pathname: `${paths.singleText.getHref()}${text.hash}`}}>
+											<div className="synopsis">{text.synopsis ? text.synopsis :
+												<Truncate lines={4}>{text.content}</Truncate>}</div>
+										</Link>
+										<TagList genres={text.genres}/>
 									</div>
-									<LikeButton text={text} liked={isLiked}/>
-									<CommentButton text={text}/>
-									<BookmarkButton text={text} bookmarked={isBookmarked}/>
+									<div className="likes-comments-saves">
+										<div className="read-by">
+											<span>{formatMessage(messages.peopleReading, {1: (Math.random() * 100).toFixed(0)})}</span>
+											<span>{formatMessage(messages.minutesToRead, {
+												1: Math.round(text.content.split(" ").length / 200) // avg wpm
+											})}</span>
+										</div>
+										<LikeButton text={text} liked={isLiked}/>
+										<CommentButton text={text}/>
+										<BookmarkButton text={text} bookmarked={isBookmarked}/>
+									</div>
 								</div>
-							</div>
-						</div>)
-				})}
-			</div>
+							</div>)
+					})}
+				</div>
+			</>
 		)
 			;
 	}

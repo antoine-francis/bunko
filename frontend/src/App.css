@@ -256,8 +256,7 @@ h2 {
 
   & > div {
     width: 90%;
-    margin: 0 auto;
-    height: 100%;
+    margin: 32px auto;
   }
 
   #user-profile {
@@ -430,6 +429,55 @@ input:not(.seamless-input):focus {
   margin: 32px auto 0;
 }
 
+#suggested-users {
+  height: fit-content;
+  background-color: var(--dark-background-color);
+  border-radius: 8px;
+  max-width: 600px;
+  padding: 0 24px;
+
+  .label {
+    font-weight: 600;
+    padding: 16px;
+  }
+
+  .user-list {
+    display: flex;
+    flex-wrap: nowrap;
+    column-gap: 32px;
+    padding: 16px;
+  }
+
+  .user-card {
+    max-width: 140px;
+  }
+
+  .name-pic {
+    display: block;
+
+    img {
+      display: block;
+      margin: 0 auto 8px;
+    }
+
+    .name {
+      padding: 0;
+      .username, .fullname {
+        text-align: center;
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        line-height: 1.2;
+      }
+    }
+  }
+  .view-more-label {
+    padding: 0 24px 24px;
+    text-align: right;
+    font-weight: 600;
+  }
+}
+
 #dashboard .dashboard-item {
   display: flex;
   background-color: var(--dark-background-color);
@@ -540,6 +588,31 @@ textarea:focus {
   text-align: center;
   font-variant: small-caps;
   color: #888;
+}
+
+#series-info-container {
+
+  max-width: 600px;
+  padding: 0 24px;
+
+  .series-title {
+    font-size: 48px;
+    text-align: center;
+    font-family: "Young Serif", Times, serif;
+  }
+
+  .author {
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .synopsis {
+    margin-left: 60px;
+  }
+
+  .text-item {
+    margin-left: unset;
+  }
 }
 
 .text-author {

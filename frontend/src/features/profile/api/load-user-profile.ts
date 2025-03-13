@@ -51,3 +51,21 @@ export const updateUserProfile : (formData : FormData) => Promise<UserBadge | un
 		throw new Error(response.status.toString());
 	}
 };
+
+export const loadSuggestedUsers = async () : Promise<UserBadge[]> => {
+	const response = await fetch(URL.SERVER + URL.SUGGESTED_USERS, {
+		method: 'GET',
+		credentials: 'include',
+		headers: {
+			"X-CSRFToken": getCookie("csrftoken"),
+
+		}
+	});
+
+	if (response.ok) {
+		const data : UserBadge[] = await response.json();
+		return data;
+	} else {
+		throw new Error(response.status.toString());
+	}
+}
