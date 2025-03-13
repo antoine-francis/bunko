@@ -99,7 +99,7 @@ def update_profile(request):
 				else:
 					logger.info(f"END update_profile() for user {request.user.id}")
 					return Response({"error": picture_serializer.errors},
-										status=status.HTTP_400_BAD_REQUEST)
+									status=status.HTTP_400_BAD_REQUEST)
 			response_data = serializer.data
 			response = Response(response_data)
 		else:
@@ -196,3 +196,15 @@ def get_collective(request, pk):
 
 		serializer = CollectiveDetailedSerializer(collective)
 		return Response(serializer.data)
+
+
+@api_view(['GET'])
+def suggest_users(request):
+	if request.method == 'GET':
+		logger.info(f"START GET suggest_users() for user {request.user.id}")
+		users = User.objects.exclude(
+			id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
+		)[:4]
+		serializer = UserSerializer(users, many=True, context={'request': request})
+		logger.info(f"END GET suggest_users() for user {request.user.id}")
+		return Response(serializer.data, status=status.HTTP_200_OK)

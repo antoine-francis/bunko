@@ -25,9 +25,10 @@ interface TextsListProps {
 	texts?: TextDescription[];
 	showDescription?: boolean;
 	showSeries?: boolean;
+	showAuthor?: boolean;
 }
 
-export const TextsList = ({texts, showDescription = true, showSeries = true}: TextsListProps) => {
+export const TextsList = ({texts, showAuthor = false, showDescription = true, showSeries = true}: TextsListProps) => {
 	const {formatMessage, formatDate} = useIntl();
 	return (<div className={showDescription ? "text-list" : "text-list-cards"}>
 		{texts !== undefined && texts.length > 0 ?
@@ -51,6 +52,10 @@ export const TextsList = ({texts, showDescription = true, showSeries = true}: Te
 					{showDescription && (
 						<div className="text-description">
 							<div className="title">{text.title ? text.title : formatMessage(messages.untitledText)}</div>
+							{showAuthor &&
+								<Link to={paths.profile.getHref() + text.author.username}>
+									{`${text.author.firstName} ${text.author.lastName}`}
+							</Link>}
 							{showSeries && text.series &&
 								<div className="series">
 									<Link to={{pathname: `${paths.series.getHref()}${text.series.id}`}}>
