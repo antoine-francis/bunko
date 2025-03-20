@@ -224,7 +224,7 @@ class TextSerializer(serializers.ModelSerializer):
 	series = SeriesSerializer(allow_null=True)
 	saved_by = serializers.SerializerMethodField()
 	favorited_by = serializers.SerializerMethodField()
-	bookmark_position = serializers.SerializerMethodField()
+	bookmark_position = serializers.SerializerMethodField(allow_null=True)
 
 	class Meta:
 		model = Text
@@ -244,7 +244,11 @@ class TextSerializer(serializers.ModelSerializer):
 		return CommentSerializer(Comment.objects.filter(text=obj, parent__isnull=True), many=True).data
 
 	def get_bookmark_position(self, obj):
-		return Bookmark.objects.get(text=obj, user=self.context.get('request').user).position
+		bookmark = Bookmark.objects.filter(text=obj, user=self.context.get('request').user)
+		if bookmark:
+			return bookmark.position
+		else:
+			return None
 
 
 class SetBookmarkSerializer(serializers.ModelSerializer):

@@ -43,8 +43,6 @@ def text(request, text_hash):
 	if request.method == 'GET':
 		try:
 			data = Text.objects.get(hash=text_hash)
-			bookmark = Bookmark.objects.get(text=data, user=request.user)
-			data.bookmark = bookmark
 			serializer = TextSerializer(data, context={'request': request})
 			response = Response(serializer.data, status=status.HTTP_200_OK)
 		except Text.DoesNotExist:
