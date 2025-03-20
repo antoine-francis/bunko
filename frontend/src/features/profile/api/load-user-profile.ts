@@ -16,7 +16,7 @@ export const loadUserProfile : (username : string) => Promise<UserProfile | unde
 			signupDate: data.signupDate,
 			followers: data.followers === undefined ? 0 : data.followers,
 			following: data.following === undefined ? 0 : data.following,
-			bookmarks: data.bookmarks === undefined ? 0 : data.bookmarks,
+			saves: data.saves === undefined ? 0 : data.saves,
 			series: data.series === undefined ? 0 : data.series,
 			favorites: data.favorites,
 			collectives: data.collectives,

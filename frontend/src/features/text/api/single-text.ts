@@ -3,7 +3,7 @@ import {URL} from "@/constants/Url.ts";
 import {Like} from "@/types/Like.ts";
 import {getCookie} from "@/utils/get-cookie.ts";
 import {BunkoComment, CommentLike} from "@/types/Comment.ts";
-import {Bookmark} from "@/types/Bookmark.ts";
+import {SavedText} from "@/types/SavedText.ts";
 
 export const loadText : (id : string) => Promise<BunkoText | undefined> = async (hash) => {
 	const response = await fetch(URL.SERVER + URL.TEXT + hash, {
@@ -23,11 +23,12 @@ export const loadText : (id : string) => Promise<BunkoText | undefined> = async 
 			comments: data.comments,
 			genres: data.genres,
 			isDraft: data.isDraft,
-			bookmarkedBy: data.bookmarkedBy === undefined ? 0 : data.bookmarkedBy,
+			savedBy: data.savedBy === undefined ? 0 : data.savedBy,
 			likes: data.likes === undefined ? 0 : data.likes,
 			series: data.series,
 			seriesEntry: data.seriesEntry,
 			synopsis: data.synopsis,
+			bookmarkPosition: data.bookmarkPosition,
 		});
 		return text;
 	} else {
@@ -99,8 +100,8 @@ export const unlikeCommentReq = async (comment : BunkoComment) : Promise<string>
 	return response.json();
 }
 
-export const bookmark = async (text : BunkoText) : Promise<Bookmark> => {
-	const response = await fetch(URL.SERVER + URL.BOOKMARK + text.id, {
+export const save = async (text : BunkoText) : Promise<SavedText> => {
+	const response = await fetch(URL.SERVER + URL.SAVE + text.id, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -116,8 +117,8 @@ export const bookmark = async (text : BunkoText) : Promise<Bookmark> => {
 	}
 }
 
-export const unbookmark = async (text : BunkoText) : Promise<string> => {
-	const response = await fetch(URL.SERVER + URL.UNBOOKMARK + text.id, {
+export const unsave = async (text : BunkoText) : Promise<string> => {
+	const response = await fetch(URL.SERVER + URL.UNSAVE + text.id, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -209,4 +210,19 @@ export const deleteSingleText = async (text : BunkoText) : Promise<BunkoText> =>
 		throw new Error(response.status.toString());
 	}
 	return response.json();
+}
+
+export const setBookmarkPosition  = async (position: number, textHash : string) : Promise<void> => {
+	const response = await fetch(URL.SERVER + URL.BOOKMARK, {
+		body: JSON.stringify({textHash, position}),
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			"X-CSRFToken": getCookie("csrftoken"),
+		}
+	});
+	if (!response.ok) {
+		throw new Error(response.status.toString());
+	}
 }

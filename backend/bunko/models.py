@@ -100,10 +100,16 @@ class Comment(models.Model):
 		return f'{self.author.username} - {self.text.id} - {self.content[:10]}... - {self.creation_date}'
 
 
+class Save(models.Model):
+	text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name="saved_text")
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	save_date = models.DateTimeField(default=timezone.now)
+
+
 class Bookmark(models.Model):
 	text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name="bookmarked_text")
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	bookmark_date = models.DateTimeField(default=timezone.now)
+	position = models.IntegerField(default=-1)
 
 
 class Favorite(models.Model):

@@ -19,13 +19,15 @@ export const URL = {
 	LIKE: "/like/",
 	UNLIKE: "/unlike/",
 
-	BOOKMARK: "/bookmark/",
-	UNBOOKMARK: "/unbookmark/",
+	SAVE: "/save/",
+	UNSAVE: "/unsave/",
+
+	BOOKMARK: "/bookmark",
 
 	SUBSCRIBE: "/subscribe/",
 	UNSUBSCRIBE: "/unsubscribe/",
 
-	COMMENT: "/comment/",
+	COMMENT: "/comment",
 	LIKE_COMMENT: "/like_comment/",
 	UNLIKE_COMMENT: "/unlike_comment/",
 	DELETE_COMMENT: "/delete_comment",

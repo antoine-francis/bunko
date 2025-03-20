@@ -8,7 +8,6 @@ interface UserBadgeProps {
 }
 
 export const UserSimpleBadge = ({user} : UserBadgeProps) => {
-
 	return (<div key={"user"} className="user-card">
 		<Link className="name-pic" to={paths.profile.getHref() + user.username}>
 			<img className="badge-picture" src={URL.SERVER + user.picture} alt=""/>

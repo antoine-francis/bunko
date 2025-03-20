@@ -59,14 +59,9 @@ const messages = defineMessages({
 		defaultMessage: "{nb} following",
 		description: "Profile page",
 	},
-	bookmarkSing: {
-		id: "profile.bookmarkSing",
-		defaultMessage: "{nb} bookmark",
-		description: "Profile page",
-	},
-	bookmarkPlural: {
-		id: "profile.bookmarkPlural",
-		defaultMessage: "{nb} bookmarks",
+	savedText: {
+		id: "profile.savedText",
+		defaultMessage: "{count, plural, one {{count} saved text} other {{count} saved texts}}",
 		description: "Profile page",
 	},
 	newText: {
@@ -196,11 +191,9 @@ export const Profile = () => {
 											formatMessage(messages.followingSing, {nb: profile.following.length})}
 									</div>
 								</Link>
-								<Link to={{pathname: `${paths.bookmarks.getHref()}${profile.username}`}}>
-									<div className="bookmarks">
-										{profile.bookmarks.length > 1 ?
-											formatMessage(messages.bookmarkPlural, {nb: profile.bookmarks.length}) :
-											formatMessage(messages.bookmarkSing, {nb: profile.bookmarks.length})}
+								<Link to={{pathname: `${paths.savedTexts.getHref()}${profile.username}`}}>
+									<div className="saves">
+										{formatMessage(messages.savedText, {count: profile.saves.length})}
 									</div>
 								</Link>
 							</div>

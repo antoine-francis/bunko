@@ -1,18 +1,18 @@
 import {createAsyncThunk, createSlice, current, PayloadAction} from '@reduxjs/toolkit';
 import {LoadingState} from "../types/StateManagement.ts";
 import {
-	bookmark, deleteCommentReq,
+	save, deleteCommentReq,
 	deleteSingleText,
 	like, likeCommentReq,
 	loadText,
 	postComment,
-	unbookmark,
+	unsave,
 	unlike, unlikeCommentReq,
-	updateExistingText
+	updateExistingText, setBookmarkPosition
 } from "../features/text/api/single-text.ts";
-import {BunkoText, TextState} from "../types/Text.ts";
+import {Bookmark, BunkoText, TextState} from "../types/Text.ts";
 import {Like} from "../types/Like.ts";
-import {Bookmark} from "../types/Bookmark.ts";
+import {SavedText} from "../types/SavedText.ts";
 import {BunkoComment, CommentLike, CommentPost, DeleteComment} from "../types/Comment.ts";
 
 export const fetchText = createAsyncThunk<BunkoText | undefined, string>(
@@ -64,17 +64,17 @@ export const unlikeComment = createAsyncThunk(
 	}
 )
 
-export const bookmarkText = createAsyncThunk<Bookmark | undefined, BunkoText>(
-	'text_bookmark',
+export const saveText = createAsyncThunk<SavedText | undefined, BunkoText>(
+	'text_saveText',
 	async (text : BunkoText) => {
-		return await bookmark(text);
+		return await save(text);
 	}
 )
 
-export const unbookmarkText = createAsyncThunk(
-	'text_unbookmark',
+export const unsaveText = createAsyncThunk(
+	'text_unsaveText',
 	async (text : BunkoText) => {
-		return await unbookmark(text);
+		return await unsave(text);
 	}
 )
 
@@ -89,6 +89,13 @@ export const deleteComment = createAsyncThunk<void, DeleteComment>(
 	'text_deleteComment',
 	async ({id, parent, text, username} : DeleteComment) => {
 		return await deleteCommentReq(id, text, username, parent);
+	}
+)
+
+export const setBookmark = createAsyncThunk<void, Bookmark>(
+	'text_setBookmark',
+	async ({position, textHash} : Bookmark) : Promise<void> => {
+		return await setBookmarkPosition(position, textHash);
 	}
 )
 
@@ -216,33 +223,33 @@ const textSlice = createSlice({
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
 			})
-			.addCase(bookmarkText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
+			.addCase(saveText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
 				const hash = (action as any).meta.arg;
 				(state[hash] as LoadingState) = {loading: true, error: undefined};
 			})
-			.addCase(bookmarkText.fulfilled, (state, action : PayloadAction<Bookmark | undefined>) => {
+			.addCase(saveText.fulfilled, (state, action : PayloadAction<SavedText | undefined>) => {
 				if (action.payload !== undefined) {
 					const {hash} = (action as any).meta.arg;
-					state[hash].bookmarkedBy = state[hash].bookmarkedBy.concat(action.payload);
+					state[hash].savedBy = state[hash].savedBy.concat(action.payload);
 				}
 			})
-			.addCase(bookmarkText.rejected, (state, action) => {
+			.addCase(saveText.rejected, (state, action) => {
 				const hash = (action as any).meta.arg;
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
 			})
-			.addCase(unbookmarkText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
+			.addCase(unsaveText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
 				const hash = (action as any).meta.arg;
 				(state[hash] as LoadingState) = {loading: true, error: undefined};
 			})
-			.addCase(unbookmarkText.fulfilled, (state, action : PayloadAction<string>) => {
+			.addCase(unsaveText.fulfilled, (state, action : PayloadAction<string>) => {
 				if (action.payload !== undefined) {
 					const {hash} = (action as any).meta.arg;
 					const currentUser : string = action.payload;
-					state[hash].bookmarkedBy = state[hash].bookmarkedBy.filter(bkmk => {return bkmk.user.username !== currentUser});
+					state[hash].savedBy = state[hash].savedBy.filter(bkmk => {return bkmk.user.username !== currentUser});
 				}
 			})
-			.addCase(unbookmarkText.rejected, (state, action) => {
+			.addCase(unsaveText.rejected, (state, action) => {
 				const hash = (action as any).meta.arg;
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
@@ -325,6 +332,10 @@ const textSlice = createSlice({
 				const hash = (action as any).meta.arg;
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
+			})
+			.addCase(setBookmark.fulfilled, (state, action : PayloadAction<void | Bookmark>) => {
+				const {textHash, position} = (action as any).meta.arg;
+				state[textHash].bookmarkPosition = position;
 			})
 	},
 });

@@ -6,10 +6,10 @@ import {useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {paths} from "@/config/paths.ts";
 import {UserProfile} from "@/types/UserProfile.ts";
 import {TextDescription} from "@/types/Text.ts";
-import {Bookmark} from "@/types/Bookmark.ts";
+import {SavedText} from "@/types/SavedText.ts";
 import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 
-export const UserBookmarks = () => {
+export const UserSavedTexts = () => {
 	const {username} = useParams();
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -17,7 +17,7 @@ export const UserBookmarks = () => {
 
 	useEffect(() => {
 		if (profile !== undefined) {
-			document.title = `${profile.username}'s bookmarks`;
+			document.title = `${profile.username}'s list`;
 		}
 		if (username === undefined) {
 			navigate(paths.notFound.getHref());
@@ -31,13 +31,13 @@ export const UserBookmarks = () => {
 	} else if (profile.error) {
 		return <ErrorHandler statusCode={profile.error} redirectTo={location.pathname} />;
 	} else {
-		const bookmarksTextDesc : TextDescription[] = profile.bookmarks.map((bookmark : Bookmark) => {
-			return bookmark.text;
+		const savedTextDesc : TextDescription[] = profile.saves.map((savedText : SavedText) => {
+			return savedText.text;
 		})
 		return (
 			<>
-				<div id="bookmarks-container">
-					<TextsList texts={bookmarksTextDesc}/>
+				<div id="savelist-container">
+					<TextsList texts={savedTextDesc}/>
 				</div>
 			</>
 		);

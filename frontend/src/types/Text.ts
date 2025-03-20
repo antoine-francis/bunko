@@ -3,7 +3,7 @@ import {Author} from "./Author.ts";
 import {Genre} from "./Genre.ts";
 import {Series} from "./Series.ts";
 import {Like} from "./Like.ts";
-import {Bookmark} from "./Bookmark.ts";
+import {SavedText} from "./SavedText.ts";
 import {HttpStatus} from "../constants/Http.ts";
 
 export interface BunkoText {
@@ -16,13 +16,14 @@ export interface BunkoText {
 	genres: Genre[];
 	synopsis?: string;
 	isDraft: boolean;
-	bookmarkedBy: Bookmark[];
+	savedBy: SavedText[];
 	likes: Like[];
 	series?: Series;
 	seriesEntry?: number;
 	creationDate: Date;
 	modificationDate: Date;
 	publicationDate: Date;
+	bookmarkPosition?: number;
 	loading?: boolean;
 	error?: HttpStatus | undefined;
 }
@@ -70,8 +71,6 @@ export interface EditorContent {
 }
 
 export interface TextEditorState {
-	// showAlert: boolean;
-	// alertType: string | undefined;
 	title: string | undefined;
 	genres: Genre[],
 	content: string;
@@ -85,4 +84,14 @@ export interface TextEditorState {
 export interface DraftState {
 	isDraft: boolean;
 	hash: string;
+}
+
+export interface BookmarkPosition {
+	textNode : Node;
+	position: number;
+}
+
+export interface Bookmark {
+	textHash : string;
+	position: number;
 }
