@@ -1,5 +1,5 @@
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
-import {useCallback, useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {NotFound} from "@/components/NotFound.tsx";
 import {paths} from "@/config/paths.ts";
 import {Genre} from "@/types/Genre.ts";
@@ -8,12 +8,12 @@ import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {
 	deleteComment,
 	deleteText,
-	fetchText,
+	fetchText, setBookmark,
 	updateText
 } from "@/slices/TextSlice.ts";
 import {UserBadge} from "@/types/UserProfile.ts";
 import {LikeButton} from "@/components/text/LikeButton.tsx";
-import {BookmarkButton} from "@/components/text/BookmarkButton.tsx";
+import {SaveButton} from "@/components/text/SaveButton.tsx";
 import {CommentSection} from "@/components/text/CommentSection.tsx";
 import {defineMessages, useIntl} from "react-intl";
 import Markdown from "marked-react";
@@ -28,6 +28,9 @@ import {IconAlertTriangle, IconEdit, IconShare3, IconTrash} from "@tabler/icons-
 import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {CommentButton} from "@/components/text/CommentButton.tsx";
 import {Dropdown} from "@/components/util/Dropdown.tsx";
+import {getCaretCharacterOffsetWithin} from "@/utils/text-selection.ts";
+import {BookmarkLocationMarker} from "@/components/text/BookmarkLocationMarker.tsx";
+import {SavedText} from "@/types/SavedText.ts";
 
 const messages = defineMessages({
 	author: {
@@ -95,28 +98,36 @@ export const SingleText = () => {
 	const dispatch = useBunkoDispatch();
 	const {formatMessage} = useIntl();
 	const {showAlert, alertType, commentDeleteData} = useBunkoSelector(state => state.modal);
-	const text = useBunkoSelector(state => hash ? state.texts[hash] : undefined);
+	const text : BunkoText |undefined = useBunkoSelector(state => hash ? state.texts[hash] : undefined);
 	const currentUser : string | undefined = useBunkoSelector(state => {
 		const user : UserBadge | undefined = state.currentUser.user;
 		return user ? user.username : undefined;
 	});
 
-	const loadingSuccess = text && !text.loading && !text.error;
-	const isOwner = useIsOwner(loadingSuccess ? text.author.username : undefined, currentUser);
-	const isLiked = loadingSuccess ? text.likes.filter((like) => {
+	const loadingSuccess : boolean | undefined = text && !text.loading && !text.error;
+	const isOwner : boolean = useIsOwner(loadingSuccess ? text?.author.username : undefined, currentUser);
+	const isLiked : boolean = loadingSuccess ? text !== undefined && text.likes.filter((like) => {
 		return like.user.username === currentUser;
 	}).length > 0 : false;
 
-	const isBookmarked = loadingSuccess ? text.bookmarkedBy.filter((bookmark) => {
-		return bookmark.user.username === currentUser;
+	const isSaved : boolean = loadingSuccess ? text !== undefined && text.savedBy.filter((save : SavedText) => {
+		return save.user.username === currentUser;
 	}).length > 0 : false;
 
 	useEffect(() => {
+		if (hash === undefined) {
+			navigate(paths.notFound.getHref());
+		} else {
+			if (!text) {
+				dispatch(fetchText(hash));
+			}
+		}
+
 		if (text !== undefined) {
 			document.title = text.title ? text.title : formatMessage(messages.untitledText);
 
 			if (location.hash !== "") {
-				const hashlink = document.getElementById(location.hash.substring(1));
+				const hashlink: HTMLElement | null = document.getElementById(location.hash.substring(1));
 				if (hashlink !== null) {
 					hashlink.scrollIntoView({behavior: "smooth"});
 					window.setTimeout(() => {
@@ -126,14 +137,6 @@ export const SingleText = () => {
 			}
 		}
 	}, [formatMessage, location, text]);
-
-	if (hash === undefined) {
-		navigate(paths.notFound.getHref());
-	} else {
-		if (!text) {
-			dispatch(fetchText(hash));
-		}
-	}
 
 	const getDropdownContent = useCallback(() => {
 		const items = [];
@@ -197,6 +200,18 @@ export const SingleText = () => {
 		dispatch(confirmPublication());
 	}, [dispatch]);
 
+	const handleBookmarking = useCallback((event : React.MouseEvent<HTMLElement>) => {
+		if (event.detail === 2 && text !== undefined) {
+			event.preventDefault();
+			const targetNode : HTMLElement | null = document.getElementById('text-content');
+			if (targetNode !== null) {
+				const endPosition : number = getCaretCharacterOffsetWithin(targetNode);
+				window.getSelection()?.removeAllRanges();
+				dispatch(setBookmark({position: endPosition, textHash: text.hash}))
+			}
+		}
+	}, [text]);
+
 
 
 	const confirmAction = useCallback(() => {
@@ -247,14 +262,15 @@ export const SingleText = () => {
 				<div className="reader-genres">{text.genres.map((genre: Genre) => {
 					return (<ClickableTag key={genre.tag} tag={genre.tag}/>);
 				})}</div>
-				<div className="text-content"><Markdown>{text.content}</Markdown></div>
+				<div id="text-content" onClick={handleBookmarking}><Markdown>{text.content}</Markdown></div>
+				<BookmarkLocationMarker bookmarkLocation={text.bookmarkPosition}/>
 				{!text.isDraft ? (
 					<>
 						<div className="actions">
 							<div className="reactions">
 								<LikeButton liked={isLiked} text={text}/>
 								<CommentButton text={text}/>
-								<BookmarkButton bookmarked={isBookmarked} text={text}/>
+								<SaveButton saved={isSaved} text={text}/>
 							</div>
 							<div className="options">
 								<Dropdown items={getDropdownContent()} align="end"/>

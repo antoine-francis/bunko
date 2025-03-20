@@ -13,12 +13,13 @@ import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {URL} from "@/constants/Url.ts";
 import {EmptyListContainer} from "@/components/EmptyListContainer.tsx";
 import {LikeButton} from "@/components/text/LikeButton.tsx";
-import {BookmarkButton} from "@/components/text/BookmarkButton.tsx";
+import {SaveButton} from "@/components/text/SaveButton.tsx";
 import {CommentButton} from "@/components/text/CommentButton.tsx";
 import {IconAlertTriangle} from "@tabler/icons-react";
 import {Truncate} from "@re-dev/react-truncate";
 import {Dropdown} from "@/components/util/Dropdown.tsx";
 import {SuggestedUsers} from "@/components/users-list/SuggestedUsers.tsx";
+import {SavedText} from "@/types/SavedText.ts";
 
 const messages = defineMessages({
 	author: {
@@ -91,8 +92,8 @@ export const Dashboard = () => {
 						const isLiked: boolean = user !== undefined ? text.likes.filter((like) => {
 							return like.user.username === user.username
 						}).length > 0 : false;
-						const isBookmarked = user !== undefined ? text.bookmarkedBy.filter((bookmark) => {
-							return bookmark.user.username === user.username;
+						const isSaved = user !== undefined ? text.savedBy.filter((savedText : SavedText) => {
+							return savedText.user.username === user.username;
 						}).length > 0 : false;
 
 						const date = moreThanAWeek(text) ?
@@ -140,7 +141,7 @@ export const Dashboard = () => {
 										</div>
 										<LikeButton text={text} liked={isLiked}/>
 										<CommentButton text={text}/>
-										<BookmarkButton text={text} bookmarked={isBookmarked}/>
+										<SaveButton text={text} saved={isSaved}/>
 									</div>
 								</div>
 							</div>)

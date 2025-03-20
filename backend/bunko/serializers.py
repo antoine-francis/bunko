@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from users.models import Profile
-from .models import Text, Comment, Like, Genre, Bookmark, Series, Favorite, CommentLike
+from .models import Text, Comment, Like, Genre, Save, Series, Favorite, CommentLike, Bookmark
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -142,28 +142,27 @@ class SeriesCreateSerializer(serializers.ModelSerializer):
 		fields = ['title', 'id', 'entries']
 
 
-
-class BookmarkSerializer(serializers.ModelSerializer):
+class SavedTextSerializer(serializers.ModelSerializer):
 	text = TextDescriptionSerializer()
 
 	class Meta:
-		model = Bookmark
-		fields = ['text', 'user', 'bookmark_date']
+		model = Save
+		fields = ['text', 'user', 'save_date']
 
 
-class UserBookmarkSerializer(serializers.ModelSerializer):
+class UserSavedTextSerializer(serializers.ModelSerializer):
 	user = AuthorSerializer()
 
 	class Meta:
-		model = Bookmark
-		fields = ['user', 'bookmark_date']
+		model = Save
+		fields = ['user', 'save_date']
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
 	user = AuthorSerializer()
 
 	class Meta:
-		model = Bookmark
+		model = Save
 		fields = ['user', 'favorite_date']
 
 
@@ -223,25 +222,51 @@ class TextSerializer(serializers.ModelSerializer):
 	genres = GenreTagSerializer(many=True)
 	author = AuthorSerializer()
 	series = SeriesSerializer(allow_null=True)
-	bookmarked_by = serializers.SerializerMethodField()
+	saved_by = serializers.SerializerMethodField()
 	favorited_by = serializers.SerializerMethodField()
+	bookmark_position = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Text
-		fields = ['title', 'content', 'author', 'is_draft', 'comments', 'likes', 'bookmarked_by', 'favorited_by', 'hash',
+		fields = ['title', 'content', 'author', 'is_draft', 'comments', 'likes', 'saved_by', 'favorited_by', 'hash', 'bookmark_position',
 				  'series', 'series_entry', 'synopsis', 'genres', 'id', 'creation_date', 'modification_date', 'publication_date']
 
 	def get_likes(self, obj):
 		return LikeSerializer(Like.objects.filter(text=obj), many=True).data
 
-	def get_bookmarked_by(self, obj):
-		return UserBookmarkSerializer(Bookmark.objects.filter(text=obj), many=True).data
+	def get_saved_by(self, obj):
+		return UserSavedTextSerializer(Save.objects.filter(text=obj), many=True).data
 
 	def get_favorited_by(self, obj):
 		return FavoriteSerializer(Favorite.objects.filter(text=obj), many=True).data
 
 	def get_comments(self, obj):
 		return CommentSerializer(Comment.objects.filter(text=obj, parent__isnull=True), many=True).data
+
+	def get_bookmark_position(self, obj):
+		return Bookmark.objects.get(text=obj, user=self.context.get('request').user).position
+
+
+class SetBookmarkSerializer(serializers.ModelSerializer):
+	user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
+	text = serializers.SlugRelatedField(queryset=Text.objects.all(), slug_field='hash', write_only=True)
+	position = serializers.IntegerField(write_only=True)
+
+	class Meta:
+		model = Bookmark
+		fields = ['user', 'text', 'position']
+
+	def create(self, validated_data):
+		bookmark_db = Bookmark.objects.filter(user=validated_data.get('user'), text=validated_data.get('text'))
+		if bookmark_db:
+			bookmark_db.update(position=validated_data.get('position'))
+			return bookmark_db
+		else:
+			return Bookmark.objects.create(
+				user=validated_data.get('user'),
+				text=validated_data.get('text'),
+				position=validated_data.get('position')
+			)
 
 
 class GenreSerializer(serializers.ModelSerializer):

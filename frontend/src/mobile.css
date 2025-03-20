@@ -271,15 +271,6 @@
         padding-right: 8px;
     }
 
-    .text-content {
-        user-select: none;
-        max-width: 800px;
-        margin: 96px auto;
-        text-align: justify;
-        line-height: 1.6;
-        font-family: "Times New Roman", Times, serif;
-    }
-
     #new-series-input {
         width: fit-content;
         margin: 0 auto 0 16px;

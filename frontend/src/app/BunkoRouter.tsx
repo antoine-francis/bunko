@@ -102,10 +102,10 @@ const bunkoRouter = createBrowserRouter([
 				},
 			},
 			{
-				path: paths.bookmarks.path,
+				path: paths.savedTexts.path,
 				lazy: async () => {
-					const { UserBookmarks } = await import('./routes/UserBookmarks.tsx');
-					return { Component: UserBookmarks };
+					const { UserSavedTexts } = await import('./routes/UserSavedTexts.tsx');
+					return { Component: UserSavedTexts };
 				},
 			},
 			{

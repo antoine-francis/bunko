@@ -1,4 +1,4 @@
-import {Bookmark} from "./Bookmark.ts";
+import {SavedText} from "./SavedText.ts";
 import {Collective} from "./Collective.ts";
 import {TextDescription} from "./Text.ts";
 import {Favorite} from "./Favorite.ts";
@@ -18,7 +18,7 @@ export interface UserProfile extends UserBadge {
 	signupDate: Date;
 	followers: Subscription[];
 	following: Subscription[];
-	bookmarks: Bookmark[];
+	saves: SavedText[];
 	series: Series[];
 	favorites: Favorite[];
 	collectives: Membership[];

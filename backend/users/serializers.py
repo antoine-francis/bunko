@@ -3,8 +3,8 @@ import logging
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from bunko.models import Bookmark, Text, Favorite, Series
-from bunko.serializers import BookmarkSerializer, TextDescriptionSerializer, SeriesSerializer
+from bunko.models import Save, Text, Favorite, Series
+from bunko.serializers import SavedTextSerializer, TextDescriptionSerializer, SeriesSerializer
 from users.models import Profile, Subscription, Membership, Collective
 
 logger = logging.getLogger(__name__)
@@ -62,17 +62,16 @@ class MembershipSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
 	followers = serializers.SerializerMethodField()
 	following = serializers.SerializerMethodField()
-	bookmarks = serializers.SerializerMethodField()
+	saves = serializers.SerializerMethodField()
 	series = serializers.SerializerMethodField()
 	user = UserSerializer()
 	collectives = serializers.SerializerMethodField()
 	texts = serializers.SerializerMethodField()
 	favorites = serializers.SerializerMethodField()
-	# picture = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Profile
-		fields = ['user', 'picture', 'bio', 'signup_date', 'followers', 'following', 'bookmarks', 'series', 'favorites', 'collectives', 'texts']
+		fields = ['user', 'picture', 'bio', 'signup_date', 'followers', 'following', 'saves', 'series', 'favorites', 'collectives', 'texts']
 
 	def get_followers(self, obj):
 		return SubscriptionFollowersSerializer(Subscription.objects.filter(following=obj.user), many=True).data
@@ -80,8 +79,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 	def get_following(self, obj):
 		return SubscriptionFollowingSerializer(Subscription.objects.filter(follower=obj.user), many=True).data
 
-	def get_bookmarks(self, obj):
-		return BookmarkSerializer(Bookmark.objects.filter(user=obj.user, text__is_draft=False), many=True).data
+	def get_saves(self, obj):
+		return SavedTextSerializer(Save.objects.filter(user=obj.user, text__is_draft=False), many=True).data
 
 	def get_series(self, obj):
 		return SeriesSerializer(Series.objects.filter(text__author=obj.user).distinct(), many=True).data

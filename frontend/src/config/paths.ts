@@ -51,10 +51,10 @@ export const paths = {
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/following/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
-	bookmarks: {
-		path: '/bookmarks/:username',
+	savedTexts: {
+		path: '/savedTexts/:username',
 		getHref: (redirectTo?: string | null | undefined) =>
-			`/bookmarks/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+			`/savedTexts/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
 	singleText: {
 		path: '/read/:hash',

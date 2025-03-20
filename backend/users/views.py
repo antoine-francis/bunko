@@ -202,7 +202,7 @@ def get_collective(request, pk):
 def suggest_users(request):
 	if request.method == 'GET':
 		logger.info(f"START GET suggest_users() for user {request.user.id}")
-		users = User.objects.exclude(
+		users = User.objects.exclude(id=request.user.id).exclude(
 			id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
 		)[:4]
 		serializer = UserSerializer(users, many=True, context={'request': request})

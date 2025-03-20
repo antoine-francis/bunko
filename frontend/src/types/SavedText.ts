@@ -1,8 +1,8 @@
 import {TextDescription} from "./Text.ts";
 import {UserBadge} from "./UserProfile.ts";
 
-export interface Bookmark {
+export interface SavedText {
 	text: TextDescription;
 	user: UserBadge;
-	bookmarkDate: Date;
+	saveDate: Date;
 }

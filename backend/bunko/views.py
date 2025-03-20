@@ -7,11 +7,11 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 
 from users.models import Subscription
-from .models import Text, Series, Like, Bookmark, Genre, Comment, CommentLike
+from .models import Text, Series, Like, Save, Genre, Comment, CommentLike, Bookmark
 from .serializers import TextSerializer, CommentSerializer, SeriesSerializer, LikeSerializer, \
-	UserBookmarkSerializer, \
+	UserSavedTextSerializer, \
 	NewCommentSerializer, NewTextSerializer, TextEditSerializer, TextDescriptionSerializer, TextsByTagSerializer, \
-	CommentLikeSerializer
+	CommentLikeSerializer, SetBookmarkSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,9 @@ def text(request, text_hash):
 	if request.method == 'GET':
 		try:
 			data = Text.objects.get(hash=text_hash)
-			serializer = TextSerializer(data)
+			bookmark = Bookmark.objects.get(text=data, user=request.user)
+			data.bookmark = bookmark
+			serializer = TextSerializer(data, context={'request': request})
 			response = Response(serializer.data, status=status.HTTP_200_OK)
 		except Text.DoesNotExist:
 			response = Response(
@@ -363,39 +365,63 @@ def unlike_comment(request, pk):
 
 
 @api_view(['POST'])
-def bookmark_text(request, pk):
-	logger.info(f"START POST bookmark_text() for user {request.user.id}")
+def save_text(request, pk):
+	logger.info(f"START POST save_text() for user {request.user.id}")
 	try:
-		bkmk_text = Text.objects.filter(id=pk).first()
-		bookmark = Bookmark.objects.filter(user=request.user, text=bkmk_text)
-		if bookmark:
+		saved_text = Text.objects.filter(id=pk).first()
+		saved_db = Save.objects.filter(user=request.user, text=saved_text)
+		if saved_db:
 			response = Response(
-				{"error": "This text has already been bookmarked"},
+				{"error": "This text has already been saved"},
 				status=status.HTTP_417_EXPECTATION_FAILED
 			)
 		else:
-			new_bookmark = Bookmark.objects.create(user=request.user, text=bkmk_text)
-			response = Response(status=status.HTTP_200_OK, data=UserBookmarkSerializer(new_bookmark).data)
+			new_save = Save.objects.create(user=request.user, text=saved_text)
+			response = Response(status=status.HTTP_200_OK, data=UserSavedTextSerializer(new_save).data)
 	except IntegrityError:
 		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
-	logger.info(f"END POST bookmark_text() for user {request.user.id}")
+	logger.info(f"END POST save_text() for user {request.user.id}")
 	return response
 
 
 @api_view(['POST'])
-def unbookmark_text(request, pk):
-	logger.info(f"START POST unbookmark_text() for user {request.user.id}")
+def unsave_text(request, pk):
+	logger.info(f"START POST unsave_text() for user {request.user.id}")
 	try:
-		bookmarked_text = Text.objects.filter(id=pk).first()
-		bookmark = Bookmark.objects.get(user=request.user, text=bookmarked_text)
-		if not bookmark:
+		saved_text = Text.objects.filter(id=pk).first()
+		save_db = Save.objects.get(user=request.user, text=saved_text)
+		if not save_db:
 			response = Response(
-				{"error": "No bookmark from user " + request.user.id + "for text " + bookmarked_text.id},
+				{"error": "No save from user " + request.user.id + "for text " + saved_text.id},
 				status=status.HTTP_404_NOT_FOUND)
 		else:
-			bookmark.delete()
+			save_db.delete()
 			response = Response(status=status.HTTP_200_OK, data=request.user.username)
 	except IntegrityError:
 		response = Response({"error": "Something happened, try again later"}, status=status.HTTP_417_EXPECTATION_FAILED)
-	logger.info(f"END POST unbookmark_text() for user {request.user.id}")
+	logger.info(f"END POST unsave_text() for user {request.user.id}")
+	return response
+
+
+@api_view(['POST'])
+def set_text_bookmark(request):
+	logger.info(f"START POST text_bookmark() for user {request.user.id}")
+	try:
+		new_bookmark = {
+			'user': request.user.id,
+			'text': request.data.get('text_hash'),
+			'position': request.data.get('position')
+		}
+		serializer = SetBookmarkSerializer(data=new_bookmark, context={'request': request})
+		if serializer.is_valid():
+			serializer.save()
+			response = Response(status=status.HTTP_200_OK)
+		else:
+			response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	except IntegrityError:
+		response = Response(
+			{"error": "Something happened, try again later"},
+			status=status.HTTP_417_EXPECTATION_FAILED
+		)
+	logger.info(f"END POST text_bookmark() for user {request.user.id}")
 	return response

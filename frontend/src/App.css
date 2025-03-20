@@ -435,6 +435,7 @@ input:not(.seamless-input):focus {
   border-radius: 8px;
   max-width: 600px;
   padding: 0 24px;
+  box-shadow: var(--box-shadow);
 
   .label {
     font-weight: 600;
@@ -631,7 +632,7 @@ textarea:focus {
   align-items: center;
 }
 
-.like, .bookmark, .comment {
+.like, .saved, .comment {
   padding: 8px;
   border-radius: 5px;
   cursor: pointer;
@@ -678,7 +679,7 @@ textarea:focus {
   margin-left: 8px;
 }
 
-.like:hover, .bookmark:hover, .comment:hover {
+.like:hover, .saved:hover, .comment:hover {
   background-color: var(--button-hover-background);
   color: #c29b00;
 }
@@ -705,8 +706,7 @@ textarea:focus {
   width: 40px;
 }
 
-.text-content {
-  user-select: none;
+#text-content {
   max-width: 800px;
   margin: 96px auto;
   text-align: justify;
