@@ -246,7 +246,7 @@ class TextSerializer(serializers.ModelSerializer):
 	def get_bookmark_position(self, obj):
 		bookmark = Bookmark.objects.filter(text=obj, user=self.context.get('request').user)
 		if bookmark:
-			return bookmark.position
+			return bookmark.first().position
 		else:
 			return None
 
