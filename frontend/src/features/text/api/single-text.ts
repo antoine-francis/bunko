@@ -28,7 +28,7 @@ export const loadText : (id : string) => Promise<BunkoText | undefined> = async 
 			series: data.series,
 			seriesEntry: data.seriesEntry,
 			synopsis: data.synopsis,
-			bookmarkPosition: data.bookmarkPosition,
+			bookmarkPosition: data.bookmarkPosition !== null ? data.bookmarkPosition : undefined,
 		});
 		return text;
 	} else {
