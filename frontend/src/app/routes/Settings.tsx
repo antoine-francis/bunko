@@ -1,8 +1,7 @@
 import {Link, NavigateFunction, useNavigate} from "react-router-dom";
 import {paths} from "@/config/paths.ts";
-import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
+import {useBunkoDispatch} from "@/hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
-import {UserBadge} from "@/types/UserProfile.ts";
 import {useEffect} from "react";
 import {BunkoDispatch} from "@/store.ts";
 import {
