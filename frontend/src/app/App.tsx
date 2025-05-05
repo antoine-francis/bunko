@@ -1,5 +1,6 @@
 import '../App.css';
 import '../profile.css';
+import '../settings.css';
 import '../mobile.css';
 import {BunkoRouter} from "./BunkoRouter.tsx";
 import {IntlProvider} from "react-intl";

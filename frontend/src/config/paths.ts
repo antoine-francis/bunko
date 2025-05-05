@@ -21,6 +21,11 @@ export const paths = {
 				`/auth/logout${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 		},
 	},
+	settings: {
+		path: '/settings',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/settings/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
 	profile: {
 		path: '/user/:username',
 		getHref: (redirectTo?: string | null | undefined) =>
@@ -75,6 +80,11 @@ export const paths = {
 		path: '/tags',
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/tags${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
+	writers: {
+		path: '/writers',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/writers${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
 	collective: {
 		path: '/collective/:id',

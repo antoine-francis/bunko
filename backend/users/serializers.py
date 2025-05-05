@@ -19,15 +19,23 @@ class ProfilePictureSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
 	picture = serializers.SerializerMethodField()
+	bio = serializers.SerializerMethodField()
 
 	class Meta:
 		model = User
-		fields = ['first_name', 'last_name', 'username', 'email', 'picture']
+		fields = ['first_name', 'last_name', 'username', 'email', 'picture', 'bio']
 
 	def get_picture(self, obj):
 		try:
 			profile = Profile.objects.get(user=obj)
 			return profile.picture.url  # Assuming 'picture' is an ImageField or FileField
+		except Profile.DoesNotExist:
+			return None
+
+	def get_bio(self, obj):
+		try:
+			profile = Profile.objects.get(user=obj)
+			return profile.bio  # Assuming 'picture' is an ImageField or FileField
 		except Profile.DoesNotExist:
 			return None
 

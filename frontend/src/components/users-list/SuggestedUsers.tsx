@@ -8,14 +8,14 @@ import {paths} from "@/config/paths.ts";
 import {Link} from "react-router-dom";
 
 const messages = defineMessages({
-	trendingUsersToday: {
-		defaultMessage: "Trending users today",
-		id: "trendingUsersToday",
+	suggestedUsers: {
+		defaultMessage: "Suggested users",
+		id: "suggestedUsers",
 		description: "Suggested Users",
 	},
 	viewMore: {
 		defaultMessage: "View more…",
-		id: "trendingUsersToday",
+		id: "viewMore",
 		description: "Suggested Users",
 	}
 })
@@ -36,7 +36,7 @@ export const SuggestedUsers = ({users} : SuggestedUsersProps) => {
 	return (
 		<div id="suggested-users-container">
 			<div id="suggested-users">
-				<div className="label">{formatMessage(messages.trendingUsersToday)}</div>
+				<div className="label">{formatMessage(messages.suggestedUsers)}</div>
 				<div className="user-list">
 					{users.map((user: UserBadge, index: number) => {
 						return (
@@ -45,7 +45,7 @@ export const SuggestedUsers = ({users} : SuggestedUsersProps) => {
 					})}
 				</div>
 				<div className="view-more-label">
-					<Link to={paths.home.getHref()}>{formatMessage(messages.viewMore)}</Link>
+					<Link to={paths.writers.getHref()}>{formatMessage(messages.viewMore)}</Link>
 				</div>
 			</div>
 		</div>

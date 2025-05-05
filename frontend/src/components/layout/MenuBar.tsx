@@ -19,7 +19,7 @@ export const MenuBar = () => {
 			if (showVerticalOptionsBar) {
 				mainContentDiv.style.marginLeft = "0";
 			} else {
-				mainContentDiv.style.marginLeft = "250px";
+				mainContentDiv.style.marginLeft = "var(--sidebar-width)";
 			}
 		}
 		dispatch(toggleVerticalBar());
@@ -38,7 +38,7 @@ export const MenuBar = () => {
 						</div>
 					</Link>
 					<Search/>
-					<Link to={{pathname: paths.newText.getHref()}}>
+					<Link id="new-text-btn" to={{pathname: paths.newText.getHref()}}>
 						<div id="create-text" className="menu-bar-btn">
 							<IconPlus/>
 						</div>

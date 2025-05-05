@@ -74,6 +74,13 @@ const bunkoRouter = createBrowserRouter([
 				},
 			},
 			{
+				path: paths.settings.path,
+				lazy: async () => {
+					const { Settings } = await import('./routes/Settings');
+					return { Component: Settings };
+				},
+			},
+			{
 				path: paths.profile.path,
 				lazy: async () => {
 					const { Profile } = await import('./routes/Profile');
@@ -127,6 +134,13 @@ const bunkoRouter = createBrowserRouter([
 				lazy: async () => {
 					const { BrowseTags } = await import('./routes/BrowseTags.tsx');
 					return { Component: BrowseTags };
+				},
+			},
+			{
+				path: paths.writers.path,
+				lazy: async () => {
+					const { BrowseWriters } = await import('./routes/BrowseWriters.tsx');
+					return { Component: BrowseWriters };
 				},
 			},
 			{

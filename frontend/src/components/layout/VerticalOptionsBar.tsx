@@ -4,6 +4,7 @@ import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {defineMessages, useIntl} from "react-intl";
 import {
 	IconHash,
+	IconHome,
 	IconLayoutGrid,
 	IconLogout,
 	IconMoon,
@@ -15,9 +16,13 @@ import {toggleDarkMode, toggleVerticalBar} from "@/slices/UiStateSlice.ts";
 import {useCallback, useEffect} from "react";
 import {Footer} from "@/components/layout/Footer.tsx";
 import {Dropdown} from "@/components/util/Dropdown.tsx";
-import {UserBadge} from "@/types/UserProfile.ts";
 
 const messages = defineMessages({
+	home: {
+		id: "menubar.home",
+		description: "Menu bar button",
+		defaultMessage: "Home",
+	},
 	browseTags: {
 		id: "menubar.browseTags",
 		description: "Menu bar button",
@@ -62,10 +67,10 @@ export const VerticalOptionsBar = () => {
 		})
 	}, []);
 
-	const getDropdownContent = useCallback((user : UserBadge) => {
+	const getDropdownContent = useCallback(() => {
 		const items = [];
 		items.push(
-			<div className="nav-btn" onClick={() => navigate(paths.profile.getHref() + user.username)}>
+			<div className="nav-btn" onClick={() => navigate(paths.settings.getHref())}>
 				<IconSettings/>
 				{formatMessage(messages.settings)}
 			</div>
@@ -91,11 +96,19 @@ export const VerticalOptionsBar = () => {
 			<>
 				<div className="close-bar-veil" style={!showVerticalOptionsBar ? {display: "none"} : {display: "block"}}
 					 onClick={() => dispatch(toggleVerticalBar(false))}/>
-				<div id="vertical-options-bar" style={showVerticalOptionsBar ? {left: "0px"} : {left: "-250px"}}>
+				<div id="vertical-options-bar" style={showVerticalOptionsBar ? {left: "0px"} : {left: "-225px"}}>
 					<div id="vertical-bar-content">
 						<ul>
 							<li>
-								<Link to={{pathname: paths.tags.getHref()}}>
+								<Link to={{pathname: paths.home.getHref()}}>
+									<div id="browse-tags" className="nav-btn">
+										<IconHome/>
+										{formatMessage(messages.home)}
+									</div>
+								</Link>
+							</li>
+							<li>
+								<Link to={{pathname: paths.writers.getHref()}}>
 									<div id="browse-tags" className="nav-btn">
 										<IconUsersGroup/>
 										{formatMessage(messages.browseWriters)}
@@ -123,9 +136,7 @@ export const VerticalOptionsBar = () => {
 						<div className="more-options">
 							<button id="toggle-dark-mode" onClick={handleDarkModeToggle}>{isDarkMode ? <IconSun/> :
 								<IconMoon/>}</button>
-
-
-							<Dropdown items={getDropdownContent(user)} />
+							<Dropdown items={getDropdownContent()}/>
 						</div>
 					</div>
 					<Footer/>

@@ -11,6 +11,7 @@ export interface UserBadge {
 	firstName: string;
 	lastName: string;
 	picture: string;
+	bio?: string;
 }
 
 export interface UserProfile extends UserBadge {

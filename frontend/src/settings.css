@@ -1,0 +1,32 @@
+h2 {
+    margin-top: 0;
+}
+
+.settings-section {
+    background-color: var(--dark-background-color);
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 16px;
+    display: flex;
+
+    .section-icon {
+        align-content: center;
+        margin-right: 12px;
+    }
+
+    h4 {
+        margin: 3px 0;
+    }
+
+    .description {
+        font-weight: 500;
+    }
+    .description:hover {
+        color: var(--link-color);
+    }
+}
+
+.settings-section:hover {
+
+}

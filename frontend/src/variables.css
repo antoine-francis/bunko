@@ -1,6 +1,6 @@
 :root {
     --menu-bar-height: 63px;
-    --sidebar-width: 250px;
+    --sidebar-width: 225px;
     --footer-height: 55px;
     --box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 
@@ -37,6 +37,7 @@
     --font-color: #d3d3d3;
     --font-color: #d3d3d3;
     --background-color: #242424;
+    /* purplish background #222038 */
     --dark-background-color: #181818;
     --link-color: #c0c2c6;
     --link-hover-color: #c29b00;

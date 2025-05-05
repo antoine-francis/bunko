@@ -198,6 +198,19 @@ def get_collective(request, pk):
 		serializer = CollectiveDetailedSerializer(collective)
 		return Response(serializer.data)
 
+#
+# @api_view(['GET'])
+# def suggest_users(request):
+# 	if request.method == 'GET':
+# 		logger.info(f"START GET suggest_users() for user {request.user.id}")
+# 		users = User.objects.exclude(id=request.user.id).exclude(
+# 			id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
+# 		)[:4]
+# 		serializer = UserSerializer(users, many=True, context={'request': request})
+# 		logger.info(f"END GET suggest_users() for user {request.user.id}")
+# 		return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 @api_view(['GET'])
 def suggest_users(request):
@@ -209,7 +222,7 @@ def suggest_users(request):
 		users_with_bookmark_count = users.annotate(
 			bookmark_count=Count('text__bookmarked_text', filter=Q(text__bookmarked_text__isnull=False))
 		)
-		users_sorted = users_with_bookmark_count.order_by('-bookmark_count')[:4]
+		users_sorted = users_with_bookmark_count.order_by('-bookmark_count')[:10]
 		serializer = UserSerializer(users_sorted, many=True, context={'request': request})
 		logger.info(f"END GET suggest_users() for user {request.user.id}")
 		return Response(serializer.data, status=status.HTTP_200_OK)

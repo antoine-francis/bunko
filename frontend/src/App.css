@@ -153,6 +153,13 @@ input[type=text], textarea {
   text-align: center;
 }
 
+#new-text-btn {
+  background-color: var(--menu-bar-gold);
+  svg {
+    color: var(--sidebar-background);
+  }
+}
+
 .menu-bar-btn:hover {
   background-color: #474747;
   color: #c29b00;
@@ -164,7 +171,7 @@ input[type=text], textarea {
 }
 
 #vertical-options-bar {
-  width: 250px;
+  width: var(--sidebar-width);
   flex: 0 0 auto;
   background-color: var(--sidebar-background);
   transition: 0.2s;
@@ -200,7 +207,7 @@ input[type=text], textarea {
 }
 
 #vertical-options-bar ul li {
-  padding: 24px;
+  padding: 12px 8px;
   display: flex;
 }
 
@@ -239,7 +246,7 @@ input[type=text], textarea {
 
   .dropdown-menu {
     .item {
-      padding: 16px;
+      padding: 2px 8px;
     }
 
   }
@@ -262,7 +269,7 @@ h2 {
   transition: 0.2s;
   width: 100%;
   flex: 1 1 auto;
-  margin-left: 250px;
+  margin-left: var(--sidebar-width);
   display: flex;
   justify-content: space-around;
 
@@ -271,7 +278,7 @@ h2 {
   }
 
   #user-profile {
-    max-width: 1079px;
+    max-width: 600px;
   }
 
   footer {
@@ -441,6 +448,29 @@ input:not(.seamless-input):focus {
 
 .terms-conditions input:focus {
   outline: none;
+}
+
+#browse-by-writers-container {
+
+  max-width: 800px;
+
+  .subtext {
+    margin-bottom: 60px;
+    text-align: center;
+  }
+
+  .user-card {
+    padding: 16px;
+    background-color: var(--dark-background-color);
+    box-shadow: var(--box-shadow);
+    border-radius: 8px;
+    margin-bottom: 32px;
+
+    .bio {
+      font-weight: 400;
+      margin-top: 12px;
+    }
+  }
 }
 
 .submit-btn {
@@ -698,7 +728,8 @@ textarea:focus {
   }
 
   .synopsis {
-    margin-left: 60px;
+    margin: 60px;
+    text-align: center;
   }
 
   .text-item {
