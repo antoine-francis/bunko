@@ -3,7 +3,7 @@ import {paths} from "@/config/paths.ts";
 import {useBunkoDispatch, useBunkoSelector} from "@/hooks/redux-hooks.ts";
 import {useCallback} from "react";
 import {toggleVerticalBar} from "@/slices/UiStateSlice.ts";
-import {IconMenu2, IconPlus} from "@tabler/icons-react";
+import {IconBell, IconMenu2, IconPlus} from "@tabler/icons-react";
 import {Search} from "../search/Search.tsx";
 import {URL} from "@/constants/Url.ts";
 
@@ -33,7 +33,7 @@ export const MenuBar = () => {
 						<IconMenu2/>
 					</div>
 					<Link to={paths.home.getHref()}>
-						<div className="home">
+						<div id="home">
 							poqopo.co
 						</div>
 					</Link>
@@ -41,6 +41,11 @@ export const MenuBar = () => {
 					<Link to={{pathname: paths.newText.getHref()}}>
 						<div id="create-text" className="menu-bar-btn">
 							<IconPlus/>
+						</div>
+					</Link>
+					<Link to={{pathname: paths.newText.getHref()}}>
+						<div id="create-text" className="menu-bar-btn">
+							<IconBell/>
 						</div>
 					</Link>
 					<Link id="profile-pic" to={{pathname: paths.profile.getHref() + user.username}}>

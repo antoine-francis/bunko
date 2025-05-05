@@ -125,17 +125,20 @@ export const ProfileEdit = () => {
 
 		if (!issue && currentUser !== undefined) {
 			const formData = new FormData();
-			formData.append("picture", (imgFile as File));
+			if (imgFile !== null) {
+				formData.append("picture", (imgFile as File));
+			}
 			formData.append("formerUsername", currentUser.username);
 			formData.append("firstName", firstName);
 			formData.append("lastName", lastName);
 			formData.append("username", username);
+			formData.append("bio", bio);
 
 			dispatch(updateProfile(formData))
 			setSaved(true);
 		}
 
-	}, [firstName, lastName, username, dispatch, currentUser, invalidLastName, invalidFirstName, invalidUsername, imgFile]);
+	}, [firstName, lastName, username, bio, dispatch, currentUser, invalidLastName, invalidFirstName, invalidUsername, imgFile]);
 
 	const handlePictureChange = useCallback((e : ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0] !== null) {

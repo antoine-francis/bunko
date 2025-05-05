@@ -110,6 +110,7 @@ class Bookmark(models.Model):
 	text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name="bookmarked_text")
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	position = models.IntegerField(default=-1)
+	bookmark_date = models.DateTimeField(auto_now=True)
 
 
 class Favorite(models.Model):

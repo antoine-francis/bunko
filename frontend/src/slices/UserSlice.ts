@@ -66,6 +66,7 @@ const userSlice = createSlice({
 				state.loading = false;
 				state.error = undefined;
 				state.user = undefined;
+				location.reload();
 			})
 			.addCase(logout.rejected, (state) => {
 				// The logout action is fulfilled regardless of errors

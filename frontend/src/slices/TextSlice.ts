@@ -14,6 +14,7 @@ import {Bookmark, BunkoText, TextState} from "../types/Text.ts";
 import {Like} from "../types/Like.ts";
 import {SavedText} from "../types/SavedText.ts";
 import {BunkoComment, CommentLike, CommentPost, DeleteComment} from "../types/Comment.ts";
+import {fetchTexts} from "@/slices/TextListSlice.ts";
 
 export const fetchText = createAsyncThunk<BunkoText | undefined, string>(
 	'text_fetchText',
@@ -121,9 +122,14 @@ const textSlice = createSlice({
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
 			})
-			.addCase(likeText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
-				const hash = (action as any).meta.arg;
-				(state[hash] as LoadingState) = {loading: true, error: undefined};
+			.addCase(fetchTexts.fulfilled, (state, action : PayloadAction<{feed: BunkoText[], bookmarks: BunkoText[]}>) => {
+				const {feed} = action.payload;
+				for (const text of feed) {
+					state[text.hash] = text
+				}
+			})
+			.addCase(fetchTexts.rejected, (state, action) => {
+				state.error = (action as any).error.message;
 			})
 			.addCase(likeText.fulfilled, (state, action : PayloadAction<Like>) => {
 				if (action.payload !== undefined) {
@@ -135,10 +141,6 @@ const textSlice = createSlice({
 				const {hash} = (action as any).meta.arg;
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
-			})
-			.addCase(unlikeText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
-				const hash = (action as any).meta.arg;
-				(state[hash] as LoadingState) = {loading: true, error: undefined};
 			})
 			.addCase(unlikeText.fulfilled, (state, action : PayloadAction<string>) => {
 				if (action.payload !== undefined) {
@@ -223,10 +225,6 @@ const textSlice = createSlice({
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
 			})
-			.addCase(saveText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
-				const hash = (action as any).meta.arg;
-				(state[hash] as LoadingState) = {loading: true, error: undefined};
-			})
 			.addCase(saveText.fulfilled, (state, action : PayloadAction<SavedText | undefined>) => {
 				if (action.payload !== undefined) {
 					const {hash} = (action as any).meta.arg;
@@ -237,10 +235,6 @@ const textSlice = createSlice({
 				const hash = (action as any).meta.arg;
 				state[hash].loading = false;
 				state[hash].error = (action as any).error.message;
-			})
-			.addCase(unsaveText.pending, (state, action : PayloadAction<LoadingState | undefined>) => {
-				const hash = (action as any).meta.arg;
-				(state[hash] as LoadingState) = {loading: true, error: undefined};
 			})
 			.addCase(unsaveText.fulfilled, (state, action : PayloadAction<string>) => {
 				if (action.payload !== undefined) {

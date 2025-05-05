@@ -1,12 +1,12 @@
 import {TextDescription} from "@/types/Text.ts";
 import PropTypes from "prop-types";
-import {EmptyList} from "../users-list/EmptyList.tsx";
 import {Link} from "react-router-dom";
 import {paths} from "@/config/paths.ts";
 import {defineMessages, FormattedDate, useIntl} from "react-intl";
 import {toRoman} from "@/utils/roman-numerals.ts";
 import {TagList} from "./TagList.tsx";
 import {Truncate} from "@re-dev/react-truncate";
+import {EmptyTextList} from "@/components/texts-list/EmptyTextList.tsx";
 
 const messages = defineMessages({
 	untitledText: {
@@ -48,14 +48,14 @@ export const TextsList = ({texts, showAuthor = false, showDescription = true, sh
 						date: formatDate(text.modificationDate ? text.modificationDate : text.creationDate)
 					})}
 				</div>}
-				</div>
+					</div>
 					{showDescription && (
 						<div className="text-description">
 							<div className="title">{text.title ? text.title : formatMessage(messages.untitledText)}</div>
 							{showAuthor &&
 								<Link to={paths.profile.getHref() + text.author.username}>
 									{`${text.author.firstName} ${text.author.lastName}`}
-							</Link>}
+								</Link>}
 							{showSeries && text.series &&
 								<div className="series">
 									<Link to={{pathname: `${paths.series.getHref()}${text.series.id}`}}>
@@ -63,15 +63,22 @@ export const TextsList = ({texts, showAuthor = false, showDescription = true, sh
 										<div></div>
 									</Link>
 								</div>}
-							{text.synopsis ? text.synopsis : <Truncate lines={4}>{text.content}</Truncate>}
+							{text.synopsis ? text.synopsis : <div className="preview-synopsis"><Truncate lines={4}>{text.content}</Truncate></div>}
 							<TagList genres={text.genres}/>
-							<div className="publ-date"><FormattedDate
-								value={text.publicationDate ? text.publicationDate : text.creationDate}/></div>
+							<div className="publ-date">
+								<FormattedDate value={text.publicationDate ? text.publicationDate : text.creationDate}/>
+							</div>
 						</div>
 					)}
 				</div>
+					{text.bookmarkPosition && text.content &&
+						<div className="progress-bar-container">
+							<div className="progress-bar"
+								 style={{width: `${(text.bookmarkPosition / text.content.length) * 100}%`}}></div>
+						</div>
+					}
 				</Link>
-			)) : <EmptyList/>}
+			)) : <EmptyTextList/>}
 	</div>);
 }
 

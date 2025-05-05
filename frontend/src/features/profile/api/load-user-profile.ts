@@ -38,7 +38,6 @@ export const updateUserProfile : (formData : FormData) => Promise<UserBadge | un
 		body: formData,
 		credentials: 'include',
 		headers: {
-			// "Content-Type": "multipart/form-data",
 			"X-CSRFToken": getCookie("csrftoken"),
 
 		}

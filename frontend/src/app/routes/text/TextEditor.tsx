@@ -223,9 +223,11 @@ export const TextEditor = () => {
 	const save = useCallback((isDraft: boolean) => {
 		const genres = [];
 		if (tags !== "") {
-			const tagList = tags.split(",");
+			const tagList = tags.split(/[,#]+/)
 			for (const tag of tagList) {
-				genres.push({tag: tag.toLowerCase().trim()} as Genre);
+				if (tag !== "") {
+					genres.push({tag: tag.toLowerCase().trim()} as Genre);
+				}
 			}
 		}
 		if (text) {
@@ -243,7 +245,7 @@ export const TextEditor = () => {
 			navigate(paths.singleText.getHref() + text.hash);
 			dispatch(resetEditor())
 		} else {
-			const series = getSeriesInfo();
+			const series : Series | undefined = getSeriesInfo();
 			const newText : EditorContent = {
 				content,
 				title,
@@ -281,11 +283,14 @@ export const TextEditor = () => {
 		switch (alertType) {
 			case C.PUBLISH_TEXT:
 				save(false);
-				if (text !== undefined) {
-					navigate(paths.singleText.getHref() + text.hash);
-				} else {
-					navigate(paths.home.getHref());
+				if (hash !== undefined) {
+					navigate(paths.singleText.getHref() + hash);
 				}
+				// if (text !== undefined) {
+				// 	navigate(paths.singleText.getHref() + text.hash);
+				// } else {
+				// 	navigate(paths.home.getHref());
+				// }
 				break;
 			case C.CANCEL_EDIT:
 				dispatch(closeModal());

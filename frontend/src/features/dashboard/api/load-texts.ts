@@ -2,7 +2,7 @@ import {BunkoText} from "@/types/Text.ts";
 import {Series} from "@/types/Series.ts";
 import {URL} from "@/constants/Url.ts";
 
-export const loadTexts : () => Promise<BunkoText[]> = async () => {
+export const loadTexts : () => Promise<{feed: BunkoText[], bookmarks: BunkoText[]}> = async () => {
 	const response = await fetch(URL.SERVER + URL.TEXTS, {
 		credentials: 'include',
 	});

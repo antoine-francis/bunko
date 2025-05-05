@@ -42,9 +42,11 @@ export const SeriesDescription = () => {
 
 	const getSeriesAuthors = () : Author[] => {
 		if (series !== undefined && series.entries !== undefined && series.entries.length > 0) {
-			return series.entries.map((entry : TextDescription) => {
-				return entry.author;
-			})
+			return series.entries.map((entry : TextDescription, index : number, self : BunkoText[]) => {
+				if (index === self.findIndex((t : BunkoText) => t.author.username === entry.author.username)) {
+					return entry.author;
+				}
+			}).filter((entry : Author | undefined) => entry !== undefined)
 		} else {
 			return [];
 		}
@@ -60,15 +62,16 @@ export const SeriesDescription = () => {
 		const seriesTextDesc : TextDescription[] = series.entries.map((text : BunkoText) => {
 			return convertTextToDesc(text);
 		})
+		const seriesAuthor : Author[] = getSeriesAuthors();
 		return (
 			<>
 				<div id="series-info-container">
 					<div className="series-title">{series.title}</div>
 					<div className="author">
-						{getSeriesAuthors().map((author : Author, index : number) => {
+						{seriesAuthor.map((author : Author, index : number) => {
 							return (
 								<Link key={"author-" + author.username} to={paths.profile.getHref() + author.username}>
-									{`${author.firstName} ${author.lastName} ${index !== getSeriesAuthors().length - 1 ? "," : ""}`}
+									{`${author.firstName} ${author.lastName}${index !== seriesAuthor.length - 1 ? ", " : ""}`}
 								</Link>
 							)
 						})}
@@ -79,7 +82,7 @@ export const SeriesDescription = () => {
 						{formatMessage(messages.entry, {count: seriesTextDesc.length})}
 					</div>
 					<div className="text-list-container">
-						<TextsList texts={seriesTextDesc} showAuthor={true} showSeries={false}/>A
+						<TextsList texts={seriesTextDesc} showAuthor={true} showSeries={false}/>
 					</div>
 				</div>
 			</>

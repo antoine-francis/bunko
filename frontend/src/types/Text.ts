@@ -40,6 +40,7 @@ export interface TextDescription {
 	creationDate: Date;
 	modificationDate: Date;
 	publicationDate: Date;
+	bookmarkPosition?: number;
 	id: number;
 	content?: string;
 }
@@ -51,7 +52,7 @@ export interface MinimalTextDesc {
 }
 
 export interface TextListState {
-	texts: BunkoText[];
+	bookmarks: BunkoText[];
 	error?: HttpStatus;
 	loading: boolean;
 }

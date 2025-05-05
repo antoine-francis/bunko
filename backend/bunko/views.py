@@ -27,13 +27,20 @@ def home(request):
 def get_texts(request):
 	if request.method == 'GET':
 		logger.info(f"START GET get_texts() for user {request.user.id}")
-		data = Text.objects.filter(
-			author_id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
-			is_draft=False
-		)
-		serializer = TextSerializer(data, context={'request': request}, many=True)
-		response = Response(serializer.data)
-		logger.info(f"END GET get_texts() for user {request.user.id}")
+		feed_data = Text.objects.exclude(
+			bookmarked_text__id__in=Bookmark.objects.filter(user=request.user.id)).filter(
+				author_id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
+				is_draft=False
+			)
+		feed_serializer = TextSerializer(feed_data, context={'request': request}, many=True)
+		bookmarks = Bookmark.objects.filter(
+			user_id=request.user.id,
+			position__gt=-1
+		).prefetch_related('text').order_by('-bookmark_date')[:5]
+		bookmarked_texts = [bookmark.text for bookmark in bookmarks]
+		bookmarks_serializer = TextSerializer(bookmarked_texts, context={'request': request}, many=True)
+		response_data = {'feed': feed_serializer.data, 'bookmarks': bookmarks_serializer.data}
+		response = Response(data=response_data)
 		return response
 
 

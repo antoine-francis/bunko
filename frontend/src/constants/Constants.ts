@@ -12,4 +12,7 @@ export const C = {
 	TITLES: "TITLES",
 
 	MORE_OPTIONS: "MORE_OPTIONS",
+
+	// Bookmarking position
+	READING_COMPLETE: -1
 }

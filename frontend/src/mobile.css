@@ -205,6 +205,10 @@
         margin: 0;
     }
 
+    #suggested-users-container {
+        display: none;
+    }
+
     .read-by {
         display: none;
     }
@@ -228,13 +232,6 @@
 
     .destructive-action {
         color: #fa4b4b;
-    }
-
-    .text-title {
-        font-size: 48px;
-        margin-top: 80px;
-        text-align: center;
-        font-family: "Times New Roman", Times, serif;
     }
 
     .text-series-info {
@@ -276,12 +273,6 @@
         margin: 0 auto 0 16px;
     }
 
-    .text-title-editor {
-        font-family: monospace;
-        font-size: 36px;
-        margin: 16px auto;
-    }
-
     #genre-tags {
         margin: 8px auto;
         font-family: monospace;
@@ -295,10 +286,6 @@
 
     .modal-buttons button:not(:last-child) {
         margin-right: 16px;
-    }
-
-    .text-title-editor:focus-visible {
-        outline: none;
     }
 
     .text-editor {
