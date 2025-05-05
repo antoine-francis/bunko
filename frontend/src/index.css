@@ -82,6 +82,10 @@ button:focus-visible {
     a {
       color: var(--menu-link-color);
     }
+
+    svg {
+      color: var(--menu-bar-gold);
+    }
   }
 
   #vertical-options-bar {

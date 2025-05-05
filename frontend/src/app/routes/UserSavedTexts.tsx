@@ -37,7 +37,7 @@ export const UserSavedTexts = () => {
 		return (
 			<>
 				<div id="savelist-container">
-					<TextsList texts={savedTextDesc}/>
+					<TextsList showAuthor={true} texts={savedTextDesc}/>
 				</div>
 			</>
 		);

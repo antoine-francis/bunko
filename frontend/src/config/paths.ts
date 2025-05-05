@@ -32,9 +32,9 @@ export const paths = {
 			`/edit/user${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
 	newText: {
-		path: '/new/',
+		path: '/new',
 		getHref: (redirectTo?: string | null | undefined) =>
-			`/new/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+			`/new${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
 	editText: {
 		path: '/edit/:hash',

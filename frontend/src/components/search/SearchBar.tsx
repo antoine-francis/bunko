@@ -45,7 +45,7 @@ export function SearchBar() {
 				  onChange={handleChange}/>
 			{searchVal !== "" && <div id="clear-input" onClick={() => {
 				setSearchVal("");
-			}}><IconX/></div>}
+			}}><IconX title={formatMessage(messages.clearSearch)}/></div>}
 		</>
 	);
 }

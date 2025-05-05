@@ -173,7 +173,7 @@ class NewTextSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Text
-		fields = ['content', 'author', 'series', 'series_entry', 'genres', 'title']
+		fields = ['content', 'author', 'series', 'series_entry', 'synopsis', 'genres', 'is_draft', 'title']
 
 	def create(self, validated_data):
 		genres_data = validated_data.pop('genres', [])
@@ -194,7 +194,7 @@ class TextEditSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Text
-		fields = ['content', 'author', 'series', 'series_entry', 'genres', 'title', 'hash', 'is_draft']
+		fields = ['content', 'author', 'series', 'series_entry', 'synopsis', 'genres', 'title', 'hash', 'is_draft']
 
 	def create(self, validated_data):
 		genres_data = validated_data.pop('genres', [])
@@ -204,6 +204,9 @@ class TextEditSerializer(serializers.ModelSerializer):
 
 		for attr, value in validated_data.items():
 			setattr(text, attr, value)
+
+		# Clear existing genres before adding new ones
+		text.genres.clear()
 
 		genres = []
 		for g in genres_data:
@@ -244,11 +247,12 @@ class TextSerializer(serializers.ModelSerializer):
 		return CommentSerializer(Comment.objects.filter(text=obj, parent__isnull=True), many=True).data
 
 	def get_bookmark_position(self, obj):
-		bookmark = Bookmark.objects.filter(text=obj, user=self.context.get('request').user)
-		if bookmark:
-			return bookmark.first().position
-		else:
-			return None
+		request = self.context.get('request')
+		if request:
+			bookmark = Bookmark.objects.filter(text=obj, user=request.user)
+			if bookmark:
+				return bookmark.first().position
+		return None
 
 
 class SetBookmarkSerializer(serializers.ModelSerializer):

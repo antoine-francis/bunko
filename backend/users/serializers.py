@@ -98,12 +98,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 	def get_favorites(self, obj):
 		return TextDescriptionSerializer(Favorite.objects.filter(user=obj.user), many=True).data
 
-	# def get_picture(self, obj):
-	# 	try:
-	# 		return obj.picture.url  # Assuming 'picture' is an ImageField or FileField
-	# 	except Profile.DoesNotExist:
-	# 		return None
-
 
 class UserMembershipSerializer(serializers.ModelSerializer):
 	user = UserSerializer()

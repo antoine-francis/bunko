@@ -3,6 +3,7 @@ import logging
 
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models import Count, Q
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -91,17 +92,17 @@ def update_profile(request):
 		serializer = UserSerializer(instance=user, data=request.data, context={'request': request})
 		if serializer.is_valid():
 			serializer.save()
-			if request.data.get('picture') != 'null':
-				profile = Profile.objects.get(id=user.id)
-				picture_serializer = ProfileSerializer(profile, data=request.data, partial=True)
-				if picture_serializer.is_valid():
-					picture_serializer.save()
-				else:
-					logger.info(f"END update_profile() for user {request.user.id}")
-					return Response({"error": picture_serializer.errors},
-									status=status.HTTP_400_BAD_REQUEST)
-			response_data = serializer.data
-			response = Response(response_data)
+			profile = Profile.objects.get(id=user.id)
+			picture_serializer = ProfileSerializer(profile, data=request.data, partial=True)
+			if picture_serializer.is_valid():
+				picture_serializer.save()
+				response = Response(serializer.data)
+			else:
+				logger.info(f"END update_profile() for user {request.user.id}")
+				response = Response(
+					{"error": picture_serializer.errors},
+					status=status.HTTP_400_BAD_REQUEST
+				)
 		else:
 			errors = serializer.errors
 			fields = []
@@ -109,8 +110,8 @@ def update_profile(request):
 				fields.append('username')
 			if 'picture' in errors:
 				fields.append('picture')
-				logger.error(errors)
-				response = Response({"error": errors, "fields": fields}, status=status.HTTP_409_CONFLICT)
+			logger.error(errors)
+			response = Response({"error": errors, "fields": fields}, status=status.HTTP_409_CONFLICT)
 	except IntegrityError as e:
 		message = f"Error while updating user {request.user.id} : {str(e)}"
 		logger.info(message)
@@ -203,8 +204,12 @@ def suggest_users(request):
 	if request.method == 'GET':
 		logger.info(f"START GET suggest_users() for user {request.user.id}")
 		users = User.objects.exclude(id=request.user.id).exclude(
-			id__in=Subscription.objects.filter(follower=request.user.id).values('following'),
-		)[:4]
-		serializer = UserSerializer(users, many=True, context={'request': request})
+			id__in=Subscription.objects.filter(follower=request.user.id).values('following')
+		)
+		users_with_bookmark_count = users.annotate(
+			bookmark_count=Count('text__bookmarked_text', filter=Q(text__bookmarked_text__isnull=False))
+		)
+		users_sorted = users_with_bookmark_count.order_by('-bookmark_count')[:4]
+		serializer = UserSerializer(users_sorted, many=True, context={'request': request})
 		logger.info(f"END GET suggest_users() for user {request.user.id}")
 		return Response(serializer.data, status=status.HTTP_200_OK)

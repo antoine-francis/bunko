@@ -31,6 +31,7 @@ import {Dropdown} from "@/components/util/Dropdown.tsx";
 import {getCaretCharacterOffsetWithin} from "@/utils/text-selection.ts";
 import {BookmarkLocationMarker} from "@/components/text/BookmarkLocationMarker.tsx";
 import {SavedText} from "@/types/SavedText.ts";
+import {DoneReadingButton} from "@/components/text/DoneReadingButton.tsx";
 
 const messages = defineMessages({
 	author: {
@@ -207,12 +208,10 @@ export const SingleText = () => {
 			if (targetNode !== null) {
 				const endPosition : number = getCaretCharacterOffsetWithin(targetNode);
 				window.getSelection()?.removeAllRanges();
-				dispatch(setBookmark({position: endPosition, textHash: text.hash}))
+				dispatch(setBookmark({position: endPosition, textHash: text.hash}));
 			}
 		}
 	}, [text]);
-
-
 
 	const confirmAction = useCallback(() => {
 		switch (alertType) {
@@ -266,6 +265,7 @@ export const SingleText = () => {
 				<BookmarkLocationMarker bookmarkLocation={text.bookmarkPosition}/>
 				{!text.isDraft ? (
 					<>
+						<DoneReadingButton text={text} position={text.bookmarkPosition} />
 						<div className="actions">
 							<div className="reactions">
 								<LikeButton liked={isLiked} text={text}/>
