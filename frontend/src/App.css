@@ -428,6 +428,7 @@ form div input {
   height: 20px;
   padding: 4px;
   border: 1px solid #888;
+  font-size: 16px;
 }
 
 input:not(.seamless-input):focus {
@@ -677,7 +678,7 @@ textarea {
   border: none;
   box-sizing: border-box;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   /*height: 36px;*/
   border-radius: 18px;
   transition: 0.1s;

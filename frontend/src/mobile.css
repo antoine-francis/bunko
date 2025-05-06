@@ -276,6 +276,7 @@
     #genre-tags {
         margin: 8px auto;
         font-family: monospace;
+        font-size: 16px;
     }
 
     .modal-buttons {
