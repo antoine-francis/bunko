@@ -59,13 +59,52 @@ export const VerticalOptionsBar = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		// hides sidebar on click -- mobile
 		window.addEventListener("click", (event : MouseEvent) => {
-			const isMobileScreen = window.innerWidth <= 700;
+			const isMobileScreen : boolean = window.innerWidth <= 700;
 			if (isMobileScreen && event.target && event.target instanceof Element && event.target.classList.contains("nav-btn")) {
 				dispatch(toggleVerticalBar(false));
 			}
 		})
-	}, []);
+		return window.removeEventListener("click", (event : MouseEvent) => {
+			const isMobileScreen : boolean = window.innerWidth <= 700;
+			if (isMobileScreen && event.target && event.target instanceof Element && event.target.classList.contains("nav-btn")) {
+				dispatch(toggleVerticalBar(false));
+			}
+		})
+	}, [showVerticalOptionsBar]);
+
+	useEffect(() => {
+		window.addEventListener("resize", () => {
+			const isMobileScreen : boolean = window.innerWidth <= 700;
+			if (!isMobileScreen) {
+				const userPref : boolean = JSON.parse(localStorage.getItem('showVerticalOptionsBar') ?? 'true');
+				if (showVerticalOptionsBar !== userPref) {
+					dispatch(toggleVerticalBar(userPref));
+				}
+			}
+			if (showVerticalOptionsBar) {
+				if (isMobileScreen) {
+					dispatch(toggleVerticalBar(false));
+				}
+			}
+		})
+
+		return window.removeEventListener("resize", () => {
+			const isMobileScreen : boolean = window.innerWidth <= 700;
+			if (!isMobileScreen) {
+				const userPref : boolean = JSON.parse(localStorage.getItem('showVerticalOptionsBar') ?? 'true');
+				if (showVerticalOptionsBar !== userPref) {
+					dispatch(toggleVerticalBar(userPref));
+				}
+			}
+			if (showVerticalOptionsBar) {
+				if (isMobileScreen) {
+					dispatch(toggleVerticalBar(false));
+				}
+			}
+		})
+	}, [showVerticalOptionsBar]);
 
 	const getDropdownContent = useCallback(() => {
 		const items = [];

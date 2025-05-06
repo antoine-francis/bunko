@@ -269,6 +269,17 @@ def get_series_by_user(request, username):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+def get_popular_series(request):
+	logger.info(f"START get_popular_series() for user {request.user.id}")
+	data = Series.objects.filter(text__author__username=username)
+	serializer = SeriesSerializer(data, context={'request': request}, many=True)
+	logger.info(f"END GET get_series_by_user() for user {request.user.id}")
+	response = Response(serializer.data, status=status.HTTP_200_OK)
+	logger.info(f"END get_popular_series() for user {request.user.id}")
+	return response
+
+
 @api_view()
 def get_series(request, pk):
 	if request.method == 'GET':

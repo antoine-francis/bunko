@@ -25,7 +25,7 @@ export const EmptyDashboardContainer = () => {
 	return (
 		<div id="empty-list-container">
 			<ul>
-				<li><Link to={""}>{formatMessage(messages.exploreAuthors)}</Link></li>
+				<li><Link to={paths.writers.getHref()}>{formatMessage(messages.exploreAuthors)}</Link></li>
 				<li><Link to={""}>{formatMessage(messages.browseSeries)}</Link></li>
 				<li><Link to={paths.tags.getHref()}>{formatMessage(messages.browseTags)}</Link></li>
 			</ul>

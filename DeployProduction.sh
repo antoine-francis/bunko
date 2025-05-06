@@ -11,3 +11,4 @@ npm install;
 npm run build;
 nginx -t;
 nginx -s reload;
+sudo systemctl reload nginx;

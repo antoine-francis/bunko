@@ -18,8 +18,10 @@ export const MenuBar = () => {
 		if (mainContentDiv !== null) {
 			if (showVerticalOptionsBar) {
 				mainContentDiv.style.marginLeft = "0";
+				localStorage.setItem('showVerticalOptionsBar', JSON.stringify(false));
 			} else {
 				mainContentDiv.style.marginLeft = "var(--sidebar-width)";
+				localStorage.setItem('showVerticalOptionsBar', JSON.stringify(true));
 			}
 		}
 		dispatch(toggleVerticalBar());
