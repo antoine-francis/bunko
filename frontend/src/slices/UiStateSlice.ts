@@ -5,7 +5,7 @@ import {detectDarkMode} from "../utils/detect-color-scheme.ts";
 const isDarkMode : boolean = detectDarkMode();
 
 const initialState: UiState = {
-	showVerticalOptionsBar: window.innerWidth > 700 || JSON.parse(localStorage.getItem('showVerticalOptionsBar') ?? 'true'),
+	showVerticalOptionsBar: window.innerWidth > 700 && JSON.parse(localStorage.getItem('showVerticalOptionsBar') ?? 'true'),
 	isDarkMode
 };
 

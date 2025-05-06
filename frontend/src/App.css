@@ -563,6 +563,8 @@ input:not(.seamless-input):focus {
     flex-wrap: nowrap;
     padding: 16px 3px;
     gap: 16px;
+    overflow-x: scroll;
+    scrollbar-width: none;
 
 
     .text-item {
