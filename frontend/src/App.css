@@ -39,7 +39,7 @@ input[type=text], textarea {
 }
 
 .menu-bar a#profile-pic {
-  width: 48px;
+  width: 24px;
   display: flex;
   justify-content: center;
   padding: 0 16px;
@@ -158,6 +158,7 @@ input[type=text], textarea {
   svg {
     color: var(--sidebar-background);
   }
+  margin-left: auto;
 }
 
 .menu-bar-btn:hover {
@@ -311,8 +312,45 @@ h2 {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
+  width: 95%;
   justify-content: space-around;
+}
+
+.series-card {
+  border-radius: 8px;
+  background-color: var(--dark-background-color);
+  box-shadow: var(--box-shadow);
+  padding: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  column-gap: 12px;
+
+  svg {
+    color: var(--dark-background-color);
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    background-color: var(--background-color);
+  }
+
+  .cover-img {
+    display: flex;
+    align-content: center;
+  }
+
+  .title {
+    color: var(--golden-accent-color);
+  }
+
+  .synopsis {
+    margin-top: 8px;
+    font-weight: 400;
+    color: var(--bio-synopsis-color);
+  }
+
+  .read-count {
+    font-size: 14px;
+  }
 }
 
 .tag-name {
@@ -467,9 +505,14 @@ input:not(.seamless-input):focus {
     border-radius: 8px;
     margin-bottom: 32px;
 
+    .username {
+      color: var(--golden-accent-color);
+    }
+
     .bio {
       font-weight: 400;
       margin-top: 12px;
+      color: var(--bio-synopsis-color)
     }
   }
 }
@@ -645,7 +688,8 @@ input:not(.seamless-input):focus {
   padding-top: 6px;
   display: flex;
   justify-content: right;
-  gap: 16px;
+  font-size: 14px;
+  gap: 5px;
 
   span {
     display: flex;
@@ -757,11 +801,11 @@ textarea:focus {
 }
 
 .like, .saved, .comment {
-  padding: 8px;
+  padding: 8px 3px;
   border-radius: 5px;
   cursor: pointer;
   width: min-content;
-  font-size: 18px;
+  font-size: 16px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular", sans-serif;
 }
 

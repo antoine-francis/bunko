@@ -272,9 +272,13 @@ def get_series_by_user(request, username):
 @api_view(['GET'])
 def get_popular_series(request):
 	logger.info(f"START get_popular_series() for user {request.user.id}")
-	data = Series.objects.filter(text__author__username=username)
-	serializer = SeriesSerializer(data, context={'request': request}, many=True)
-	logger.info(f"END GET get_series_by_user() for user {request.user.id}")
+	series_with_texts = (
+		Series.objects
+						 .exclude(text__author=request.user)
+						 .exclude(text__isnull=True)
+						 .exclude(text__is_draft=True)
+	)
+	serializer = SeriesSerializer(series_with_texts, context={'request': request}, many=True)
 	response = Response(serializer.data, status=status.HTTP_200_OK)
 	logger.info(f"END get_popular_series() for user {request.user.id}")
 	return response
@@ -286,8 +290,10 @@ def get_series(request, pk):
 		logger.info(f"START GET get_series() for user {request.user.id}")
 		try:
 			data = get_object_or_404(Series, id=pk)
+			print(data)
 			if not data.text.filter(author=request.user).exists():
 				data = data.text.filter(is_draft=False)
+				print(data)
 			serializer = SeriesSerializer(data)
 			response = Response(serializer.data, status=status.HTTP_200_OK)
 

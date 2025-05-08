@@ -73,6 +73,7 @@ const userSlice = createSlice({
 				state.loading = false;
 				state.error = undefined;
 				state.user = undefined;
+				location.reload();
 			})
 			.addCase(login.pending, (state) => {
 				state.loading = true;

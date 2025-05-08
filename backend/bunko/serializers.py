@@ -108,15 +108,18 @@ class TextDescriptionSerializer(serializers.ModelSerializer):
 	author = serializers.SerializerMethodField()
 	series = SeriesNameSerializer()
 	genres = GenreTagSerializer(many=True, allow_null=True)
+	bookmark_count = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Text
 		fields = ['title', 'author', 'series', 'series_entry', 'genres', 'synopsis', 'is_draft', 'creation_date', 'modification_date',
-				  'publication_date', 'content', 'hash']
+				  'publication_date', 'content', 'hash', 'bookmark_count']
 
 	def get_author(self, obj):
 		return AuthorSerializer(obj.author).data
 
+	def get_bookmark_count(self, obj):
+		return len(Bookmark.objects.filter(text=obj))
 
 class SeriesTitleSerializer(serializers.ModelSerializer):
 	class Meta:

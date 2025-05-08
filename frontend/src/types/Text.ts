@@ -24,6 +24,7 @@ export interface BunkoText {
 	modificationDate: Date;
 	publicationDate: Date;
 	bookmarkPosition?: number;
+	bookmarkCount?: number;
 	loading?: boolean;
 	error?: HttpStatus | undefined;
 }

@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (comment, get_texts, get_series, get_series_by_user, like_text,
 					unlike_text, like_comment, unlike_comment, unsave_text, save_text, create_text, text,
 					get_texts_by_tag, get_tags,
-					search_tags, delete_comment, set_text_bookmark)
+					search_tags, delete_comment, set_text_bookmark, get_popular_series)
 
 urlpatterns = [
 	# api views
@@ -28,6 +28,7 @@ urlpatterns = [
 
 	# series
 	path('series/<username>', get_series_by_user),
+	path('popular_series', get_popular_series),
 	path('series_id/<int:pk>', get_series),
 
 	# comments

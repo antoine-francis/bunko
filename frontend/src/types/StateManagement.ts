@@ -1,6 +1,7 @@
 import {HttpStatus} from "../constants/Http.ts";
 import {DeleteComment} from "@/types/Comment.ts";
 import {UserBadge} from "@/types/UserProfile.ts";
+import {Series} from "@/types/Series.ts";
 
 export interface LoadingState {
 	loading: boolean;
@@ -22,4 +23,5 @@ export interface SuggestionsState {
 	loading: boolean;
 	error: HttpStatus | undefined;
 	suggestedUsers: UserBadge[];
+	suggestedSeries: Series[];
 }

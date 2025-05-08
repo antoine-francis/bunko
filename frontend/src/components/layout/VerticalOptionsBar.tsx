@@ -163,7 +163,7 @@ export const VerticalOptionsBar = () => {
 								</Link>
 							</li>
 							<li>
-								<Link to={{pathname: paths.tags.getHref()}}>
+								<Link to={{pathname: paths.browseSeries.getHref()}}>
 									<div id="browse-tags" className="nav-btn">
 										<IconLayoutGrid/>
 										{formatMessage(messages.browseSeries)}

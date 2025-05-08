@@ -71,6 +71,11 @@ export const paths = {
 		getHref: (redirectTo?: string | null | undefined) =>
 			`/series/${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 	},
+	browseSeries: {
+		path: '/series',
+		getHref: (redirectTo?: string | null | undefined) =>
+			`/series${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+	},
 	tag: {
 		path: '/tag/:tag',
 		getHref: (redirectTo?: string | null | undefined) =>

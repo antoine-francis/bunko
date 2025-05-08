@@ -123,6 +123,13 @@ const bunkoRouter = createBrowserRouter([
 				},
 			},
 			{
+				path: paths.browseSeries.path,
+				lazy: async () => {
+					const { BrowseSeries } = await import('./routes/BrowseSeries.tsx');
+					return { Component: BrowseSeries };
+				},
+			},
+			{
 				path: paths.tag.path,
 				lazy: async () => {
 					const { Tag } = await import('./routes/Tag.tsx');

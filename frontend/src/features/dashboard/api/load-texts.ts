@@ -34,3 +34,14 @@ export const loadSeries : (id : string) => Promise<Series> = async (id : string)
 		throw new Error(response.status.toString());
 	}
 };
+
+export const loadPopularSeries : () => Promise<Series[]> = async () => {
+	const response = await fetch(URL.SERVER + URL.BROWSE_SERIES, {
+		credentials: 'include',
+	});
+	if (response.ok) {
+		return await response.json();
+	} else {
+		throw new Error(response.status.toString());
+	}
+};

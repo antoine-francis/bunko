@@ -1,6 +1,17 @@
 .user-info {
     margin: 30px auto 50px;
     text-align: center;
+
+    .username {
+        color: var(--golden-accent-color);
+        text-shadow: var(--text-shadow);
+        font-weight: 700;
+    }
+
+    .bio {
+        margin-top: 16px;
+        color: var(--bio-synopsis-color);
+    }
 }
 
 .user-info .profile-pic {
@@ -120,7 +131,6 @@
 
 .full-name {
     font-weight: 700;
-    color: var(--golden-accent-color);
     font-family: Young Serif, serif;
     text-shadow: var(--text-shadow);
 }
@@ -134,6 +144,10 @@
 
 .follows a {
     margin: 0 10px;
+}
+
+.follow-button {
+    margin: 16px;
 }
 
 .preview-container {

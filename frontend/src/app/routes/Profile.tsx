@@ -160,6 +160,8 @@ export const Profile = () => {
 					<>
 						<div className="user-info">
 							<img className="profile-pic" src={profile.picture} alt={profile.username}/>
+							<div className="username">{profile.username}</div>
+
 							<div className="name-edit">
 								<div className="full-name">{profile.firstName} {profile.lastName}</div>
 								{isOwner && <div id="profile-edit">
@@ -168,13 +170,9 @@ export const Profile = () => {
 									</Link>
 								</div>}
 							</div>
-							<div className="username">@{profile.username}</div>
 							<div className="join-date" title={formatDate(profile.signupDate)}>
 								Member since {new Date(profile.signupDate).getFullYear()}
 							</div>
-							{!isOwner && <div className="follow-button">
-								<button onClick={handleSubscribe}>{isFollowedByUser ? "Unfollow" : "Follow"}</button>
-							</div>}
 							<div className="bio">{profile.bio}</div>
 							<div className="follows">
 								<Link to={{pathname: `${paths.followers.getHref()}${profile.username}`}}>
@@ -197,6 +195,9 @@ export const Profile = () => {
 									</div>
 								</Link>
 							</div>
+							{!isOwner && <div className="follow-button">
+								<button onClick={handleSubscribe}>{isFollowedByUser ? "Unfollow" : "Follow"}</button>
+							</div>}
 						</div>
 						{profile.collectives !== undefined && profile.collectives.length > 0 && (
 							<div className="collectives">

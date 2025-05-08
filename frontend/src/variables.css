@@ -14,6 +14,7 @@
     --background-hover-color: #f1f1f1;
     --menu-link-color: #c0c2c6;
     --tag-color: #888888 !important;
+    --bio-synopsis-color: #888888;
     --golden-accent-color: #783800;
     --button-hover-color: #783800;
     --button-hover-background: #ececec;
@@ -44,6 +45,7 @@
     --background-hover-color: #474747;
     --menu-link-color: #c0c2c6;
     --tag-color: #b4b4b4 !important;
+    --bio-synopsis-color: #a5a5a5;
     --golden-accent-color: #c29b00;
     --button-hover-color: #c29b00;
     --button-hover-background: #1e1e1e;

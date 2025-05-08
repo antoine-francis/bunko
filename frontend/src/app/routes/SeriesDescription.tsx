@@ -10,6 +10,7 @@ import {convertTextToDesc} from "@/features/text/text-functions.ts";
 import {LoadingContainer} from "@/components/LoadingContainer.tsx";
 import {Author} from "@/types/Author.ts";
 import {defineMessages, useIntl} from "react-intl";
+import {getSeriesAuthors} from "@/hooks/series-hooks.ts";
 
 const messages = defineMessages({
 	entry: {
@@ -40,18 +41,6 @@ export const SeriesDescription = () => {
 		}
 	}, [series, dispatch, id, navigate]);
 
-	const getSeriesAuthors = () : Author[] => {
-		if (series !== undefined && series.entries !== undefined && series.entries.length > 0) {
-			return series.entries.map((entry : TextDescription, index : number, self : BunkoText[]) => {
-				if (index === self.findIndex((t : BunkoText) => t.author.username === entry.author.username)) {
-					return entry.author;
-				}
-			}).filter((entry : Author | undefined) => entry !== undefined)
-		} else {
-			return [];
-		}
-	}
-
 	if (!series) {
 		return null;
 	} else if (series.loading) {
@@ -62,7 +51,7 @@ export const SeriesDescription = () => {
 		const seriesTextDesc : TextDescription[] = series.entries.map((text : BunkoText) => {
 			return convertTextToDesc(text);
 		})
-		const seriesAuthor : Author[] = getSeriesAuthors();
+		const seriesAuthor : Author[] = getSeriesAuthors(series);
 		return (
 			<>
 				<div id="series-info-container">

@@ -14,6 +14,7 @@ export const URL = {
 
 
 	SERIES: "/series_id/",
+	BROWSE_SERIES: "/popular_series",
 	COLLECTIVE: "/collective/",
 
 	LIKE: "/like/",

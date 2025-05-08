@@ -13,6 +13,7 @@
 
     .search-bar-container {
         visibility: hidden;
+        display: none;
     }
 
     #search-bar {
@@ -210,9 +211,9 @@
         display: none;
     }
 
-    .read-by {
-        display: none;
-    }
+    /*.read-by {*/
+    /*    display: none;*/
+    /*}*/
 
     .btn {
         cursor: pointer;
