@@ -8,6 +8,8 @@ export const URL = {
 	TAGS: "/tags",
 	SEARCH_TAGS: "/search_tags",
 
+	SEARCH_TITLES: "/search_titles",
+
 	UPDATE_PROFILE: "/update_profile",
 	SUGGESTED_USERS: "/suggested_users",
 	PROFILE: "/profile/",

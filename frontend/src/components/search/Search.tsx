@@ -8,7 +8,9 @@ export function Search() {
 	return (
 		<div className="search-bar-container">
 			<SearchBar/>
-			{searchBarText !== "" && <SearchResults/>}
+			{
+				searchBarText !== "" && <SearchResults/>
+			}
 		</div>
 	)
 }

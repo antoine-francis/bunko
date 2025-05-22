@@ -83,9 +83,12 @@ export interface TextEditorState {
 	newHash: string | undefined;
 }
 
-export interface DraftState {
-	isDraft: boolean;
-	hash: string;
+export interface SearchState {
+	query: string;
+	searchType: string;
+	results: any[];
+	error?: HttpStatus | undefined;
+	loading: boolean;
 }
 
 export interface BookmarkPosition {

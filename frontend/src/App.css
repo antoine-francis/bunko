@@ -95,10 +95,52 @@ input[type=text], textarea {
 }
 
 .search-results {
+
+  .results-container {
+    padding: 8px;
+  }
   width: 100%;
   background-color: #242424;
   padding: 0 2px !important;
   position: relative;
+
+  #search-type {
+    display: flex;
+    border-radius: 20px;
+    background-color: var(--dark-background-color);
+    padding: 0 0 0 16px;
+    transition: 0.1s;
+
+    span {
+      display: flex;
+      align-content: center;
+      transition: 0.1s;
+      border-radius: 8px;
+      margin-right: 6px;
+      cursor: pointer;
+
+      &.active {
+        background-color: var(--background-active-color);
+        border: 1px solid var(--active-border-color);
+        cursor: default;
+      }
+    }
+
+    svg + span {
+      padding: 8px 8px 8px 0;
+    }
+
+    & > span:hover {
+      outline: 1px solid var(--golden-accent-color);
+      background-color: var(--background-color);
+    }
+  }
+
+  svg {
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px;
+  }
 }
 
 .list-results {
@@ -117,7 +159,16 @@ input[type=text], textarea {
 
 .list-results ul {
   list-style: none;
-  padding: 0;
+  padding: 16px 0 0 0;
+  border-top: 1px solid var(--separator);
+  overflow: scroll;
+  max-height: 150px;
+
+  .result-count {
+    margin-left: 16px;
+    font-size: 14px;
+    color: var(--bio-synopsis-color);
+  }
 }
 
 .result {
@@ -126,6 +177,15 @@ input[type=text], textarea {
 
   a {
     color: var(--link-color);
+
+    .result-item {
+
+      .author {
+        margin-left: 8px;
+        color: var(--bio-synopsis-color);
+        font-size: 15px;
+      }
+    }
   }
 }
 
@@ -613,6 +673,13 @@ input:not(.seamless-input):focus {
 
     .text-item {
       margin: 0;
+      padding: 12px 8px;
+      max-height: 212px;
+
+      a {
+        overflow: hidden;
+        max-height: 150px;
+      }
     }
 
     .progress-bar-container {
@@ -924,6 +991,7 @@ textarea:focus {
   top: -112px;
   text-align: center;
   margin-bottom: -12px;
+  max-width: 150px;
 }
 
 .item-header {

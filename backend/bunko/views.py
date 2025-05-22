@@ -200,8 +200,8 @@ def get_tags(request):
 @api_view(['GET'])
 def search_tags(request):
 	if request.method == 'GET':
-		logger.info(f"START GET search_tags() for user {request.user.id}")
 		query = request.GET.get('tag_query')
+		logger.info(f"START GET search_tags({query}) for user {request.user.id}")
 		data = Genre.objects.filter(
 			tag__contains=query,
 			text_genres__isnull=False,
@@ -209,6 +209,20 @@ def search_tags(request):
 		).distinct()
 		serializer = TextsByTagSerializer(data, context={'request': request}, many=True)
 		logger.info(f"END GET get_tags() for user {request.user.id}")
+		return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def search_titles(request):
+	if request.method == 'GET':
+		query = request.GET.get('title_query')
+		logger.info(f"START GET search_titles({query}) for user {request.user.id}")
+		data = Text.objects.filter(
+			title__contains=query,
+			is_draft=False
+		).distinct()
+		serializer = TextDescriptionSerializer(data, context={'request': request}, many=True)
+		logger.info(f"END GET search_titles() for user {request.user.id}")
 		return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 

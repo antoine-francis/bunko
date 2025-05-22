@@ -45,3 +45,14 @@ export const loadPopularSeries : () => Promise<Series[]> = async () => {
 		throw new Error(response.status.toString());
 	}
 };
+
+export const loadTitlesSearchResults= async (query : string) : Promise<BunkoText[]> => {
+	const response = await fetch(URL.SERVER + URL.SEARCH_TITLES + "?title_query=" + query, {
+		credentials: 'include',
+	});
+	if (response.ok) {
+		return await response.json();
+	} else {
+		throw new Error(response.status.toString());
+	}
+};

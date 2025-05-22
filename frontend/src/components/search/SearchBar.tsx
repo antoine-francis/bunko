@@ -5,6 +5,16 @@ import {resetSearchBar, searchTags} from "@/slices/BrowseTagsSlice.ts";
 import {IconX} from "@tabler/icons-react";
 
 const messages = defineMessages({
+	searchTitles: {
+		id: "menubar.searchTitles",
+		description: "Menu bar button",
+		defaultMessage: "Search titles",
+	},
+	searchAuthors: {
+		id: "menubar.searchAuthors",
+		description: "Menu bar button",
+		defaultMessage: "Search authors",
+	},
 	searchTags: {
 		id: "menubar.searchTags",
 		description: "Menu bar button",

@@ -11,7 +11,7 @@ import {Series} from "@/types/Series.ts";
 import {fetchPopularSeries} from "@/slices/SuggestionsSlice.ts";
 import {getReaderCount, getSeriesAuthors} from "@/hooks/series-hooks.ts";
 import {Author} from "@/types/Author.ts";
-import {IconBook, IconBooks} from "@tabler/icons-react";
+import {IconBooks} from "@tabler/icons-react";
 
 const messages = defineMessages({
 	browseSeries: {
@@ -45,7 +45,7 @@ export const BrowseSeries = () => {
 		return <EmptyList/>;
 	} else {
 		return (
-			<div id="browse-by-tags-container">
+			<div id="browse-by-series-container">
 				<h2>{formatMessage(messages.browseSeries)}</h2>
 				{suggestedSeries.map((series: Series, index: number) => {
 					const seriesAuthor = getSeriesAuthors(series);
